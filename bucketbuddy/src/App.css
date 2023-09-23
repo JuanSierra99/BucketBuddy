@@ -1,0 +1,221 @@
+.top-bar {
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0.7rem;
+}
+
+.container {
+  background-color: rgba(255, 253, 253, 0.1);
+  border-radius: 5%;
+  filter: blur(100%);
+  min-width: 20rem;
+  max-width: "22rem";
+  width: 35vw;
+  height: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 30px 20px 25px 20px;
+}
+
+.buddy-image {
+  width: 30vw;
+  max-width: 20rem;
+  min-width: 12rem;
+  image-rendering: pixelated;
+  -webkit-filter: drop-shadow(1px -2px 5px #242424);
+  filter: drop-shadow(1px -2px 5px #242424);
+  height: auto;
+  display: grid;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 50px;
+  padding-bottom: 30px;
+}
+
+.signin-button {
+  color: #ffffff;
+  border-radius: 10px;
+  background-color: black;
+  border-color: #0000002f;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.4s;
+}
+
+.signin-button:hover {
+  color: rgb(255, 207, 49);
+}
+
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+} */
+
+/* @font-face {
+        font-family: test;
+        src: url(CreamySugar-gxnGR.ttf);
+    }
+    body{
+        margin: 0;
+        background-color: #8BACFD;
+        background-image: linear-gradient(#8BACFD, #8234e8);
+    }
+
+    .top-bar{
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: space-between;
+        padding: .2rem .7rem;
+    } */
+
+/* .top-bar-bucketmate{
+        color:  #8BACFD;
+        font-size: 1.6rem;
+        text-decoration: none;
+    }
+
+    .top-bar-signup{
+        font-family: test;
+        font-size: 1.2rem;
+        color:  #ffffff;
+        text-decoration: none;
+        background-color:  #6200ff;
+        border-radius: 10px;
+        align-self: center;
+    } */
+
+/*-----------------------------------------------*/
+
+/* .buddy-image{
+        width: 30vw;
+        max-width: 20rem;
+        min-width: 12rem;
+        image-rendering: pixelated;
+        -webkit-filter: drop-shadow(1px -2px 5px #242424);
+        height: auto;
+        display: grid;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 50px;
+        padding-bottom: 30px;
+    }
+
+    .container{
+        background-color: rgba(255, 253, 253, 0.1);
+        border-radius: 5%;
+        filter: blur(100%);
+        min-width: 15rem;
+        max-width: 22rem;
+        width: 35vw;
+        height: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 30 20 25 20;
+    } */
+
+/* .input-boxes{
+        background-color: transparent;
+        color: rgb(255, 255, 255);
+        outline: none; 
+        border-style:solid;
+        border-radius: 10px;
+        border-color: #0000002f;
+        border-width: 2.5px;
+        padding: 4px;
+        margin-bottom: 2em;
+        width: 100%;
+    } */
+
+/* .input-boxes::placeholder{
+        opacity: 0;
+    } */
+
+/* input:focus + label, 
+    input:not(:placeholder-shown) + label
+    {
+        transform: translateY(-4.7em);
+        color:#ffffff;
+        font-size: 1rem;
+    } */
+/* 
+    label{
+       display:block;
+       position: absolute;
+       color: #eeeeee;
+       font-family: sans-serif;
+       font-size: .9rem;
+       padding-left: 6px;
+       transform: translateY(-3.5em);
+       -webkit-transform: translateY(-3.5em);
+       transform-origin: 0 0;
+       user-select: none;
+       cursor: text;
+       transition: 0.3s;
+    } */
+
+/* .signin-button{
+        color: #ffffff;
+        border-radius: 10px;
+        background-color: black;
+        border-color: #0000002f;
+        display: block;  
+        margin-right: auto;
+        margin-left: auto;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: all .4s;
+    }
+
+    .signin-button:hover{
+        color: rgb(255, 207, 49);
+    }
+
+    .forgot-password-link{
+        color: whitesmoke;
+        font-size: 1rem;
+        display: block;
+        text-align: center;
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    } */

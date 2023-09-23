@@ -1,0 +1,37 @@
+.input-boxes {
+  background-color: transparent;
+  color: rgb(255, 255, 255);
+  outline: none; /*do anything ?*/
+  border-style: solid;
+  border-radius: 10px;
+  border-color: #0000002f;
+  border-width: 2.5px;
+  padding: 4px;
+  margin-bottom: 2em;
+  width: 100%;
+}
+
+.input-boxes::placeholder {
+  opacity: 0;
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label {
+  transform: translateY(-4.3em);
+  color: #ffffff;
+  font-size: 1rem;
+}
+label {
+  display: block; /* do i need this ?*/
+  position: absolute;
+  color: #eeeeee;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  padding-left: 6px;
+  transform: translateY(-3em);
+  -webkit-transform: translateY(-3em);
+  transform-origin: 0 0;
+  user-select: none;
+  cursor: text;
+  transition: 0.3s;
+}
