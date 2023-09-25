@@ -1,14 +1,15 @@
 .top-bar {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: space-between;
   padding: 0.2rem 0.7rem;
 }
 
 .container {
-  background-color: rgba(75, 75, 75, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
   border-radius: 5%;
-  filter: blur(100%);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
   min-width: 20rem;
   max-width: 25rem;
   width: 35vw;
@@ -36,7 +37,7 @@
 .signin-button {
   color: #ffffff;
   border-radius: 10px;
-  background-color: black;
+  background-color: rgb(20, 20, 20);
   border-color: #0000002f;
   display: block;
   margin-right: auto;
