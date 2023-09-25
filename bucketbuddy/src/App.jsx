@@ -12,12 +12,15 @@ function App() {
         <a href="https://react.dev">Sign in</a>
       </nav>
       <img src="/buddy.png" className="buddy-image" />
-      <div>
-        <form className="container">
+      <div className="container">
+        <form>
           <FloatingInput value="username" type="email" id="username" />
           <FloatingInput value="password" type="password" id="password" />
-          <input class="signin-button" type="submit" value="sign in" />
+          <input className="signin-button" type="submit" value="sign in" />
         </form>
+        <a href="http://www.bing.com" class="forgot-password-link">
+          Forgot Password?
+        </a>
       </div>
     </body>
   );

@@ -4,7 +4,7 @@ function FloatingInput(props) {
   return (
     <>
       <input
-        class="input-boxes"
+        className="input-boxes"
         type={props.type ? props.type : "text"}
         placeholder="input"
         id={props.id}

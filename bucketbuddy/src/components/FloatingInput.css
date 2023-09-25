@@ -1,14 +1,16 @@
 .input-boxes {
   background-color: transparent;
   color: rgb(255, 255, 255);
-  outline: none; /*do anything ?*/
+  outline: none;
   border-style: solid;
-  border-radius: 10px;
+  border-radius: 15px;
   border-color: #0000002f;
   border-width: 2.5px;
   padding: 4px;
   margin-bottom: 2em;
   width: 100%;
+  box-sizing: border-box; /*so that input box doestn extend past its container */
+  /* but why does 100% go past border box even with no padding ? */
 }
 
 .input-boxes::placeholder {
@@ -33,5 +35,5 @@ label {
   transform-origin: 0 0;
   user-select: none;
   cursor: text;
-  transition: 0.3s;
+  transition: 0.25s;
 }
