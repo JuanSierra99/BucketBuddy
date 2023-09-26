@@ -73,7 +73,7 @@ body {
   height: 100vh;
   width: 100vw;
   /* background-image: linear-gradient(#8bacfd, #8234e8); */
-  background-image: url("https://static.vecteezy.com/system/resources/previews/010/527/184/original/liquid-flow-purple-purple-3d-neon-lava-lamp-geometric-background-for-banner-card-ui-design-or-wallpaper-gradient-mesh-bubble-in-the-shape-of-a-wave-drop-fluid-colorful-3d-tubes-free-vector.jpg");
-  background-size: cover;
+  background-image: linear-gradient(#8bacfd, #8234e8);
+  /* background-size: cover; */
   /* background-repeat: no-repeat; */
 }

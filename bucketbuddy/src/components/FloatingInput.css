@@ -30,8 +30,8 @@ label {
   font-family: sans-serif;
   font-size: 0.9rem;
   padding-left: 6px;
-  transform: translateY(-3.3em);
-  -webkit-transform: translateY(-3.3em);
+  transform: translateY(-3.2em);
+  -webkit-transform: translateY(-3.2em);
   transform-origin: 0 0;
   user-select: none;
   cursor: text;
