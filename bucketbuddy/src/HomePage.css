@@ -1,0 +1,15 @@
+.nav-bar {
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  width: 100vw;
+  padding: 0.3rem 0 0.3rem 0;
+  -webkit-backdrop-filter: blur(20px);
+  justify-content: center;
+}
+
+table,
+th,
+td {
+  border-style: solid;
+}
