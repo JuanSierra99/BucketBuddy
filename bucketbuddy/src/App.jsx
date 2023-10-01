@@ -8,15 +8,15 @@ import SignIn from "./components/templates/SignIn.jsx";
 import SignUp from "./components/templates/signup.jsx";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <div>
-        <p>Reserved for Welcome Page</p>
-      </div>
-    ),
-    errorElement: <ErrorPage />,
-  },
+  // {
+  //   path: "/",
+  //   element: (
+  //     <div>
+  //       <p>Reserved for Welcome Page</p>
+  //     </div>
+  //   ),
+  //   errorElement: <ErrorPage />,
+  // },
 
   {
     path: "/sign-in",
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/sign-up",
+    path: "/",
     element: <SignUp />,
     errorElement: <ErrorPage />,
   },
