@@ -1,0 +1,21 @@
+.navbar-container {
+  position: fixed;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  /* padding: 0.1rem 0 0.1rem 0; */
+  -webkit-backdrop-filter: blur(20px);
+  height: fit-content;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 8px;
+  margin-left: 8px;
+}
+
+.navbar div:only-child {
+  margin-left: auto;
+  margin-right: auto;
+}

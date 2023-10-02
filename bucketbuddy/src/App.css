@@ -3,21 +3,20 @@
   z-index: 1;
   background-color: rgba(0, 0, 0, 0.7);
   width: 100vw;
-  padding: 0.3rem 0 0.3rem 0;
+  padding: 0.1rem 0 0.1rem 0;
   -webkit-backdrop-filter: blur(20px);
-}
-
-body {
-  background-color: rgb(23, 0, 72);
+  height: fit-content;
 }
 
 .signup-half {
   background-image: url("https://static.vecteezy.com/system/resources/previews/011/764/329/original/liquid-flow-purple-blue-3d-neon-lava-lamp-geometric-background-for-banner-card-ui-design-or-wallpaper-gradient-mesh-bubble-in-the-shape-of-a-wave-drop-fluid-colorful-abstract-shapes-free-vector.jpg");
   border-radius: 0 0 20% 20%;
   height: 95vh;
+  background-size: cover;
 }
 
 .navbar {
+  background-color: green;
   display: flex;
   background-color: transparent;
   justify-content: space-between;
@@ -48,20 +47,22 @@ body {
     "image3 image3 image3"
     "footer footer footer";
   grid-template-columns: 33% 33% 33%;
-  width: 80vw;
-  max-width: 55rem;
+  width: 95vw;
+  /* max-width: 55rem; */
   min-width: 28rem;
-  margin: 20px auto 35px auto;
-  padding: 2rem;
+  margin: 0px auto 35px auto;
+  padding-top: 2rem;
+  /* padding: 2rem; */
   row-gap: 4rem;
 }
 
 .information-grid > p {
-  color: white;
+  color: rgb(237, 220, 255);
   text-align: center;
   margin-top: auto;
   margin-bottom: auto;
   font-size: 2rem;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .information-grid > img {
@@ -72,6 +73,9 @@ body {
 .grid-header {
   grid-area: header;
   color: white;
+  border-radius: 25px;
+  background-image: url("https://static.vecteezy.com/system/resources/previews/011/764/329/original/liquid-flow-purple-blue-3d-neon-lava-lamp-geometric-background-for-banner-card-ui-design-or-wallpaper-gradient-mesh-bubble-in-the-shape-of-a-wave-drop-fluid-colorful-abstract-shapes-free-vector.jpg");
+  background-size: cover;
   text-align: center;
   font-size: 5rem;
 }

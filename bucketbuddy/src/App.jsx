@@ -6,17 +6,14 @@ import ErrorPage from "./components/templates/ErrorPage.jsx";
 import HomePage from "./components/pages/HomePage.jsx";
 import SignIn from "./components/templates/SignIn.jsx";
 import SignUp from "./components/templates/signup.jsx";
+import { WelcomePage } from "./components/templates/WelcomePage";
 
 const router = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: (
-  //     <div>
-  //       <p>Reserved for Welcome Page</p>
-  //     </div>
-  //   ),
-  //   errorElement: <ErrorPage />,
-  // },
+  {
+    path: "/",
+    element: <WelcomePage />,
+    errorElement: <ErrorPage />,
+  },
 
   {
     path: "/sign-in",
@@ -25,7 +22,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/",
+    path: "/sign-up",
     element: <SignUp />,
     errorElement: <ErrorPage />,
   },
