@@ -1,12 +1,10 @@
-import { useState } from "react";
 import "./App.css";
-import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ErrorPage from "./components/templates/ErrorPage.jsx";
-import HomePage from "./components/pages/HomePage.jsx";
+import { ErrorPage } from "./components/templates/ErrorPage.jsx";
+import { HomePage } from "./components/pages/HomePage.tsx";
 import SignIn from "./components/templates/SignIn.jsx";
 import SignUp from "./components/templates/signup.jsx";
-import { WelcomePage } from "./components/templates/WelcomePage";
+import { WelcomePage } from "./components/templates/WelcomePage.jsx";
 
 const router = createBrowserRouter([
   {

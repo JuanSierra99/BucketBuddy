@@ -1,13 +1,3 @@
-.navbar-container {
-  position: fixed;
-  z-index: 1;
-  background-color: rgba(0, 0, 0, 0.7);
-  width: 100vw;
-  padding: 0.1rem 0 0.1rem 0;
-  -webkit-backdrop-filter: blur(20px);
-  height: fit-content;
-}
-
 .signup-half {
   background-image: url("https://static.vecteezy.com/system/resources/previews/011/764/329/original/liquid-flow-purple-blue-3d-neon-lava-lamp-geometric-background-for-banner-card-ui-design-or-wallpaper-gradient-mesh-bubble-in-the-shape-of-a-wave-drop-fluid-colorful-abstract-shapes-free-vector.jpg");
   border-radius: 0 0 20% 20%;
@@ -15,13 +5,8 @@
   background-size: cover;
 }
 
-.navbar {
-  background-color: green;
-  display: flex;
-  background-color: transparent;
-  justify-content: space-between;
-  margin-right: 8px;
-  margin-left: 8px;
+body {
+  background-color: rgb(171, 122, 76);
 }
 
 .form-container {
@@ -121,7 +106,20 @@
   padding-top: 50px;
 }
 
-.signin-button {
+.welcome-page-buddy-image {
+  width: 15rem;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.test {
+  font-family: butter;
+  margin: 0;
+}
+
+.submit-form-button {
   color: #ffffff;
   border-radius: 10px;
   background-color: rgb(20, 20, 20);
@@ -135,7 +133,7 @@
   margin-top: 0;
 }
 
-.signin-button:hover {
+.submit-form-button:hover {
   color: rgb(255, 207, 49);
 }
 
@@ -148,10 +146,15 @@
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
-.sidebar {
-  background-color: green;
-  max-width: 15rem;
-  height: 100%;
+.navlink-couple {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 1.5px;
+}
+
+@font-face {
+  font-family: "butter";
+  src: url("/Users/juansierra/BucketBuddy/bucketbuddy/src/assets/Butterfly-ywYKm.otf");
 }
 
 /* #root {

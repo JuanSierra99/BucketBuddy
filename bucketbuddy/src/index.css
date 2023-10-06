@@ -70,11 +70,5 @@ button:focus-visible {
 
 body {
   margin: 0;
-  /* background-color: rgb(23, 0, 72); */
-  /* height: 100vh;
-  width: 100vw; */
-  /* background-image: linear-gradient(#8bacfd, #8234e8); */
-  background-image: linear-gradient(rgb(28, 9, 87), #000000);
-  /* background-size: cover; */
-  /* background-repeat: no-repeat; */
+  background-color: green;
 }

@@ -1,0 +1,15 @@
+.navlink-signup {
+  color: white;
+  font-size: 0.9rem;
+  text-decoration: none;
+  background-color: rgb(111, 50, 252);
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 5px;
+  font-weight: bold;
+  padding: 2px 6px 2px 6px;
+  height: fit-content;
+}
+
+.navlink-signup:hover {
+  background-color: rgb(93, 27, 245);
+}

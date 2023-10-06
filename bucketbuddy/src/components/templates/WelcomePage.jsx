@@ -1,17 +1,24 @@
-import { BucketBuddyLink } from "../atoms/BucketBuddyLink";
 import { NavBar } from "../molecules/NavBar.jsx";
+import { SignInLink } from "../atoms/SignInLink.jsx";
+import { SignUpLink } from "../atoms/SignUpLink.jsx";
+import "./WelcomePage.css";
 
 export function WelcomePage() {
   return (
-    <body>
+    <body className="welcome-page-background">
       <NavBar
-        navItem={<a href="http://localhost:5173/sign-up">Sign Up</a>}
+        navItem={
+          <div className="navlink-couple">
+            <SignInLink />
+            <SignUpLink />
+          </div>
+        }
       ></NavBar>
       <div className="information-grid">
         <h1 className="grid-header">
-          This.
-          <img src="/buddy.png" className="buddy-image" />
-          Is Bucket Buddy
+          Say Hello To
+          <img src="/buddy.png" className="welcome-page-buddy-image" />
+          <p className="test">Bucket Buddy</p>
         </h1>
         <img className="grid-image1" src="/CAT2.jpeg"></img>
         <p className="grid-text1">

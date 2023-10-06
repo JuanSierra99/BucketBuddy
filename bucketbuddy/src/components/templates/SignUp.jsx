@@ -13,7 +13,13 @@ function SignUp() {
         height: "100vh",
       }}
     >
-      <NavBar a={<a href="http://localhost:5173/sign-in">Sign in</a>}></NavBar>
+      <NavBar
+        navItem={
+          <a href="http://localhost:5173/sign-in" className="navlink-signin">
+            SIGN IN
+          </a>
+        }
+      ></NavBar>
       <img src="/buddy.png" className="buddy-image" />
       <div className="form-container">
         <form>
@@ -24,7 +30,7 @@ function SignUp() {
             type="text"
             id="confirm-password"
           />
-          <input className="signin-button" type="submit" value="sign up" />
+          <input className="submit-form-button" type="submit" value="sign up" />
         </form>
       </div>
     </body>

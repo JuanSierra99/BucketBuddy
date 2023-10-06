@@ -1,7 +1,8 @@
 import "/Users/juansierra/BucketBuddy/bucketbuddy/src/App.css";
-import { BucketBuddyLink } from "../atoms/BucketBuddyLink";
+// import { BucketBuddyLink } from "../atoms/BucketBuddyLink";
 import FloatingInput from "../atoms/FloatingInput";
 import { NavBar } from "../molecules/NavBar";
+import { SignUpLink } from "../atoms/SignUpLink";
 
 function SignIn() {
   return (
@@ -13,13 +14,13 @@ function SignIn() {
         height: "100vh",
       }}
     >
-      <NavBar a={<a href="http://localhost:5173/sign-up">Sign Up</a>}></NavBar>
+      <NavBar navItem={<SignUpLink />}></NavBar>
       <img src="/buddy-smile.png" className="buddy-image" />
       <div className="form-container">
         <form>
           <FloatingInput value="username" type="email" id="username" />
           <FloatingInput value="password" type="password" id="password" />
-          <input className="signin-button" type="submit" value="sign in" />
+          <input className="submit-form-button" type="submit" value="sign in" />
         </form>
         <a href="http://www.bing.com" class="forgot-password-link">
           Forgot Password?
