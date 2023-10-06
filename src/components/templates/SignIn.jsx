@@ -1,4 +1,4 @@
-import "/Users/juansierra/BucketBuddy/bucketbuddy/src/App.css";
+// import "/Users/juansierra/BucketBuddy/bucketbuddy/src/App.css";
 // import { BucketBuddyLink } from "../atoms/BucketBuddyLink";
 import FloatingInput from "../atoms/FloatingInput";
 import { NavBar } from "../molecules/NavBar";

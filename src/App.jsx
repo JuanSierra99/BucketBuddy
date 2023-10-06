@@ -1,7 +1,7 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "./components/templates/ErrorPage.jsx";
-import { HomePage } from "./components/pages/HomePage.tsx";
+import { HomePage } from "./components/pages/HomePage";
 import SignIn from "./components/templates/SignIn.jsx";
 import SignUp from "./components/templates/signup.jsx";
 import { WelcomePage } from "./components/templates/WelcomePage.jsx";
