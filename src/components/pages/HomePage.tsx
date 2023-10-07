@@ -4,30 +4,45 @@ import { BucketBuddyLink } from "../atoms/BucketBuddyLink";
 // import "/Users/juansierra/BucketBuddy/bucketbuddy/src/App.css";
 // import "./HomePage.css";
 
-const data = [
-  { Title: "0", Studio: 19, players: "Male" },
-  { Title: "1", Studio: 19, players: "Male" },
-  { Title: "2", Studio: 19, players: "Male" },
-  { Title: "3", Studio: 19, players: "Male" },
+// const testData = [
+//   { Title: "0", Studio: 19, players: "Male" },
+//   { Title: "1", Studio: 19, players: "Male" },
+//   { Title: "2", Studio: 19, players: "Male" },
+//   { Title: "3", Studio: 19, players: "Male" },
+// ];
+
+const Data = [
+  {id: Date.now().toString(), Title: "Mary Sue"},
 ];
 
 export function HomePage() {
-  // const [ata, setData] = useState(0);
+  const [data, setData] = useState(Data);
+  const addKey = () => {
+    setData([...data, {id: Date.now().toString(), Title: "Mary Soo"}])
+  }
+
+  const [searchString, setSearchString] = useState("goo");
+
   return (
-    <body style={{ backgroundColor: "white" }}>
+    <body>
+      <button onClick={addKey}>Press Me</button>
       <div className="App">
         <table>
-          <tr>
-            <td>Title</td>
-            <td>Studio</td>
-            <td>players</td>
-          </tr>
+          <th>
+            {Object.keys(Data[0]).map((key) => { //
+              if(key != 'id'){
+                return (<td>{key}</td>)
+              }
+            })}
+          </th>
           {data.map((val) => {
             return (
               <tr>
-                <td>{val.Title}</td>
-                <td>{val.Studio}</td>
-                <td>{val.players}</td>
+                <input
+        type="text"
+        value={searchString}
+        onChange={(e) => setSearchString(e.target.value)}
+      />
               </tr>
             );
           })}

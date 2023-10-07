@@ -5,7 +5,7 @@ import "./WelcomePage.css";
 
 export function WelcomePage() {
   return (
-    <body className="welcome-page-background">
+    <body className="welcome-page-background ">
       <NavBar
         navItem={
           <div className="navlink-couple">
