@@ -153,6 +153,53 @@
   src: url("/Users/juansierra/BucketBuddy/bucketbuddy/src/assets/Butterfly-ywYKm.otf");
 }
 
+/* Style the table itself */
+table {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  border-collapse: collapse;
+  border: px solid #d1d1e0; /* Light lavender border */
+  background-color: #f5e6f8; /* Lavender background color */
+}
+
+/* Style the table headers (th elements) */
+th {
+  background-color: #c8a2ff; /* Light purple for header background */
+  color: white; /* White text color */
+  border: 2px solid #d1d1e0;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Style the table rows (tr elements) */
+tr {
+  border: 5px solid #d1d1e0;
+}
+
+/* Style the table data cells (td elements) */
+td {
+  padding: 12px;
+  text-align: left;
+}
+
+td:hover {
+  background-color: rgb(255, 210, 255);
+}
+
+/* Style the input boxes within the table */
+input[type="text"] {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #d1d1e0;
+  border-radius: 3px;
+}
+
+/* Add some hover effect for table rows */
+tr:hover {
+  background-color: #e4ccff; /* Light lavender on hover */
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;
