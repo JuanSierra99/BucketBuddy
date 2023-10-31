@@ -1,53 +1,72 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
-import { BucketBuddyLink } from "../atoms/BucketBuddyLink";
-// import "/Users/juansierra/BucketBuddy/bucketbuddy/src/App.css";
-// import "./HomePage.css";
+import TextInput from "../atoms/TextInput";
+import { error } from "console";
+import { json } from "stream/consumers";
 
-// const testData = [
-//   { Title: "0", Studio: 19, players: "Male" },
-//   { Title: "1", Studio: 19, players: "Male" },
-//   { Title: "2", Studio: 19, players: "Male" },
-//   { Title: "3", Studio: 19, players: "Male" },
-// ];
+const url = "http://localhost:3000";
 
-const Data = [
-  {id: Date.now().toString(), Title: "Mary Sue"},
-];
+const getJson = async (url) => {
+  const response = await fetch(url);
+      if (response.ok) {
+        console.log(response.status + " " + response.statusText);
+        const json = await response.json();
+        return json
+      } else {
+        console.log("Error: " + response.status + " " + response.statusText);
+      }
+}
 
 export function HomePage() {
-  const [data, setData] = useState(Data);
-  const addKey = () => {
-    setData([...data, {id: Date.now().toString(), Title: "Mary Soo"}])
-  }
+  const [dataSet, setDataSet] = useState([{}]);
+  const [tables, setTables] = useState([{}]);
 
-  const [searchString, setSearchString] = useState("goo");
+  useEffect(() => {
+    const getTable = async () => {
+      const table_name = "test";
+      const url = `http://localhost:3000/table?name=${table_name}`;
+      const json = await getJson(url)
+      setDataSet(json)
+    }
+    const getTables = async () => {
+      const url = "http://localhost:3000/api/tables"
+      const json = await  getJson(url)
+      setTables(json.table_names)
+    }
+    getTable();
+    getTables();
+  }, []);
+  //initialized to an array with one empty object
+  //therefore if dataSet is never changed, keys.map will not render any <th> elements
+  //similarly for dataset.map, that uses same dataSet array, so it also wont render anything
+  const keys = Object.keys(dataSet[0]); 
 
   return (
-    <body>
-      <button onClick={addKey}>Press Me</button>
-      <div className="App">
-        <table>
-          <th>
-            {Object.keys(Data[0]).map((key) => { //
-              if(key != 'id'){
-                return (<td>{key}</td>)
-              }
-            })}
-          </th>
-          {data.map((val) => {
-            return (
-              <tr>
-                <input
-        type="text"
-        value={searchString}
-        onChange={(e) => setSearchString(e.target.value)}
-      />
-              </tr>
-            );
-          })}
-        </table>
-      </div>
-    </body>
+    <div>
+      {JSON.stringify(tables)}
+      <table>
+        {/*A table header for every key*/}
+        {keys.map((k) => {
+          return <th>{k}</th>;
+        })}
+
+        {/*for every object in our data set*/}
+        {dataSet.map((data, n) => {
+          return (
+            <tr key={n}>
+              {/*display the value for every key in the object*/}
+              {keys.map((k, n) => {
+                return (
+                  <td>
+                    <input key={n} type="text" value={data[k]} />
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </table>
+      {/* <p>{JSON.stringify(dataSet)}</p> */}
+    </div>
   );
 }
