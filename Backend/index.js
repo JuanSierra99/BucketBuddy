@@ -4,6 +4,7 @@ const client = require("./database");
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { table } = require("console");
 
 // Needed for cross origin requests
 app.use(
@@ -266,7 +267,7 @@ app.post("/api/add-column", async (request, response) => {
     }
     // Execute the SQL query to add a column to the specified table
     await client.query(
-      `ALTER TABLE ${tableName} ADD ${columnName} ${dataType}`
+      `ALTER TABLE "${tableName}" ADD "${columnName}" ${dataType}`
     );
     // Log a success message
     console.log(`Added: ${columnName} to ${tableName}`);
@@ -285,6 +286,31 @@ app.post("/api/add-column", async (request, response) => {
       // Send a HTTP response containing a generic error message for other errors.
       response.status(500).json({ error: "Internal Server Error" });
     }
+  }
+});
+
+app.post("/api/add-row", async (request, response) => {
+  try {
+    console.log("here");
+    const tableName = request.body.tableName;
+    if (!tableName) {
+      console.log("Table name is required");
+      return;
+    }
+    if (!isValidName(tableName)) {
+      console.log("Invalid table name");
+    }
+    newRowQuery = `INSERT INTO "${tableName}" DEFAULT VALUES`;
+    await client.query(newRowQuery);
+    console.log(`Added new row to table: ${tableName}`);
+    response
+      .status(200)
+      .json({ message: `Added new row to table: ${tableName}` });
+  } catch (error) {
+    console.log({ error: error.message });
+    response
+      .status(500)
+      .json({ error: "Internal Server Error", message: error.message });
   }
 });
 
