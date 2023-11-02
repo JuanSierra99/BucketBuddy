@@ -41,7 +41,7 @@ app.get("/api/get-table", async (req, res) => {
       res.status(400).json({ Error: "Invalid table name " });
       return;
     }
-    const query = `SELECT * FROM ${table_name}`;
+    const query = `SELECT * FROM "${table_name}"`;
     // Execute the SQL query to get the specified table's rows, and assing it to data
     const data = await client.query(query);
     const rows = data.rows;
@@ -69,7 +69,7 @@ app.get("/api/table-fields", async (request, response) => {
       response.status(400).json({ message: "Invalid table name" });
       return;
     }
-    const query = `SELECT column_name FROM information_schema.columns WHERE table_name='${table_name}' AND column_name!='id'`;
+    const query = `SELECT column_name FROM information_schema.columns WHERE table_name='${table_name}' AND column_name!='unique_record_id'`;
     const json = await client.query(query);
     const fields = json.rows.map((row) => {
       return row.column_name;
@@ -96,7 +96,7 @@ app.post("/api/new-table", async (request, response) => {
       response.status(400).json({ error: "Invalid table name" });
       return;
     }
-    const createTableQuery = `CREATE TABLE "${tableName}" (id SERIAL PRIMARY KEY , Name VARCHAR)`;
+    const createTableQuery = `CREATE TABLE "${tableName}" (unique_record_id SERIAL PRIMARY KEY , Name VARCHAR)`;
     // Execute the SQL query to create the table
     await client.query(createTableQuery);
     // Log a success message indicating that the table has been created.
