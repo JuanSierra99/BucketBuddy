@@ -19,7 +19,7 @@ const getJson = async (url) => {
 
 export default function Table({ selectedTable }) {
   // Data for selected table
-  const [dataSet, setDataSet] = useState([{}]);
+  const [table, setTable] = useState([{}]);
   const [fields, setFields] = useState([]);
   useEffect(() => {
     const getTable = async () => {
@@ -32,9 +32,9 @@ export default function Table({ selectedTable }) {
         const fields = await getJson(
           `http://localhost:3000/api/table-fields?name=${table_name}`
         );
-        setDataSet(json ? json : [{}]);
+        setTable(json ? json : [{}]);
         setFields(fields ? fields : []);
-        // setDataSet(json.length > 0 ? json : [{}]); //IS THIS GOOD ? WE GET ERROR IF DB HAS NO TABLES
+        // setTable(json.length > 0 ? json : [{}]); //IS THIS GOOD ? WE GET ERROR IF DB HAS NO TABLES
         // setFields(fields.length > 0 ? fields : []);
       }
     };
@@ -42,15 +42,15 @@ export default function Table({ selectedTable }) {
   }, [selectedTable]);
 
   const handleInputChange = (e, index, key) => {
-    const newDataSet = [...dataSet];
+    const newDataSet = [...table];
     newDataSet[index][key] = e.target.value;
-    setDataSet(newDataSet);
+    setTable(newDataSet);
   };
 
   //initialized to an array with one empty object
-  //therefore if dataSet is never changed, keys.map will not render any <th> elements
-  //similarly for dataset.map, that uses same dataSet array, so it also wont render anything
-  // const keys = Object.keys(dataSet.length > 0 ? dataSet[0] : {});
+  //therefore if table is never changed, keys.map will not render any <th> elements
+  //similarly for dataset.map, that uses same table array, so it also wont render anything
+  // const keys = Object.keys(table.length > 0 ? table[0] : {});
   const keys = fields; //when we use this, fields are not in order they are created
   return (
     <div>
@@ -62,18 +62,19 @@ export default function Table({ selectedTable }) {
         })}
 
         {/*for every object in our data set*/}
-        {dataSet.map((data, dataIndex) => {
+        {table.map((record, recordIndex) => {
           return (
-            <tr key={dataIndex}>
+            <tr key={record.id}>
               {/*display the value for every key in the object*/}
               {keys.map((key, keyIndex) => {
                 return (
                   <td key={keyIndex}>
                     <input
                       type="text"
-                      value={data[key]}
+                      value={record[key]}
+                      // onBlur={}
                       onChange={(e) => {
-                        handleInputChange(e, dataIndex, key);
+                        handleInputChange(e, recordIndex, key);
                       }}
                       // onBlur={(e) => (e.target.value = "nooo")}
                     />
