@@ -151,7 +151,7 @@ app.post("/api/change-cell", async (request, response) => {
       response.status(400).json({ error: "Invalid Parameter" });
       return;
     }
-    const changeCellQuery = `UPDATE ${tableName} SET ${fieldName} = '${newCellValue}' WHERE unique_record_id=${rowId}`;
+    const changeCellQuery = `UPDATE "${tableName}" SET "${fieldName}" = '${newCellValue}' WHERE unique_record_id=${rowId}`;
     // Execute the SQL query to create the table
     await client.query(changeCellQuery);
     // Log a success message indicating that the table has been created.
