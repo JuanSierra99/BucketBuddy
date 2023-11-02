@@ -155,10 +155,12 @@ app.post("/api/change-cell", async (request, response) => {
     // Execute the SQL query to create the table
     await client.query(changeCellQuery);
     // Log a success message indicating that the table has been created.
-    console.log(`Cell succesfuly changed to: ${newCellValue}`);
+    console.log(
+      `Changed cell in table "${tableName}", with row id ${rowId}, and field name "${fieldName}", to ${newCellValue}`
+    );
     // Send an HTTP response with a success message in the response body
     response.status(200).json({
-      message: `Changed cell in table: "${tableName}", with row id: ${rowId}, and field name:${fieldName} to ${newCellValue}`,
+      message: `Changed cell in table "${tableName}", with row id ${rowId}, and field name "${fieldName}", to ${newCellValue}`,
     });
   } catch (error) {
     console.log("Error: " + error.message);
