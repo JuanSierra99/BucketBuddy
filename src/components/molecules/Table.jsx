@@ -36,7 +36,7 @@ const Post = async (json) => {
 
 export default function Table({ selectedTable }) {
   // Data for selected table
-  const [table, setTable] = useState([{}]);
+  const [rows, setRows] = useState([{}]);
   const [fields, setFields] = useState([]);
   useEffect(() => {
     const getTable = async () => {
@@ -49,9 +49,9 @@ export default function Table({ selectedTable }) {
         const fields = await getJson(
           `http://localhost:3000/api/table-fields?name=${table_name}`
         );
-        setTable(json ? json : [{}]);
+        setRows(json ? json : [{}]);
         setFields(fields ? fields : []);
-        // setTable(json.length > 0 ? json : [{}]); //IS THIS GOOD ? WE GET ERROR IF DB HAS NO TABLES
+        // setRows(json.length > 0 ? json : [{}]); //IS THIS GOOD ? WE GET ERROR IF DB HAS NO TABLES
         // setFields(fields.length > 0 ? fields : []);
       }
     };
@@ -59,9 +59,9 @@ export default function Table({ selectedTable }) {
   }, [selectedTable]);
 
   const handleInputChange = (e, index, key) => {
-    const newDataSet = [...table];
+    const newDataSet = [...rows];
     newDataSet[index][key] = e.target.value;
-    setTable(newDataSet);
+    setRows(newDataSet);
   };
 
   const changeCell = (tableName, newCellValue, RecordId, fieldName) => {
@@ -82,7 +82,7 @@ export default function Table({ selectedTable }) {
           return <th>{k}</th>;
         })}
         {/*for every object in our data set*/}
-        {table.map((record, recordIndex) => {
+        {rows.map((record, recordIndex) => {
           return (
             <tr key={record.id}>
               {/*display the value for every key in the object*/}
