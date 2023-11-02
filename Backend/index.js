@@ -83,14 +83,14 @@ app.get("/api/table-fields", async (request, response) => {
 // In the SQL database, create a new table using the speicified name
 app.post("/api/new-table", async (request, response) => {
   try {
-    //get the name of table from the request body
+    // Get the name of table from the request body
     const tableName = request.body.name;
-    // ensure that the given table name is defined
+    // Ensure that the given table name is defined
     if (!tableName) {
       response.status(400).json({ error: "Table name is required" });
       return;
     }
-    // ensure that the given table name is valid
+    // Ensure that the given table name is valid
     if (!isValidName(tableName)) {
       response.status(400).json({ error: "Invalid table name" });
       return;
@@ -106,6 +106,52 @@ app.post("/api/new-table", async (request, response) => {
       .json({ message: `Table "${tableName}" created successfully` });
   } catch (error) {
     console.log(error);
+    response.status(500).json({ error: "Table creation failed" });
+  }
+});
+
+// Double check validation for this one. Wrote this one kinda fast so make sure it looks good !!!!!!!!!
+// In the SQL database, create a new table using the speicified name
+app.post("/api/change-cell", async (request, response) => {
+  try {
+    // Get the table name from the request body
+    const tableName = request.body.name;
+    // Get the row id from the request body
+    const rowId = request.body.rowId;
+    // Get the field name from the request body
+    const fieldName = request.body.fieldName;
+    // Get the new value to assing to cell
+    const newCellValue = request.body.newCellValue;
+    // Ensure that the given table name is defined
+
+    // FINISH THIS HERE TOOOOOOO !!!!!!!
+    if (!tableName) {
+      response.status(400).json({ error: "Table name is required" });
+      return;
+    }
+    // Ensure that the given table name is valid BUT ALSO CHANGE THSI
+    if (
+      !isValidName(tableName) ||
+      !isValidName(rowId) ||
+      !isValidName(fieldName) ||
+      !isValidName(newCellValue)
+    ) {
+      console.log("Invalid something"); //change this lol
+      response.status(400).json({ error: "Invalid query values" });
+      return;
+    }
+
+    const changeCellQuery = `UPDATE ${tableName} SET ${fieldName} = '${newCellValue}' WHERE id=${rowId}`;
+    // Execute the SQL query to create the table
+    await client.query(changeCellQuery);
+    // Log a success message indicating that the table has been created.
+    console.log(`Cell succesfuly changed to: ${newCellValue}`);
+    // Send an HTTP response with a success message in the response body
+    response.status(200).json({
+      message: `Changed cell in table: "${tableName}", with row id: ${rowId}, and field name:${fieldName} to ${newCellValue}`,
+    });
+  } catch (error) {
+    console.log(error.message);
     response.status(500).json({ error: "Table creation failed" });
   }
 });
