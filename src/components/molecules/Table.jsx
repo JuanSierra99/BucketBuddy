@@ -17,6 +17,23 @@ const getJson = async (url) => {
   }
 };
 
+const Post = async (json) => {
+  const response = await fetch("http://localhost:3000/api/change-cell", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(json),
+  });
+  if (response.ok) {
+    console.log(response.status + " " + response.statusText);
+    const json = await response.json();
+    return json;
+  } else {
+    console.log("Error: " + response.status + " " + response.statusText);
+  }
+};
+
 export default function Table({ selectedTable }) {
   // Data for selected table
   const [table, setTable] = useState([{}]);
@@ -47,20 +64,23 @@ export default function Table({ selectedTable }) {
     setTable(newDataSet);
   };
 
-  //initialized to an array with one empty object
+  const changeCell = (tableName, newCellValue, RecordId, fieldName) => {
+    Post({ name: tableName, rowId: RecordId, newCellValue, fieldName });
+  };
+
+  //table is initialized to an array with one empty object
   //therefore if table is never changed, keys.map will not render any <th> elements
-  //similarly for dataset.map, that uses same table array, so it also wont render anything
+  //similarly for table.map, that uses same table array, so it also wont render anything
   // const keys = Object.keys(table.length > 0 ? table[0] : {});
   const keys = fields; //when we use this, fields are not in order they are created
   return (
     <div>
       <p>{selectedTable}</p>
       <table>
-        {/*A table header for every key*/}
+        {/*make every key in our table a header*/}
         {keys.map((k) => {
           return <th>{k}</th>;
         })}
-
         {/*for every object in our data set*/}
         {table.map((record, recordIndex) => {
           return (
@@ -72,7 +92,14 @@ export default function Table({ selectedTable }) {
                     <input
                       type="text"
                       value={record[key]}
-                      // onBlur={}
+                      onBlur={(e) =>
+                        changeCell(
+                          selectedTable,
+                          e.target.value,
+                          record.id,
+                          key
+                        )
+                      }
                       onChange={(e) => {
                         handleInputChange(e, recordIndex, key);
                       }}
