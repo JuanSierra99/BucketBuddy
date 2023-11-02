@@ -121,27 +121,36 @@ app.post("/api/change-cell", async (request, response) => {
     const rowId = request.body.rowId;
     // Get the field name from the request body
     const fieldName = request.body.fieldName;
-    // Get the new value to assing to cell
+    // Get the new value to assing to cell from the request body
     const newCellValue = request.body.newCellValue;
     // Ensure that the given table name is defined
-
-    // FINISH THIS HERE TOOOOOOO !!!!!!!
     if (!tableName) {
       response.status(400).json({ error: "Table name is required" });
       return;
     }
-    // Ensure that the given table name is valid BUT ALSO CHANGE THSI
+    if (!rowId) {
+      response.status(400).json({ error: "Row Id is required" });
+      return;
+    }
+    if (!fieldName) {
+      response.status(400).json({ error: "Field name is required" });
+      return;
+    }
+    if (!newCellValue) {
+      response.status(400).json({ error: "New cell value is required" });
+      return;
+    }
+    // Validate all recieved parameters
     if (
       !isValidName(tableName) ||
       !isValidName(rowId) ||
       !isValidName(fieldName) ||
       !isValidName(newCellValue)
     ) {
-      console.log("Invalid something"); //change this lol
-      response.status(400).json({ error: "Invalid query values" });
+      console.log("Invalid Parameter");
+      response.status(400).json({ error: "Invalid Parameter" });
       return;
     }
-
     const changeCellQuery = `UPDATE ${tableName} SET ${fieldName} = '${newCellValue}' WHERE id=${rowId}`;
     // Execute the SQL query to create the table
     await client.query(changeCellQuery);
@@ -152,8 +161,8 @@ app.post("/api/change-cell", async (request, response) => {
       message: `Changed cell in table: "${tableName}", with row id: ${rowId}, and field name:${fieldName} to ${newCellValue}`,
     });
   } catch (error) {
-    console.log(error.message);
-    response.status(500).json({ error: "Table creation failed" });
+    console.log("Error: " + error.message);
+    response.status(500).json({ error: error.message });
   }
 });
 
