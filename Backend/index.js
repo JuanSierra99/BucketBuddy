@@ -69,7 +69,7 @@ app.get("/api/table-fields", async (request, response) => {
       response.status(400).json({ message: "Invalid table name" });
       return;
     }
-    const query = `SELECT column_name FROM information_schema.columns WHERE table_name='${table_name}'`;
+    const query = `SELECT column_name FROM information_schema.columns WHERE table_name='${table_name}' AND column_name!='id'`;
     const json = await client.query(query);
     const fields = json.rows.map((row) => {
       return row.column_name;
@@ -161,6 +161,52 @@ app.post("/api/change-cell", async (request, response) => {
     // Send an HTTP response with a success message in the response body
     response.status(200).json({
       message: `Changed cell in table "${tableName}", with row id ${rowId}, and field name "${fieldName}", to ${newCellValue}`,
+    });
+  } catch (error) {
+    console.log("Error: " + error.message);
+    response.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/change-field", async (request, response) => {
+  try {
+    // Get the table name from the request body
+    const tableName = request.body.tableName;
+    // Get the field name from the request body
+    const fieldName = request.body.currentFieldName;
+    // Get the new value to assing to cell from the request body
+    const newFieldName = request.body.newFieldName;
+    // Ensure that the given table name is defined
+    if (!tableName) {
+      response.status(400).json({ error: "Table name is required" });
+      return;
+    }
+    if (!fieldName) {
+      response.status(400).json({ error: "Current field name is required" });
+      return;
+    }
+    if (!newFieldName) {
+      response.status(400).json({ error: "New field name is required" });
+      return;
+    }
+    // Validate all recieved parameters
+    if (
+      !isValidName(tableName) ||
+      !isValidName(fieldName) ||
+      !isValidName(newFieldName)
+    ) {
+      console.log("Invalid Parameter");
+      response.status(400).json({ error: "Invalid Parameter" });
+      return;
+    }
+    const changeFieldNameQuery = `ALTER TABLE "${tableName}" RENAME COLUMN "${fieldName}" TO "${newFieldName}"`;
+    // Execute the SQL query to create the table
+    await client.query(changeFieldNameQuery);
+    // Log a success message indicating that the table has been created.
+    console.log(`Success in changing field name`);
+    // Send an HTTP response with a success message in the response body
+    response.status(200).json({
+      message: `Success in changing field name`,
     });
   } catch (error) {
     console.log("Error: " + error.message);
