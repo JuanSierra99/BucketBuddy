@@ -1,0 +1,191 @@
+const client = require("./database");
+
+// Api server framework
+const express = require("express");
+const app = express();
+const cors = require("cors");
+
+// Needed for cross origin requests
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+
+app.use(express.json()); //Needed to parse JSON request bodies
+// app.use(express.urlencoded({ extended: true })); // Needed when we use post in html form
+
+const port = 3000; // Run this api server on port 3000
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+function runQuery(query) {
+  return new Promise((resolve, reject) => {
+    client.query(query, (err, res) => {
+      !err ? resolve(res.rows) : reject("Error running query");
+    });
+  });
+}
+
+// Send row data of the specific table
+app.get("/api/get-table", async (req, res) => {
+  try {
+    const table_name = req.query.name;
+    if (!table_name) {
+      console.log("Status 400: Table name is required");
+      res.status(400).json({ Error: "Table name is required" });
+      return;
+    }
+    if (!isValidName(table_name)) {
+      res.status(400).json({ Error: "Invalid table name " });
+      return;
+    }
+    const query = `SELECT * FROM ${table_name}`;
+    // Execute the SQL query to get the specified table's rows, and assing it to data
+    const data = await runQuery(query);
+    // Log the data for debugging
+    console.log("Sending data: ", data);
+    // Send an HTTP response with data in the response body
+    res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// FINISH THIS ONE I MADE IT SUPER QUICK
+app.get("/api/table-fields", async (request, response) => {
+  try {
+    const table_name = request.query.name;
+    if (!table_name) {
+      console.log("table name required");
+      response.status(400).json({ message: "table name required" });
+      return;
+    }
+    if (!isValidName(table_name)) {
+      console.log("Invalid table name");
+      response.status(400).json({ message: "Invalid table name" });
+      return;
+    }
+    const query = `SELECT column_name FROM information_schema.columns WHERE table_name='${table_name}'`;
+    const json = await client.query(query);
+    const fields = json.rows.map((row) => {
+      return row.column_name;
+    });
+    console.log("Sending fields for " + table_name + " table: ", fields);
+    response.status(200).json(fields);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+// In the SQL database, create a new table using the speicified name
+app.post("/api/new-table", async (request, response) => {
+  try {
+    //get the name of table from the request body
+    const tableName = request.body.name;
+    // ensure that the given table name is defined
+    if (!tableName) {
+      response.status(400).json({ error: "Table name is required" });
+      return;
+    }
+    // ensure that the given table name is valid
+    if (!isValidName(tableName)) {
+      response.status(400).json({ error: "Invalid table name" });
+      return;
+    }
+    const createTableQuery = `CREATE TABLE ${tableName} (id SERIAL PRIMARY KEY , Name VARCHAR)`;
+    // Execute the SQL query to create the table
+    await client.query(createTableQuery);
+    // Log a success message indicating that the table has been created.
+    console.log(`Created Table: ${tableName}`);
+    // Send an HTTP response with a success message in the response body
+    response
+      .status(200)
+      .json({ message: `Table "${tableName}" created successfully` });
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ error: "Table creation failed" });
+  }
+});
+
+// Send an array of all the public tables in the SQL database
+app.get("/api/all-tables", async (req, response) => {
+  try {
+    // Execute the SQL query to retrieve the table names
+    const json = await client.query(
+      "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+    );
+    // Use json to make an array of table names
+    const table_names = json.rows.map((row) => {
+      return row.table_name;
+    });
+    // Log the data being sent for debugging
+    console.log("Sending table names: ", table_names);
+    // Send an HTTP response with an object containing the array of table names in the response body
+    response.status(200).json({ table_names: table_names });
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Given an existing tables name, a valid field name, and a valid data type, add a new field to the table in the database
+app.post("/api/add-column", async (request, response) => {
+  try {
+    // Get the required values from the body of the request
+    const { tableName, columnName, dataType } = request.body;
+    // Ensure all values are defined.
+    if (!tableName) {
+      response.status(400).json({ Error: "Table name required" });
+      return;
+    }
+    if (!columnName) {
+      response
+        .status(400)
+        .json({ Error: `Column name required ${columnName}` });
+      return;
+    }
+    if (!dataType) {
+      response.status(400).json({ Error: "data type required" });
+      return;
+    }
+    // Validate each value before adding it to the query
+    if (
+      !isValidName(tableName) ||
+      !isValidName(columnName) ||
+      !isValidName(dataType)
+    ) {
+      response.status(400).json({ Error: "invalid query" });
+      return;
+    }
+    // Execute the SQL query to add a column to the specified table
+    await client.query(
+      `ALTER TABLE ${tableName} ADD ${columnName} ${dataType}`
+    );
+    // Log a success message
+    console.log(`Added: ${columnName} to ${tableName}`);
+    // Send an HTTP response with a success message in the response body
+    response
+      .status(200)
+      .json({ message: `Added: ${columnName} to ${tableName}` });
+  } catch (error) {
+    // Check for specific error codes to handle known scenarios.
+    if (error.code === "42701") {
+      response.status(400).json({
+        error: `Column "${columnName}" already exists in table "${tableName}"`,
+      });
+    } else {
+      console.log(error);
+      // Send a HTTP response containing a generic error message for other errors.
+      response.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+});
+
+// Validate strings to ensure query safety.
+function isValidName(tableName) {
+  const validNameRegex = /^[a-zA-Z0-9_]+$/;
+  return validNameRegex.test(tableName);
+}
