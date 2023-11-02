@@ -43,13 +43,14 @@ app.get("/api/get-table", async (req, res) => {
     }
     const query = `SELECT * FROM ${table_name}`;
     // Execute the SQL query to get the specified table's rows, and assing it to data
-    const data = await runQuery(query);
+    const data = await client.query(query);
+    const rows = data.rows;
     // Log the data for debugging
-    console.log("Sending data: ", data);
+    console.log("Sending rows: ", rows);
     // Send an HTTP response with data in the response body
-    res.status(200).json(data);
+    res.status(200).json(rows);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -95,7 +96,7 @@ app.post("/api/new-table", async (request, response) => {
       response.status(400).json({ error: "Invalid table name" });
       return;
     }
-    const createTableQuery = `CREATE TABLE ${tableName} (id SERIAL PRIMARY KEY , Name VARCHAR)`;
+    const createTableQuery = `CREATE TABLE "${tableName}" (id SERIAL PRIMARY KEY , Name VARCHAR)`;
     // Execute the SQL query to create the table
     await client.query(createTableQuery);
     // Log a success message indicating that the table has been created.
@@ -105,7 +106,7 @@ app.post("/api/new-table", async (request, response) => {
       .status(200)
       .json({ message: `Table "${tableName}" created successfully` });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     response.status(500).json({ error: "Table creation failed" });
   }
 });
@@ -172,7 +173,7 @@ app.get("/api/all-tables", async (req, response) => {
     // Send an HTTP response with an object containing the array of table names in the response body
     response.status(200).json({ table_names: table_names });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     response.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -223,15 +224,15 @@ app.post("/api/add-column", async (request, response) => {
         error: `Column "${columnName}" already exists in table "${tableName}"`,
       });
     } else {
-      console.log(error);
+      console.log(error.message);
       // Send a HTTP response containing a generic error message for other errors.
       response.status(500).json({ error: "Internal Server Error" });
     }
   }
 });
 
-// Validate strings to ensure query safety.
+// Validate strings to ensure query safety. (IS THIS GOOD ENOUGH ??)
 function isValidName(tableName) {
-  const validNameRegex = /^[a-zA-Z0-9_]+$/;
+  const validNameRegex = /^[a-zA-Z0-9_ ]+$/;
   return validNameRegex.test(tableName);
 }
