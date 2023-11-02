@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import TextInput from "../atoms/TextInput";
-import { error } from "console";
-import { json } from "stream/consumers";
+import Table from "../molecules/Table";
 
 const url = "http://localhost:3000";
 
@@ -17,57 +15,75 @@ const getJson = async (url) => {
   }
 };
 
-export function Table({selectedTable}) {
-  const [dataSet, setDataSet] = useState([{}]);
-  const [tables, setTables] = useState([{}]);
+const Post = async (json) => {
+  const response = await fetch("http://localhost:3000/api/new-table", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(json),
+  });
+  if (response.ok) {
+    console.log(response.status + " " + response.statusText);
+    const json = await response.json();
+    return json;
+  } else {
+    console.log("Error: " + response.status + " " + response.statusText);
+  }
+};
 
-  useEffect(() => {
-    const getTable = async () => {
-      const table_name = selectedTable;
-      const url = `http://localhost:3000/table?name=${table_name}`;
-      const json = await getJson(url);
-      setDataSet(json);
-    };
-    const getTables = async () => {
-      const url = "http://localhost:3000/api/tables";
-      const json = await getJson(url);
-      setTables(json.table_names);
-    };
-    getTable();
-    getTables();
-  }, []);
-
-  //initialized to an array with one empty object
-  //therefore if dataSet is never changed, keys.map will not render any <th> elements
-  //similarly for dataset.map, that uses same dataSet array, so it also wont render anything
-  const keys = Object.keys(dataSet[0]);
+// Component that gives dropdown of all tables 
+const Selector = (props) => {
+  const data = props.data
   return (
-    <table>
-      {/*A table header for every key*/}
-      {keys.map((k) => {
-        return <th>{k}</th>;
+    <select
+      onChange={(e) => {
+        props.setState(e.target.value);
+      }}
+    >
+      {data.map((name) => {
+        return <option value={name}>{name}</option>;
       })}
-
-      {/*for every object in our data set*/}
-      {dataSet.map((data, n) => {
-        return (
-          <tr key={n}>
-            {/*display the value for every key in the object*/}
-            {keys.map((k, n) => {
-              return (
-                <td>
-                  <input key={n} type="text" value={data[k]} />
-                </td>
-              );
-            })}
-          </tr>
-        );
-      })}
-    </table>
+    </select>
   );
-}
+};
 
 export function HomePage() {
-  const [selectedTable, setSelectedTable] = useState("test")
-  return (<Table selectedTable={selectedTable}/>);
+  const [selectedTable, setSelectedTable] = useState("");
+  const [tables, setTables] = useState([]);
+  const [newTableName, setNewTableName] = useState("");
+
+  const getTables = async () => {
+    const url = "http://localhost:3000/api/all-tables";
+    const json = await getJson(url);
+    setTables(json.table_names);
+    return json.table_names
+  };
+  //retrieve a list of all the tables in our database
+  //maybe we can use this to prevent users from trying to create a duplicate table with api create table endpoint
+  useEffect(() => {
+     getTables().then((res) => {setSelectedTable(res[0])});
+  }, []); //maybe we want to do something with this when we add new tables ?
+
+  return (
+    <div>
+      <Selector setState={setSelectedTable} data={tables}/>
+      <input
+        type="text"
+        id="createTableName"
+        placeholder="Enter new table name"
+        value={newTableName}
+        onChange={(e) => setNewTableName(e.target.value)}
+      />
+      <button
+        onClick={async () => {
+          await Post({ name: newTableName }); //requests api endpoint to create new table. must await for getTables() to have updated info
+          await getTables(); //will request api endpoint to send current tables in db, then updates tables state
+        }}
+      >
+        Create new table
+      </button>
+      <Table selectedTable={selectedTable} />
+    </div>
+  );
 }
