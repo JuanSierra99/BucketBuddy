@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 Backend/database.js
+Backend/tempCodeRunnerFile.js
 dist
 dist-ssr
 *.local
