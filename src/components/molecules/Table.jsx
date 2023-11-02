@@ -17,8 +17,8 @@ const getJson = async (url) => {
   }
 };
 
-const Post = async (json) => {
-  const response = await fetch("http://localhost:3000/api/change-cell", {
+const Post = async (url, json) => {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +65,20 @@ export default function Table({ selectedTable }) {
   };
 
   const changeCell = (tableName, newCellValue, RecordId, fieldName) => {
-    Post({ name: tableName, rowId: RecordId, newCellValue, fieldName });
+    const url = "http://localhost:3000/api/change-cell";
+    const jsonParameters = {
+      name: tableName,
+      rowId: RecordId,
+      newCellValue,
+      fieldName,
+    };
+    Post(url, jsonParameters);
+  };
+
+  const changeField = (tableName, currentFieldName, newFieldName) => {
+    const url = "http://localhost:3000/api/change-field";
+    const json = { tableName, currentFieldName, newFieldName };
+    Post(url, json);
   };
 
   //table is initialized to an array with one empty object
@@ -78,13 +91,26 @@ export default function Table({ selectedTable }) {
       <p>{selectedTable}</p>
       <table>
         {/*make every key in our table a header*/}
-        {keys.map((k) => {
-          return <th>{k}</th>;
+        {keys.map((k, index) => {
+          return (
+            <th>
+              <input
+                type="text"
+                value={fields[index]}
+                onChange={(e) => {
+                  const newFields = [...fields];
+                  newFields[index] = e.target.value;
+                  setFields(newFields);
+                }}
+                // onBlur={(e) => {changeField(selectedTable, e.)}}
+              ></input>
+            </th>
+          );
         })}
         {/*for every object in our data set*/}
         {rows.map((record, recordIndex) => {
           return (
-            <tr key={record.id}>
+            <tr key={record.unique_record_id}>
               {/*display the value for every key in the object*/}
               {keys.map((key, keyIndex) => {
                 return (
@@ -96,7 +122,7 @@ export default function Table({ selectedTable }) {
                         changeCell(
                           selectedTable,
                           e.target.value,
-                          record.id,
+                          record.unique_record_id,
                           key
                         )
                       }
