@@ -15,8 +15,8 @@ const getJson = async (url) => {
   }
 };
 
-const Post = async (json) => {
-  const response = await fetch("http://localhost:3000/api/new-table", {
+const Post = async (url, json) => {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -77,11 +77,22 @@ export function HomePage() {
       />
       <button
         onClick={async () => {
-          await Post({ name: newTableName }); //requests api endpoint to create new table. must await for getTables() to have updated info
+          const url = "http://localhost:3000/api/new-table"
+          const json = { name: newTableName }
+          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
           await getTables(); //will request api endpoint to send current tables in db, then updates tables state
         }}
       >
         Create new table
+      </button>
+      <button
+        onClick={async () => {
+          const url = "http://localhost:3000/api/add-row"
+          const json = { tableName: "movies" }
+          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+        }}
+      >
+        Add Row
       </button>
       <Table selectedTable={selectedTable} />
     </div>
