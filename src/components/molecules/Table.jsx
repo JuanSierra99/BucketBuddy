@@ -75,14 +75,14 @@ export default function Table({ selectedTable }) {
         {/*for every object in our data set*/}
         {rows.map((record, recordIndex) => {
           return (
-            <tr key={Math.floor(Math.random() * 100) + 1}>
+            <tr>
               {/*display the value for every key in the object*/}
               {keys.map((key, keyIndex) => {
                 return (
-                  <td key={Math.floor(Math.random() * 100) + 1}>
+                  <td>
                     <input
                       type="text"
-                      value={record[key]}
+                      value={record[key] ? record[key] : ""}
                       onBlur={(e) =>
                         changeCell(
                           selectedTable,
