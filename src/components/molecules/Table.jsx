@@ -1,38 +1,6 @@
 import { useEffect, useState } from "react";
 import React from "react";
-
-// THIS NEEDS TO BE REVISED !
-
-const getJson = async (url) => {
-  const response = await fetch(url);
-  if (response.ok) {
-    // we return the json
-    console.log(response.status + " " + response.statusText);
-    const json = await response.json();
-    return json;
-  } else {
-    // we do not return json
-    console.log("Error: " + response.status + " " + response.statusText);
-    return null;
-  }
-};
-
-const Post = async (url, json) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(json),
-  });
-  if (response.ok) {
-    console.log(response.status + " " + response.statusText);
-    const json = await response.json();
-    return json;
-  } else {
-    console.log("Error: " + response.status + " " + response.statusText);
-  }
-};
+import { getJson, Post } from "../../../Backend/Requests";
 
 export default function Table({ selectedTable }) {
   // Data for selected table
@@ -81,14 +49,11 @@ export default function Table({ selectedTable }) {
     Post(url, json);
   };
 
-  //table is initialized to an array with one empty object
-  //therefore if table is never changed, keys.map will not render any <th> elements
-  //similarly for table.map, that uses same table array, so it also wont render anything
   // const keys = Object.keys(table.length > 0 ? table[0] : {});
   const keys = fields; //when we use this, fields are not in order they are created
   return (
     <div>
-      <p>{selectedTable}</p>
+      <h1 className="tableName">{selectedTable}</h1>
       <table>
         {/*make every key in our table a header*/}
         {keys.map((k, index) => {
@@ -110,11 +75,11 @@ export default function Table({ selectedTable }) {
         {/*for every object in our data set*/}
         {rows.map((record, recordIndex) => {
           return (
-            <tr key={record.unique_record_id}>
+            <tr key={Math.floor(Math.random() * 100) + 1}>
               {/*display the value for every key in the object*/}
               {keys.map((key, keyIndex) => {
                 return (
-                  <td key={keyIndex}>
+                  <td key={Math.floor(Math.random() * 100) + 1}>
                     <input
                       type="text"
                       value={record[key]}
@@ -129,7 +94,6 @@ export default function Table({ selectedTable }) {
                       onChange={(e) => {
                         handleInputChange(e, recordIndex, key);
                       }}
-                      // onBlur={(e) => (e.target.value = "nooo")}
                     />
                   </td>
                 );
