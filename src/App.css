@@ -180,7 +180,6 @@ tr {
 /* Style the table data cells (td elements) */
 td {
   padding: 12px;
-  text-align: left;
 }
 
 td:hover {
@@ -190,7 +189,6 @@ td:hover {
 /* Style the input boxes within the table */
 input[type="text"] {
   display: block;
-
   width: 90%;
   /* margin-left: auto; */
   margin-right: auto;
@@ -204,6 +202,55 @@ input[type="text"] {
 /* Add some hover effect for table rows */
 tr:hover {
   background-color: #e4ccff; /* Light lavender on hover */
+}
+
+.tableName {
+  /* margin-top: 0; */
+  margin-bottom: 0;
+  display: inline-block;
+  /* background-color: red; */
+  color: rgb(179, 0, 255);
+  padding: 3px;
+}
+
+.databaseStatus {
+  background-color: red;
+}
+
+.scrollable-div {
+  /* display: flex;
+  flex-direction: column; */
+  width: 10rem;
+  height: 100vh;
+  overflow: auto;
+}
+
+.tableNameButton {
+  color: white;
+  font-weight: bold;
+  width: 10rem;
+  height: 3rem;
+  background-color: #a66ef5;
+  border-style: solid;
+  border-width: 0.5px;
+  border-color: rgb(222, 184, 241);
+}
+
+.tableNameButton:hover {
+  background-color: #8c42f3;
+}
+
+.sidebar {
+  position: absolute;
+  height: 100vh;
+  width: 10rem;
+  /* background-color: green; */
+}
+
+.rightbar {
+  margin-left: 10rem;
+  height: 100vh;
+  /* background-color: yellow; */
 }
 
 /* #root {
