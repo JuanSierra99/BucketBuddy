@@ -47,7 +47,7 @@ app.get("/api/get-table", async (req, res) => {
     const data = await client.query(query);
     const rows = data.rows;
     // Log the data for debugging
-    console.log("Sending rows: ", rows);
+    console.log(`Sending rows for ${table_name}: `, rows);
     // Send an HTTP response with data in the response body
     res.status(200).json(rows);
   } catch (error) {
