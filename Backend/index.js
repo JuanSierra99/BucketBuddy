@@ -291,7 +291,6 @@ app.post("/api/add-column", async (request, response) => {
 
 app.post("/api/add-row", async (request, response) => {
   try {
-    console.log("here");
     const tableName = request.body.tableName;
     if (!tableName) {
       console.log("Table name is required");
