@@ -1,36 +1,9 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import Table from "../molecules/Table";
+import { getJson, Post } from "../../../Backend/Requests";
 
 const url = "http://localhost:3000";
-
-const getJson = async (url) => {
-  const response = await fetch(url);
-  if (response.ok) {
-    console.log(response.status + " " + response.statusText);
-    const json = await response.json();
-    return json;
-  } else {
-    console.log("Error: " + response.status + " " + response.statusText);
-  }
-};
-
-const Post = async (url, json) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(json),
-  });
-  if (response.ok) {
-    console.log(response.status + " " + response.statusText);
-    const json = await response.json();
-    return json;
-  } else {
-    console.log("Error: " + response.status + " " + response.statusText);
-  }
-};
 
 // Component that gives dropdown of all tables
 const Selector = (props) => {
@@ -55,6 +28,7 @@ const Selector = (props) => {
 };
 
 export function HomePage() {
+
   const [selectedTable, setSelectedTable] = useState("");
   const [tables, setTables] = useState([]);
   const [newTableName, setNewTableName] = useState("");
@@ -74,7 +48,7 @@ export function HomePage() {
   }, []); //maybe we want to do something with this when we add new tables ?
 
   return (
-    <div>
+    <div className="homepage">
       <div className="sidebar">
         <Selector setState={setSelectedTable} data={tables} />
       </div>
@@ -106,7 +80,7 @@ export function HomePage() {
           Add Row
         </button>
         <p className="databaseStatus">Database status</p>
-        <Table selectedTable={selectedTable} />
+        <Table selectedTable={selectedTable}/>
       </div>
     </div>
   );
