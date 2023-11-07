@@ -34,7 +34,7 @@ app.get("/api/get-table", async (req, res) => {
   try {
     const table_name = req.query.name;
     if (!table_name) {
-      console.log("Status 400: Table name is required");
+      console.log("Table name is required");
       res.status(400).json({ Error: "Table name is required" });
       return;
     }
@@ -78,6 +78,7 @@ app.get("/api/table-fields", async (request, response) => {
     console.log("Sending fields for " + table_name + " table: ", fields);
     response.status(200).json(fields);
   } catch (error) {
+    console.log(error.message);
     response.status(500).json({ error: error.message });
   }
 });
@@ -89,11 +90,13 @@ app.post("/api/new-table", async (request, response) => {
     const tableName = request.body.name;
     // Ensure that the given table name is defined
     if (!tableName) {
+      console.log("Table name is required");
       response.status(400).json({ error: "Table name is required" });
       return;
     }
     // Ensure that the given table name is valid
     if (!isValidName(tableName)) {
+      console.log("Invalid table name");
       response.status(400).json({ error: "Invalid table name" });
       return;
     }
@@ -126,18 +129,22 @@ app.post("/api/change-cell", async (request, response) => {
     const newCellValue = request.body.newCellValue;
     // Ensure that the given table name is defined
     if (!tableName) {
+      console.log("Table name is required");
       response.status(400).json({ error: "Table name is required" });
       return;
     }
     if (!rowId) {
+      console.log("Row Id is required");
       response.status(400).json({ error: "Row Id is required" });
       return;
     }
     if (!fieldName) {
+      console.log("Field name is required");
       response.status(400).json({ error: "Field name is required" });
       return;
     }
     if (!newCellValue) {
+      console.log("New cell value is required");
       response.status(400).json({ error: "New cell value is required" });
       return;
     }
@@ -179,14 +186,17 @@ app.post("/api/change-field", async (request, response) => {
     const newFieldName = request.body.newFieldName;
     // Ensure that the given table name is defined
     if (!tableName) {
+      console.log("Table name is required");
       response.status(400).json({ error: "Table name is required" });
       return;
     }
     if (!fieldName) {
+      console.log("Current field name is required");
       response.status(400).json({ error: "Current field name is required" });
       return;
     }
     if (!newFieldName) {
+      console.log("New field name is required");
       response.status(400).json({ error: "New field name is required" });
       return;
     }
@@ -238,21 +248,22 @@ app.get("/api/all-tables", async (req, response) => {
 
 // Given an existing tables name, a valid field name, and a valid data type, add a new field to the table in the database
 app.post("/api/add-column", async (request, response) => {
+  const { tableName, columnName, dataType } = request.body;
   try {
     // Get the required values from the body of the request
-    const { tableName, columnName, dataType } = request.body;
     // Ensure all values are defined.
     if (!tableName) {
+      console.log("Table name required");
       response.status(400).json({ Error: "Table name required" });
       return;
     }
     if (!columnName) {
-      response
-        .status(400)
-        .json({ Error: `Column name required ${columnName}` });
+      console.log("Column name required");
+      response.status(400).json({ Error: `Column name required` });
       return;
     }
     if (!dataType) {
+      console.log("data type required");
       response.status(400).json({ Error: "data type required" });
       return;
     }
@@ -262,6 +273,7 @@ app.post("/api/add-column", async (request, response) => {
       !isValidName(columnName) ||
       !isValidName(dataType)
     ) {
+      console.log("Invalid query");
       response.status(400).json({ Error: "invalid query" });
       return;
     }
@@ -270,14 +282,17 @@ app.post("/api/add-column", async (request, response) => {
       `ALTER TABLE "${tableName}" ADD "${columnName}" ${dataType}`
     );
     // Log a success message
-    console.log(`Added: ${columnName} to ${tableName}`);
+    console.log(`Added '${columnName}' ${dataType} Field, to '${tableName}'`);
     // Send an HTTP response with a success message in the response body
-    response
-      .status(200)
-      .json({ message: `Added: ${columnName} to ${tableName}` });
+    response.status(200).json({
+      message: `Added '${columnName}' ${dataType} Field, to table '${tableName}'`,
+    });
   } catch (error) {
     // Check for specific error codes to handle known scenarios.
     if (error.code === "42701") {
+      console.log(
+        `Column "${columnName}" already exists in table "${tableName}"`
+      );
       response.status(400).json({
         error: `Column "${columnName}" already exists in table "${tableName}"`,
       });
@@ -294,10 +309,12 @@ app.post("/api/add-row", async (request, response) => {
     const tableName = request.body.tableName;
     if (!tableName) {
       console.log("Table name is required");
+      response.status(400).json({ Error: "Table name is required" });
       return;
     }
     if (!isValidName(tableName)) {
       console.log("Invalid table name");
+      response.status(400).json({ Error: "invalid table name" });
     }
     newRowQuery = `INSERT INTO "${tableName}" DEFAULT VALUES`;
     await client.query(newRowQuery);
