@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "./components/templates/ErrorPage.jsx";
 import { HomePage } from "./components/pages/HomePage";
 import SignIn from "./components/templates/SignIn.jsx";
-import SignUp from "./components/templates/Signup.jsx";
+import SignUp from "./components/templates/SignUp.jsx";
 import { WelcomePage } from "./components/templates/WelcomePage.jsx";
 
 const router = createBrowserRouter([
