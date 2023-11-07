@@ -6,7 +6,7 @@ export function NavBar({ navItem }) {
     <div className="navbar-container">
       <nav className="navbar">
         <div>
-          <BucketBuddyLink link="http://localhost:5173/" />
+          <BucketBuddyLink link="/" />
         </div>
         {navItem}
       </nav>
