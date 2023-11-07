@@ -15,7 +15,7 @@ function SignUp() {
     >
       <NavBar
         navItem={
-          <a href="http://localhost:5173/sign-in" className="navlink-signin">
+          <a href="/sign-in" className="navlink-signin">
             SIGN IN
           </a>
         }
