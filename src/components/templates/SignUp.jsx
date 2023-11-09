@@ -22,14 +22,24 @@ function SignUp() {
       ></NavBar>
       <img src="/buddy.png" className="buddy-image" />
       <div className="form-container">
-        <form>
-          <FloatingInput value="email" type="email" id="email" />
-          <FloatingInput value="password" type="text" id="password" />
+        <form method="Post" action="http://localhost:3000/register">
           <FloatingInput
+            value="username"
+            type="text"
+            id="username"
+            name="username"
+          />
+          <FloatingInput
+            value="password"
+            type="text"
+            id="password"
+            name="password"
+          />
+          {/* <FloatingInput
             value="confirm-password"
             type="text"
             id="confirm-password"
-          />
+          /> */}
           <input className="submit-form-button" type="submit" value="sign up" />
         </form>
       </div>
