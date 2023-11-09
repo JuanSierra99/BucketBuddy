@@ -4,7 +4,7 @@ const client = require("./database");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { table } = require("console");
+// const { table } = require("console");
 
 // Needed for cross origin requests
 app.use(
@@ -20,14 +20,6 @@ const port = 3000; // Run this api server on port 3000
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-function runQuery(query) {
-  return new Promise((resolve, reject) => {
-    client.query(query, (err, res) => {
-      !err ? resolve(res.rows) : reject("Error running query");
-    });
-  });
-}
 
 // Send row data of the specific table
 app.get("/api/get-table", async (req, res) => {
