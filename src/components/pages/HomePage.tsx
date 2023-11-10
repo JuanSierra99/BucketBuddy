@@ -5,22 +5,28 @@ import { getJson, Post } from "../../../Backend/Requests";
 
 const url = "http://localhost:3000";
 
+
 // Component that gives dropdown of all tables
 const Selector = (props) => {
   const data = props.data;
+  const [lastSelected, setLastSelected] = useState(null)
   return (
     <div className="scrollable-div">
       {data.map((name) => {
         return (
-          <button
-            className="tableNameButton"
-            value={name}
-            onClick={(e) => {
-              props.setState(e.target.value);
-            }}
-          >
-            {name}
-          </button>
+          <div>
+            <button
+              className="tableNameButton"
+              value={name}
+              onClick={(e) => {
+                props.setState(e.target.value);
+                setLastSelected(name)
+              }}
+            >
+              {name}
+              {lastSelected === name && (<img src="/button-buddy.PNG" className="button-buddy-image" />)}
+            </button>
+          </div>
         );
       })}
     </div>
@@ -28,7 +34,6 @@ const Selector = (props) => {
 };
 
 export function HomePage() {
-
   const [selectedTable, setSelectedTable] = useState("");
   const [tables, setTables] = useState([]);
   const [newTableName, setNewTableName] = useState("");
@@ -70,17 +75,8 @@ export function HomePage() {
         >
           Create new table
         </button>
-        <button
-          onClick={async () => {
-            const url = "http://localhost:3000/api/add-row";
-            const json = { tableName: selectedTable };
-            await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
-          }}
-        >
-          Add Row
-        </button>
         <p className="databaseStatus">Database status</p>
-        <Table selectedTable={selectedTable}/>
+        <Table selectedTable={selectedTable} />
       </div>
     </div>
   );
