@@ -6,6 +6,8 @@ export default function Table({ selectedTable }) {
   // Data for selected table
   const [rows, setRows] = useState([{}]);
   const [fields, setFields] = useState([]);
+  const [dataType, setDataType] = useState("VARCHAR"); // For creating new columns
+
   useEffect(() => {
     const getTable = async () => {
       const table_name = selectedTable;
@@ -54,6 +56,34 @@ export default function Table({ selectedTable }) {
   return (
     <div>
       <h1 className="tableName">{selectedTable}</h1>
+      <button
+        onClick={async () => {
+          const url = "http://localhost:3000/api/add-row";
+          const json = { tableName: selectedTable };
+          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+        }}
+      >
+        Add Row
+      </button>
+      <button
+        onClick={async () => {
+          const url = "http://localhost:3000/api/add-column";
+          const json = { tableName: selectedTable, columnName: " ", dataType };
+          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+        }}
+      >
+        Add Column
+      </button>
+      <select
+        id="data-type"
+        onChange={(e) => {
+          setDataType(e.target.value);
+        }}
+      >
+        <option value={"VARCHAR"}>Text</option>
+        <option value={"INT"}>Number</option>
+        <option value={"BOOL"}>Boolean</option>
+      </select>
       <table>
         {/*make every key in our table a header*/}
         {keys.map((k, index) => {
@@ -102,6 +132,15 @@ export default function Table({ selectedTable }) {
           );
         })}
       </table>
+      <button
+        onClick={async () => {
+          const url = "http://localhost:3000/api/add-row";
+          const json = { tableName: selectedTable };
+          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+        }}
+      >
+        Add Row
+      </button>
     </div>
   );
 }
