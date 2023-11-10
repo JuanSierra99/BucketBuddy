@@ -15,14 +15,17 @@ passport.use(
   new JwtStrategy(opts, (jwtPayload, done) => {
     const username = jwtPayload.username;
     client.query(
-      `SELECT * FROM users WHERE username='${username}'`,
+      `SELECT username FROM users WHERE username='${username}'`, // Only obtain username
       (err, result) => {
         if (err) {
           return done(err, false);
         }
         if (result.rows.length === 1) {
-          const user = result.rows[0];
-          return done(null, user);
+          const user = {
+            username: jwtPayload.username,
+          };
+          // const user = result.rows[0];
+          return done(null, user); // user is added to request object in our api endpoints
         } else {
           return done(null, false);
         }
