@@ -8,6 +8,7 @@ function FloatingInput(props) {
         type={props.type ? props.type : "text"}
         placeholder="input"
         id={props.id}
+        name={props.name}
       />
       <label for={props.id}>{props.value ? props.value : "input"}</label>
     </>
