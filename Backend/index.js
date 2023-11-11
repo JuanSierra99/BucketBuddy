@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const passport = require("./passport-config");
 const jwt = require("jsonwebtoken");
+const uuid = require("uuid"); // For random and unique id's for out table names
 require("dotenv").config();
 
 // Api server framework
@@ -25,6 +26,20 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
+const getTableId = async (username, table_name) => {
+  const tableid_query = `SELECT tableid FROM user_tables WHERE username='${username}' AND table_name='${table_name}'`;
+  const tableid_result = await client.query(tableid_query); // WHAT HAPPENS IF WE HAVE SAME USER AND TABLE NAMES DUPLICATES ????
+  if (!tableid_result.rows || tableid_result.rows.length === 0) {
+    console.log(`Table '${table_name}' not found`);
+    // Send an HTTP response indicating that the table was not found
+    return response
+      .status(404)
+      .json({ error: `Table '${table_name}' not found` });
+  }
+  const table_id = tableid_result.rows[0].tableid;
+  return table_id;
+};
+
 {
   /*Note: Passport's authentication middleware, when successfully authenticating a user, adds a user object to the request object.  */
 }
@@ -34,7 +49,7 @@ app.get(
   passport.authenticate("jwt", { session: false }), // protected endpoint. Only authorized users
   async (request, response) => {
     try {
-      const table_name = request.query.name;
+      const table_name = request.query.table_name;
       const username = request.user.username;
       if (!table_name) {
         console.log("Table name is required");
@@ -43,14 +58,11 @@ app.get(
       if (!isValidName(table_name)) {
         return response.status(400).json({ Error: "Invalid table name " });
       }
-      const tableid_query = `SELECT tableid FROM user_tables WHERE username='${username}' AND table_name='${table_name}'`;
-      const table_id_response = await client.query(tableid_query);
-      const table_id = table_id_response.rows[0].tableid;
-      console.log(table_id);
-      const query = `SELECT * FROM "${table_id}"`;
-      // Execute the SQL query to get the specified table's rows, and assing it to data
-      const data = await client.query(query);
-      const rows = data.rows;
+      const table_id = await getTableId(username, table_name);
+      const table_query = `SELECT * FROM "${table_id}"`;
+      // Execute the SQL query to get the specified table's rows
+      const table_result = await client.query(table_query);
+      const rows = table_result.rows; // send every row for the requested table
       // Log the data for debugging
       console.log(`Sending rows for ${table_name}: `, rows);
       // Send an HTTP response with data in the response body
@@ -68,7 +80,7 @@ app.get(
   passport.authenticate("jwt", { session: false }),
   async (request, response) => {
     try {
-      const table_name = request.query.name;
+      const table_name = request.query.table_name;
       const username = request.user.username;
       if (!table_name) {
         console.log("table name required");
@@ -78,13 +90,10 @@ app.get(
         console.log("Invalid table name");
         return response.status(400).json({ message: "Invalid table name" });
       }
-      const query1 = `SELECT  tableid from user_tables WHERE username='${username}' AND table_name='${table_name}'`;
-      const json1 = await client.query(query1);
-      console.log(json1.rows[0]);
-      const tableid = json1.rows[0].tableid;
-      const query = `SELECT column_name FROM information_schema.columns WHERE table_name='${tableid}' AND column_name!='unique_record_id'`;
-      const json = await client.query(query);
-      const fields = json.rows.map((row) => {
+      const tableId = await getTableId(username, table_name);
+      const fields_query = `SELECT column_name FROM information_schema.columns WHERE table_name='${tableId}' AND column_name!='unique_record_id'`;
+      const fields_result = await client.query(fields_query);
+      const fields = fields_result.rows.map((row) => {
         return row.column_name;
       });
       console.log("Sending fields for " + table_name + " table: ", fields);
@@ -250,9 +259,9 @@ app.get(
   "/api/all-tables",
   passport.authenticate("jwt", { session: false }),
   async (request, response) => {
-    const username = request.user.username;
+    const username = request.user.username; // get username that was in jwt from request object
     try {
-      // Execute the SQL query to retrieve the table names
+      // Execute the SQL query to retrieve the table names for a specific user
       query = `select table_name from user_tables where username='${username}'`;
       const json = await client.query(
         query
