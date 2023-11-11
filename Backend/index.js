@@ -37,6 +37,7 @@ const getTableId = async (username, table_name) => {
       .json({ error: `Table '${table_name}' not found` });
   }
   const table_id = tableid_result.rows[0].tableid;
+  console.log(table_id);
   return table_id;
 };
 
@@ -68,7 +69,7 @@ app.get(
       // Send an HTTP response with data in the response body
       return response.status(200).json(rows);
     } catch (error) {
-      console.log(error.message);
+      console.log("Error @/api/get-table: ", error.message);
       return response.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -99,7 +100,7 @@ app.get(
       console.log("Sending fields for " + table_name + " table: ", fields);
       return response.status(200).json(fields);
     } catch (error) {
-      console.log(error.message);
+      console.log("@/api/table-fields", error.message);
       return response.status(500).json({ error: error.message });
     }
   }
@@ -112,7 +113,8 @@ app.post(
   async (request, response) => {
     try {
       // Get the name of table from the request body
-      const tableName = request.body.name;
+      const tableName = request.body.table_name;
+      const username = request.user.username;
       // Ensure that the given table name is defined
       if (!tableName) {
         console.log("Table name is required");
@@ -123,17 +125,23 @@ app.post(
         console.log("Invalid table name");
         return response.status(400).json({ error: "Invalid table name" });
       }
-      const createTableQuery = `CREATE TABLE "${tableName}" (unique_record_id SERIAL PRIMARY KEY , Name VARCHAR)`;
-      // Execute the SQL query to create the table
-      await client.query(createTableQuery);
-      // Log a success message indicating that the table has been created.
-      console.log(`Created Table: ${tableName}`);
+      const uniqueId = uuid.v4();
+      // Using client class's transaction feature to make sure either both querys execute, or none execute
+      // https://node-postgres.com/features/transactions
+      client.query("BEGIN");
+      const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name VARCHAR)`;
+      await client.query(createTableQuery); // Execute the SQL query to create the table
+      const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name) VALUES ('${uniqueId}', '${username}', '${tableName}')`;
+      await client.query(update_userTables_query);
+      await client.query("COMMIT");
+      console.log(`Table "${tableName}" created successfully`); // Log success message
       // Send an HTTP response with a success message in the response body
-      response
+      return response
         .status(200)
         .json({ message: `Table "${tableName}" created successfully` });
     } catch (error) {
-      console.log(error.message);
+      await client.query("ROLLBACK");
+      console.log("@/api/table_fields", error.message);
       return response.status(500).json({ error: "Table creation failed" });
     }
   }
@@ -195,7 +203,7 @@ app.post(
         message: `Changed cell in table "${tableName}", with row id ${rowId}, and field name "${fieldName}", to ${newCellValue}`,
       });
     } catch (error) {
-      console.log("Error: " + error.message);
+      console.log("@/api/change-cell " + error.message);
       return response.status(500).json({ error: error.message });
     }
   }
@@ -248,7 +256,7 @@ app.post(
         message: `Success in changing field name`,
       });
     } catch (error) {
-      console.log("Error: " + error.message);
+      console.log("Error @/api/change-field: " + error.message);
       return response.status(500).json({ error: error.message });
     }
   }
@@ -276,7 +284,7 @@ app.get(
       // Send an HTTP response with an object containing the array of table names in the response body
       return response.status(200).json({ table_names: table_names });
     } catch (error) {
-      console.log(error.message);
+      console.log("Error @/api/all-tables: ", error.message);
       return response.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -332,7 +340,7 @@ app.post(
           error: `Column "${columnName}" already exists in table "${tableName}"`,
         });
       } else {
-        console.log(error.message);
+        console.log("Error @/api/add-column: ", error.message);
         // Send a HTTP response containing a generic error message for other errors.
         return response.status(500).json({ error: "Internal Server Error" });
       }
@@ -361,7 +369,7 @@ app.post(
         .status(200)
         .json({ message: `Added new row to table: ${tableName}` });
     } catch (error) {
-      console.log({ error: error.message });
+      console.log("Error @/api/add-row: ", error.message);
       return response
         .status(500)
         .json({ error: "Internal Server Error", message: error.message });
@@ -390,7 +398,7 @@ app.post("/register", async (request, response) => {
     console.log("Success: new user registered");
     return response.status(200).json({ Success: "New user registered" });
   } catch (error) {
-    console.log("Error: ", error.message);
+    console.log("Error @/register: ", error.message);
     return response.json({ Error: error.message });
   }
 });
@@ -424,7 +432,7 @@ app.post("/login", async (request, response) => {
     console.log("sending jwt");
     return response.json({ token }); // issue the jwt in response
   } catch (error) {
-    console.log("Error: ", error.message);
+    console.log("Error @/api/login: ", error.message);
     return response.json({ Error: error.message });
   }
 });
