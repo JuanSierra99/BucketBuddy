@@ -13,11 +13,11 @@ export default function Table({ selectedTable }) {
       const table_name = selectedTable;
       // ensure we have a table name before sending request to api
       if (table_name) {
-        const url = `http://localhost:3000/api/get-table?name=${table_name}`;
+        const url = `http://localhost:3000/api/get-table?table_name=${table_name}`;
         // If no json is returned, i believe json variable is undefined
         const json = await getJson(url);
         const fields = await getJson(
-          `http://localhost:3000/api/table-fields?name=${table_name}`
+          `http://localhost:3000/api/table-fields?table_name=${table_name}`
         );
         setRows(json ? json : [{}]);
         setFields(fields ? fields : []);
