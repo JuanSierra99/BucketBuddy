@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import { getJson, Post } from "../../../Backend/Requests";
+const config = require("./config");
+
+const serverUrl = config.serverUrl;
 
 export default function Table({ selectedTable }) {
   // Data for selected table
@@ -13,11 +16,11 @@ export default function Table({ selectedTable }) {
       const table_name = selectedTable;
       // ensure we have a table name before sending request to api
       if (table_name) {
-        const url = `http://localhost:3000/api/get-table?table_name=${table_name}`;
+        const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
         // If no json is returned, i believe json variable is undefined
-        const json = await getJson(url);
+        const json = await getJson(apiUrl);
         const fields = await getJson(
-          `http://localhost:3000/api/table-fields?table_name=${table_name}`
+          `${serverUrl}/api/table-fields?table_name=${table_name}`
         );
         setRows(json ? json : [{}]);
         setFields(fields ? fields : []);
@@ -35,20 +38,20 @@ export default function Table({ selectedTable }) {
   };
 
   const changeCell = (tableName, newCellValue, RecordId, fieldName) => {
-    const url = "http://localhost:3000/api/change-cell";
+    const apiUrl = `${serverUrl}/api/change-cell`;
     const jsonParameters = {
       name: tableName,
       rowId: RecordId,
       newCellValue,
       fieldName,
     };
-    Post(url, jsonParameters);
+    Post(apiUrl, jsonParameters);
   };
 
   const changeField = (tableName, currentFieldName, newFieldName) => {
-    const url = "http://localhost:3000/api/change-field";
+    const apiUrl = `${serverUrl}/api/change-field`;
     const json = { tableName, currentFieldName, newFieldName };
-    Post(url, json);
+    Post(apiUrl, json);
   };
 
   // const keys = Object.keys(table.length > 0 ? table[0] : {});
@@ -58,18 +61,18 @@ export default function Table({ selectedTable }) {
       <h1 className="tableName">{selectedTable}</h1>
       <button
         onClick={async () => {
-          const url = "http://localhost:3000/api/add-row";
+          const apiUrl = `${serverUrl}/api/add-row`;
           const json = { tableName: selectedTable };
-          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+          await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
         }}
       >
         Add Row
       </button>
       <button
         onClick={async () => {
-          const url = "http://localhost:3000/api/add-column";
+          const apiUrl = `${serverUrl}/api/add-column`;
           const json = { tableName: selectedTable, columnName: " ", dataType };
-          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+          await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
         }}
       >
         Add Column
@@ -134,9 +137,9 @@ export default function Table({ selectedTable }) {
       </table>
       <button
         onClick={async () => {
-          const url = "http://localhost:3000/api/add-row";
+          const apiUrl = `${serverUrl}/api/add-row`;
           const json = { tableName: selectedTable };
-          await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+          await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
         }}
       >
         Add Row

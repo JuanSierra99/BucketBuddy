@@ -2,15 +2,18 @@ import FloatingInput from "../atoms/FloatingInput";
 import { NavBar } from "../molecules/NavBar";
 import { SignUpLink } from "../atoms/SignUpLink";
 import { Post } from "../../../Backend/Requests";
+const config = require("./config");
 import { useState } from "react";
+
+const serverUrl = config.serverUrl;
 
 function SignIn() {
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const url = "http://localhost:3000/login";
+    const apiUrl = `${serverUrl}/login`;
     const user = document.getElementById("username").value;
     const sendJson = { username: user };
-    const response = await Post(url, sendJson); // post request, wait for json response w/ token
+    const response = await Post(apiUrl, sendJson); // post request, wait for json response w/ token
     localStorage.removeItem("jwtToken");
     localStorage.setItem("jwtToken", response.token); // save the jwt to local storage. Now it can be used to authenticate all our requests
   };

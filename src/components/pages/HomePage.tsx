@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import React from "react";
 import Table from "../molecules/Table";
 import { getJson, Post } from "../../../Backend/Requests";
+const config = require('./config');
 
-const url = "http://localhost:3000";
-
+const serverUrl = config.serverUrl;
 
 // Component that gives dropdown of all tables
 const Selector = (props) => {
@@ -39,8 +39,8 @@ export function HomePage() {
   const [newTableName, setNewTableName] = useState("");
 
   const getTables = async () => {
-    const url = "http://localhost:3000/api/all-tables";
-    const json = await getJson(url);
+    const apiUrl = `${serverUrl}/api/all-tables`;
+    const json = await getJson(apiUrl);
     setTables(json.table_names);
     return json.table_names;
   };
@@ -67,9 +67,9 @@ export function HomePage() {
         />
         <button
           onClick={async () => {
-            const url = "http://localhost:3000/api/new-table";
+            const apiUrl = `${serverUrl}/api/new-table`;
             const json = { table_name: newTableName };
-            await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+            await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
             await getTables(); //will request api endpoint to send current tables in db, then updates tables state
           }}
         >
