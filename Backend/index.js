@@ -14,11 +14,16 @@ const app = express();
 // Needed for cross origin requests
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://master--frolicking-salmiakki-5b8181.netlify.app",
+    ],
   })
 );
 
-app.use(express.json()); //Needed to parse JSON request bodies
+//master--frolicking-salmiakki-5b8181.netlify.app
+
+https: app.use(express.json()); //Needed to parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Needed when we use post in html form
 
 const port = 3000; // Run this api server on port 3000
