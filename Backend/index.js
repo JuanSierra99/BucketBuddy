@@ -154,6 +154,7 @@ app.post(
   passport.authenticate("jwt", { session: false }),
   async (request, response) => {
     try {
+      const username = request.user.username;
       // Get the table name from the request body
       const tableName = request.body.name;
       // Get the row id from the request body
@@ -185,13 +186,14 @@ app.post(
       if (
         !isValidName(tableName) ||
         !isValidName(rowId) ||
-        !isValidName(fieldName) ||
-        !isValidName(newCellValue)
+        !isValidName(fieldName)
+        // !isValidName(newCellValue) // WE CANT RESTRICT CELL VALUE TOO MUCH !!
       ) {
         console.log("Invalid Parameter");
         return response.status(400).json({ error: "Invalid Parameter" });
       }
-      const changeCellQuery = `UPDATE "${tableName}" SET "${fieldName}" = '${newCellValue}' WHERE unique_record_id=${rowId}`;
+      const tableId = await getTableId(username, tableName);
+      const changeCellQuery = `UPDATE "${tableId}" SET "${fieldName}" = '${newCellValue}' WHERE unique_record_id=${rowId}`;
       // Execute the SQL query to create the table
       await client.query(changeCellQuery);
       // Log a success message indicating that the table has been created.
@@ -296,6 +298,7 @@ app.post(
   passport.authenticate("jwt", { session: false }),
   async (request, response) => {
     const { tableName, columnName, dataType } = request.body;
+    const username = request.user.username;
     try {
       // Get the required values from the body of the request
       // Ensure all values are defined.
@@ -320,9 +323,10 @@ app.post(
         console.log("Invalid query");
         return response.status(400).json({ Error: "invalid query" });
       }
+      const tableId = await getTableId(username, tableName);
       // Execute the SQL query to add a column to the specified table
       await client.query(
-        `ALTER TABLE "${tableName}" ADD "${columnName}" ${dataType}`
+        `ALTER TABLE "${tableId}" ADD "${columnName}" ${dataType}`
       );
       // Log a success message
       console.log(`Added '${columnName}' ${dataType} Field, to '${tableName}'`);
@@ -354,6 +358,7 @@ app.post(
   async (request, response) => {
     try {
       const tableName = request.body.tableName;
+      const username = request.user.username;
       if (!tableName) {
         console.log("Table name is required");
         return response.status(400).json({ Error: "Table name is required" });
@@ -362,7 +367,8 @@ app.post(
         console.log("Invalid table name");
         return response.status(400).json({ Error: "invalid table name" });
       }
-      newRowQuery = `INSERT INTO "${tableName}" DEFAULT VALUES`;
+      const tableId = await getTableId(username, tableName);
+      newRowQuery = `INSERT INTO "${tableId}" DEFAULT VALUES`;
       await client.query(newRowQuery);
       console.log(`Added new row to table: ${tableName}`);
       return response
