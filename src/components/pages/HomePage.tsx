@@ -68,7 +68,7 @@ export function HomePage() {
         <button
           onClick={async () => {
             const url = "http://localhost:3000/api/new-table";
-            const json = { name: newTableName };
+            const json = { table_name: newTableName };
             await Post(url, json); //requests api endpoint to create new table. must await for getTables() to have updated info
             await getTables(); //will request api endpoint to send current tables in db, then updates tables state
           }}
