@@ -2,10 +2,8 @@ import FloatingInput from "../atoms/FloatingInput";
 import { NavBar } from "../molecules/NavBar";
 import { SignUpLink } from "../atoms/SignUpLink";
 import { Post } from "../../../Backend/Requests";
-const config = require("./config");
+import { serverUrl } from "../../config";
 import { useState } from "react";
-
-const serverUrl = config.serverUrl;
 
 function SignIn() {
   const handleSubmit = async (event) => {

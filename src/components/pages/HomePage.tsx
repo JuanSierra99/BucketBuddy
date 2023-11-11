@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 import Table from "../molecules/Table";
 import { getJson, Post } from "../../../Backend/Requests";
-const config = require('./config');
-
-const serverUrl = config.serverUrl;
+import { serverUrl } from "../../config"; 
 
 // Component that gives dropdown of all tables
 const Selector = (props) => {

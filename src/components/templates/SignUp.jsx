@@ -1,11 +1,8 @@
 // import "/Users/juansierra/BucketBuddy/bucketbuddy/src/App.css";
-import { serverUrl } from "../../../config.js";
 import { BucketBuddyLink } from "../atoms/BucketBuddyLink.jsx";
 import FloatingInput from "../atoms/FloatingInput.jsx";
 import { NavBar } from "../molecules/NavBar.jsx";
-const config = require("./config");
-
-const serverUrl = config.serverUrl;
+import { serverUrl } from "../../config";
 
 function SignUp() {
   return (

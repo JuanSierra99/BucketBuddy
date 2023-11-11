@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import { getJson, Post } from "../../../Backend/Requests";
-const config = require("./config");
-
-const serverUrl = config.serverUrl;
+import { serverUrl } from "../../config";
 
 export default function Table({ selectedTable }) {
   // Data for selected table
