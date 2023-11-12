@@ -446,24 +446,24 @@ app.post("/login", async (request, response) => {
     const secret_key = process.env.JWT_SIGN_KEY; // Key is used to encode the jwt (very sensitive, keep in .env)
     const token = jwt.sign(user, secret_key, { expiresIn: 6000 });
     console.log("sending jwt");
-    return response.json({ token }); // issue the jwt in response
+    return response.status(200).json({ token }); // issue the jwt in response
   } catch (error) {
     console.log("Error @/api/login: ", error.message);
-    return response.json({ Error: error.message });
+    return response.status(500).json({ Error: error.message });
   }
 });
 
 // Validate strings to ensure query safety.
 function isValidName(tableName) {
-  // one way to define regular expressions is with literals like this
+  // One way to define regular expressions is with literals like this
   const validNameRegex = /^[a-zA-Z0-9 ]+$/;
-  // test the string
+  // Test the string
   return validNameRegex.test(tableName);
 }
 
 function isValidUsername(username) {
-  // One way to define regular expression is with constructor like this
+  // One way to define regular expression is with the RegExp constructor like this
   const validUserRegex = new RegExp("^[a-zA-Z0-9]{3,20}$");
-  // test the string
+  // Test the string
   return validUserRegex.test(username);
 }
