@@ -8,10 +8,7 @@ require("dotenv").config();
 
 // Api server framework
 const app = express();
-
-// const { table } = require("console");
-
-// Needed for cross origin requests
+// Configure for cross origin requests
 app.use(
   cors({
     origin: [
@@ -20,10 +17,7 @@ app.use(
     ],
   })
 );
-
-//master--frolicking-salmiakki-5b8181.netlify.app
-
-https: app.use(express.json()); //Needed to parse JSON request bodies
+app.use(express.json()); //Needed to parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Needed when we use post in html form
 
 const port = 3000; // Run this api server on port 3000
@@ -32,20 +26,31 @@ app.listen(port, () => {
 });
 
 const getTableId = async (username, table_name) => {
-  const tableid_query = `SELECT tableid FROM user_tables WHERE username='${username}' AND table_name='${table_name}'`;
-  const tableid_result = await client.query(tableid_query); // WHAT HAPPENS IF WE HAVE SAME USER AND TABLE NAMES DUPLICATES ????
-  if (!tableid_result.rows || tableid_result.rows.length === 0) {
-    console.log(`Table '${table_name}' not found`);
-    // Send an HTTP response indicating that the table was not found
-    return response
-      .status(404)
-      .json({ error: `Table '${table_name}' not found` });
+  try {
+    // Construct a SQL query to select the tableid from user_tables based on the provided username and table_name
+    const tableid_query = `SELECT tableid FROM user_tables WHERE username='${username}' AND table_name='${table_name}'`;
+    const tableid_result = await client.query(tableid_query); // WHAT HAPPENS IF WE HAVE SAME USER AND TABLE NAMES DUPLICATES ????
+    // Check if the query result has no rows or is an empty array
+    if (!tableid_result.rows || tableid_result.rows.length === 0) {
+      console.log(`Table '${table_name}' not found`);
+      // Send an HTTP response indicating that the table was not found
+      return response
+        .status(404)
+        .json({ error: `Table '${table_name}' not found` });
+    }
+    // Extract the table_id from the first row of the query result
+    const table_id = tableid_result.rows[0].tableid;
+    // console.log(table_id);
+    return table_id;
+  } catch (error) {
+    return console.log(error.message);
   }
-  const table_id = tableid_result.rows[0].tableid;
-  console.log(table_id);
-  return table_id;
 };
 
+{
+  /*Note: psql does not support parameters for identifiers. Ensure proper security practices to prevent sql injection when creating tables,
+ or adding new columns*/
+}
 {
   /*Note: Passport's authentication middleware, when successfully authenticating a user, adds a user object to the request object.  */
 }
@@ -448,23 +453,17 @@ app.post("/login", async (request, response) => {
   }
 });
 
-// Validate strings to ensure query safety. (IS THIS GOOD ENOUGH ??)
+// Validate strings to ensure query safety.
 function isValidName(tableName) {
   // one way to define regular expressions is with literals like this
-  const validNameRegex = /^[a-zA-Z0-9_ ]+$/;
+  const validNameRegex = /^[a-zA-Z0-9 ]+$/;
   // test the string
   return validNameRegex.test(tableName);
 }
 
 function isValidUsername(username) {
   // One way to define regular expression is with constructor like this
-  const validUserRegex = new RegExp("^[a-zA-Z0-9]{3,15}$");
+  const validUserRegex = new RegExp("^[a-zA-Z0-9]{3,20}$");
   // test the string
   return validUserRegex.test(username);
 }
-
-// get the tableid of a specific table of spec user
-//  select tableid from user_tables where username='bubba' AND table_name='anime';
-// RESULT (asdf)
-// the use tableid to get information of table
-// select * from asdf;
