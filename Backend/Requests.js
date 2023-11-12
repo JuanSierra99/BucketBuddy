@@ -34,6 +34,7 @@ export const Post = async (url, request_body) => {
     const json = await response.json();
     return json;
   } else {
+    return null;
     console.log("Error: " + response.status + " " + response.statusText);
   }
 };
