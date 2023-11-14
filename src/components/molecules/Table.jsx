@@ -9,24 +9,25 @@ export default function Table({ selectedTable }) {
   const [fields, setFields] = useState([]);
   const [dataType, setDataType] = useState("VARCHAR"); // For creating new columns
 
+  const getRows = async (table_name) => {
+    const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
+    const json = await getJson(apiUrl); // If request failed, getJson returns null
+    setRows(json ? json : [{ rows }]);
+  };
+
+  const getFields = async (table_name) => {
+    const apiUrl = `${serverUrl}/api/table-fields?table_name=${table_name}`;
+    const new_fields = await getJson(apiUrl);
+    setFields(new_fields ? new_fields : fields);
+  };
+
   useEffect(() => {
-    const getTable = async () => {
-      const table_name = selectedTable;
-      // ensure we have a table name before sending request to api
-      if (table_name) {
-        const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
-        // If no json is returned, i believe json variable is undefined
-        const json = await getJson(apiUrl);
-        const fields = await getJson(
-          `${serverUrl}/api/table-fields?table_name=${table_name}`
-        );
-        setRows(json ? json : [{}]);
-        setFields(fields ? fields : []);
-        // setRows(json.length > 0 ? json : [{}]); //IS THIS GOOD ? WE GET ERROR IF DB HAS NO TABLES
-        // setFields(fields.length > 0 ? fields : []);
-      }
-    };
-    getTable();
+    const table_name = selectedTable;
+    // ensure we have a table name before sending request to api
+    if (table_name) {
+      getRows(table_name);
+      getFields(table_name);
+    }
   }, [selectedTable]);
 
   const handleInputChange = (e, index, key) => {
@@ -69,7 +70,11 @@ export default function Table({ selectedTable }) {
       <button
         onClick={async () => {
           const apiUrl = `${serverUrl}/api/add-column`;
-          const json = { tableName: selectedTable, columnName: " ", dataType };
+          const json = {
+            tableName: selectedTable,
+            columnName: " ",
+            dataType,
+          };
           await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
         }}
       >
