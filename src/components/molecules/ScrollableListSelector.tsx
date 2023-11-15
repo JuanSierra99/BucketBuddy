@@ -10,6 +10,7 @@ export const ScrollableListSelector = (props) => {
     return (
       <div className="scrollable-div">
         <input
+          className="search-bar"
           type="text"
           id="searchForTable"
           placeholder="Search"
@@ -17,6 +18,7 @@ export const ScrollableListSelector = (props) => {
           onChange={(e) => setSearchTableName(e.target.value)}
         />
         {data.map((name) => {
+          // Only return tables that contains value in search bar
           if (name.toLowerCase().includes(searchTableName.toLocaleLowerCase())) {
             return (
               <div>
@@ -29,7 +31,7 @@ export const ScrollableListSelector = (props) => {
                   }}
                 >
                   {name}
-                  {lastSelected === name && (
+                  {lastSelected === name && ( // if last selected table is name of currently selected table. SHOW THE DOG !!!
                     <img src="/button-buddy.PNG" className="button-buddy-image" />
                   )}
                 </button>
