@@ -69,25 +69,8 @@ export function HomePage() {
         <Selector setState={setSelectedTable} data={tables} />
       </div>
       <div className="rightbar">
-        <input
-          type="text"
-          id="createTableName"
-          placeholder="Enter new table name"
-          value={newTableName}
-          onChange={(e) => setNewTableName(e.target.value)}
-        />
-        <button
-          onClick={async () => {
-            const apiUrl = `${serverUrl}/api/new-table`;
-            const json = { table_name: newTableName };
-            await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
-            await getTables(); //will request api endpoint to send current tables in db, then updates tables state
-          }}
-        >
-          Create new table
-        </button>
-        <p className="databaseStatus">Database status</p>
         <Table selectedTable={selectedTable} />
+         <p className="databaseStatus">Database status</p>
       </div>
     </div>
   );
