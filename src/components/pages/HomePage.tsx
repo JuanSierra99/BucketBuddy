@@ -2,30 +2,43 @@ import { useEffect, useState } from "react";
 import React from "react";
 import Table from "../molecules/Table";
 import { getJson, Post } from "../../../Backend/Requests";
-import { serverUrl } from "../../config"; 
+import { serverUrl } from "../../config";
+import { NavBar } from "../molecules/NavBar";
 
 // Component that gives dropdown of all tables
 const Selector = (props) => {
   const data = props.data;
-  const [lastSelected, setLastSelected] = useState(null)
+  const [lastSelected, setLastSelected] = useState(null);
+  const [searchTableName, setSearchTableName] = useState("");
   return (
     <div className="scrollable-div">
+      <input
+        type="text"
+        id="searchForTable"
+        placeholder="Search"
+        value={searchTableName}
+        onChange={(e) => setSearchTableName(e.target.value)}
+      />
       {data.map((name) => {
-        return (
-          <div>
-            <button
-              className="tableNameButton"
-              value={name}
-              onClick={(e) => {
-                props.setState(e.target.value);
-                setLastSelected(name)
-              }}
-            >
-              {name}
-              {lastSelected === name && (<img src="/button-buddy.PNG" className="button-buddy-image" />)}
-            </button>
-          </div>
-        );
+        if (name.toLowerCase().includes(searchTableName.toLocaleLowerCase())) {
+          return (
+            <div>
+              <button
+                className="tableNameButton"
+                value={name}
+                onClick={(e) => {
+                  props.setState(e.target.value);
+                  setLastSelected(name);
+                }}
+              >
+                {name}
+                {lastSelected === name && (
+                  <img src="/button-buddy.PNG" className="button-buddy-image" />
+                )}
+              </button>
+            </div>
+          );
+        }
       })}
     </div>
   );
