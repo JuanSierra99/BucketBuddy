@@ -13,14 +13,16 @@ export function HomePage() {
   const getTables = async () => {
     const apiUrl = `${serverUrl}/api/all-tables`;
     const json = await getJson(apiUrl);
-    setTables(json.table_names);
+    setTables(json.table_names); // set state with the obtained table names
     return json.table_names;
   };
   //retrieve a list of all the tables in our database
   //maybe we can use this to prevent users from trying to create a duplicate table with api create table endpoint
   useEffect(() => {
     getTables().then((res) => {
-      setSelectedTable(res[0]);
+      if (res.length > 0) {
+        setSelectedTable(res[0]);
+      }
     });
   }, []); //maybe we want to do something with this when we add new tables ?
 
@@ -47,6 +49,13 @@ export function HomePage() {
         <ScrollableListSelector setState={setSelectedTable} data={tables} />
       </div>
       <div className="rightbar">
+        <button onClick={async () => {
+          const apiUrl = `${serverUrl}/api/deleteTable`
+          const json = { table_name : selectedTable}
+          await Post(apiUrl, json)
+        }}>
+          Delete table
+        </button>
         <Table selectedTable={selectedTable} />
          <p className="databaseStatus">Database status</p>
       </div>
