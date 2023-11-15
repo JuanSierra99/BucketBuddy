@@ -4,6 +4,7 @@ const cors = require("cors");
 const passport = require("./passport-config");
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid"); // For random and unique id's for out table names
+const { request } = require("http");
 require("dotenv").config();
 
 // Api server framework
@@ -34,9 +35,7 @@ const getTableId = async (username, table_name) => {
     if (!tableid_result.rows || tableid_result.rows.length === 0) {
       console.log(`Table '${table_name}' not found`);
       // Send an HTTP response indicating that the table was not found
-      return response
-        .status(404)
-        .json({ error: `Table '${table_name}' not found` });
+      return;
     }
     // Extract the table_id from the first row of the query result
     const table_id = tableid_result.rows[0].tableid;
@@ -137,6 +136,7 @@ app.post(
       }
       const uniqueId = uuid.v4();
       // Using client class's transaction feature to make sure either both querys execute, or none execute
+      // Keep in mind the query's still executes, so order still matters. If one fails, everything is reverted.
       // https://node-postgres.com/features/transactions
       client.query("BEGIN");
       const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name VARCHAR)`;
@@ -153,6 +153,35 @@ app.post(
       await client.query("ROLLBACK");
       console.log("@/api/table_fields", error.message);
       return response.status(500).json({ error: "Table creation failed" });
+    }
+  }
+);
+
+// Can a client manipulate table name and user name to drop someone elses table ?!?!?!
+app.post(
+  "/api/deleteTable",
+  passport.authenticate("jwt", { session: false }),
+  async (request, response) => {
+    try {
+      const tableName = request.body.table_name; // Get the table name to delete from the request body
+      const username = request.user.username;
+      await client.query("BEGIN");
+      // ITS VERY IMPORTANT THAT THIS QUERY GOES FIRST. IF NOT, WHEN WE TRY getTableId(), the row in user_tables it needs is already deleted and itll show it does not exitst ! ...
+      // ...Because of the other query deleting it
+      const tableId = await getTableId(username, tableName); // Get the name of the table in the database
+      await client.query(`DROP TABLE "${tableId}"`);
+      const deleteUserTableEntryQuery = `DELETE FROM user_tables WHERE table_name='${tableName}' AND username='${username}'`;
+      await client.query(deleteUserTableEntryQuery);
+      await client.query("COMMIT");
+      console.log(`Table "${tableName}" deleted successfully`); // Log success message
+      // Send an HTTP response with a success message in the response body
+      return response
+        .status(200)
+        .json({ message: `Table "${tableName}" deleted successfully` });
+    } catch (error) {
+      await client.query("ROLLBACK");
+      console.log("@/api/deleteTable", error.message);
+      return response.status(500).json({ error: "table deletion failed" });
     }
   }
 );
@@ -202,7 +231,7 @@ app.post(
         console.log("Invalid Parameter");
         return response.status(400).json({ error: "Invalid Parameter" });
       }
-      const tableId = await getTableId(username, tableName);
+      const tableId = await getTableId(username, tableName); // Get actual name of table (each table has a unique id for its name)
       const changeCellQuery = `UPDATE "${tableId}" SET "${fieldName}" = '${newCellValue}' WHERE unique_record_id=${rowId}`;
       // Execute the SQL query to create the table
       await client.query(changeCellQuery);
