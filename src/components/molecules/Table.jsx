@@ -36,15 +36,15 @@ export default function Table({ selectedTable }) {
     setRows(newDataSet);
   };
 
-  const changeCell = (tableName, newCellValue, RecordId, fieldName) => {
+  const changeCellRequest = (tableName, newCellValue, RecordId, fieldName) => {
     const apiUrl = `${serverUrl}/api/change-cell`;
-    const jsonParameters = {
+    const json = {
       name: tableName,
       rowId: RecordId,
       newCellValue,
       fieldName,
     };
-    Post(apiUrl, jsonParameters);
+    Post(apiUrl, json);
   };
 
   const changeField = (tableName, currentFieldName, newFieldName) => {
@@ -53,7 +53,6 @@ export default function Table({ selectedTable }) {
     Post(apiUrl, json);
   };
 
-  // const keys = Object.keys(table.length > 0 ? table[0] : {});
   const keys = fields; //when we use this, fields are not in order they are created
   return (
     <div>
@@ -62,10 +61,13 @@ export default function Table({ selectedTable }) {
         onClick={async () => {
           const apiUrl = `${serverUrl}/api/add-row`;
           const json = { tableName: selectedTable };
-          await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+          const response = await Post(apiUrl, json); //requests api endpoint to create new row. must await so that useEffect() or getRows() has updated info ?
+          if (response) {
+            getRows(selectedTable);
+          }
         }}
       >
-        Add Row
+        New Entry
       </button>
       <button
         onClick={async () => {
@@ -75,7 +77,8 @@ export default function Table({ selectedTable }) {
             columnName: " ",
             dataType,
           };
-          await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+          await Post(apiUrl, json); //requests api endpoint to alter table.
+          getFields(selectedTable);
         }}
       >
         Add Column
@@ -120,7 +123,7 @@ export default function Table({ selectedTable }) {
                       type="text"
                       value={record[key] ? record[key] : ""}
                       onBlur={(e) =>
-                        changeCell(
+                        changeCellRequest(
                           selectedTable,
                           e.target.value,
                           record.unique_record_id,
@@ -142,10 +145,13 @@ export default function Table({ selectedTable }) {
         onClick={async () => {
           const apiUrl = `${serverUrl}/api/add-row`;
           const json = { tableName: selectedTable };
-          await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+          const response = await Post(apiUrl, json); //requests api endpoint to create new row. must await so that useEffect() or getRows() has updated info ?
+          if (response) {
+            getRows(selectedTable);
+          }
         }}
       >
-        Add Row
+        +
       </button>
     </div>
   );
