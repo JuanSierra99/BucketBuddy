@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import "./ScrollableListSelector.css";
 // This component displays a scrollable list of table names.
 // It sets the state of the selected table based on user interaction with the list.
 // Additionally, it includes search functionality to filter the displayed tables.
