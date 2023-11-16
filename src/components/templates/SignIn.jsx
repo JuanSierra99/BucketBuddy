@@ -7,13 +7,16 @@ import { useState } from "react";
 
 function SignIn() {
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // prevent default form submission behavior
     const apiUrl = `${serverUrl}/login`;
-    const user = document.getElementById("username").value;
+    const user = document.getElementById("username").value; // get value from username input (Change to use React state instead)
     const sendJson = { username: user };
-    const response = await Post(apiUrl, sendJson); // post request, wait for json response w/ token
-    localStorage.removeItem("jwtToken");
-    localStorage.setItem("jwtToken", response.token); // save the jwt to local storage. Now it can be used to authenticate all our requests
+    const response = await Post(apiUrl, sendJson); // post request, wait for json response w/ token (Should we do something if not authenticated ?)
+    if (response.token) {
+      localStorage.removeItem("jwtToken");
+      localStorage.setItem("jwtToken", response.token); // save the jwt to local storage. Now it can be used to authenticate all our requests
+    }
+    return;
   };
   return (
     <div
