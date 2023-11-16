@@ -53,6 +53,7 @@ export function HomePage() {
           const apiUrl = `${serverUrl}/api/deleteTable`
           const json = { table_name : selectedTable}
           await Post(apiUrl, json)
+          getTables();
         }}>
           Delete table
         </button>
