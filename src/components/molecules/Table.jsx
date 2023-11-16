@@ -31,6 +31,7 @@ export default function Table({ selectedTable }) {
       getRows(selectedTable);
     }
   };
+
   // Make a Post request to add a new field/column to the table. Refreshes table to show new column
   const addField = async () => {
     const apiUrl = `${serverUrl}/api/add-column`;
@@ -71,7 +72,7 @@ export default function Table({ selectedTable }) {
 
   // Make a request to the API to update the value in the database after the user has finished changing a cell's value.
   // Takes the table name, new cell value, record ID, and field name as parameters.
-  const changeCellRequest = (tableName, newCellValue, RecordId, fieldName) => {
+  const changeCellValue = (tableName, newCellValue, RecordId, fieldName) => {
     const apiUrl = `${serverUrl}/api/change-cell`;
     // Prepare the request payload
     const json = {
@@ -138,7 +139,7 @@ export default function Table({ selectedTable }) {
                       type={sql_to_js_types[field_data.data_type]}
                       value={record[field_data.column_name] || ""}
                       onBlur={(e) =>
-                        changeCellRequest(
+                        changeCellValue(
                           selectedTable,
                           e.target.value,
                           record.unique_record_id,
