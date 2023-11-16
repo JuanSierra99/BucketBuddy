@@ -22,6 +22,26 @@ export default function Table({ selectedTable }) {
       setFields(new_fields);
     }
   };
+  // Make a Post request to add a new row to the table. Refreshes table to show new row
+  const addRow = async () => {
+    const apiUrl = `${serverUrl}/api/add-row`;
+    const json = { tableName: selectedTable };
+    const response = await Post(apiUrl, json); //requests api endpoint to create new row. must await so that useEffect() or getRows() has updated info ?
+    if (response) {
+      getRows(selectedTable);
+    }
+  };
+  // Make a Post request to add a new field/column to the table. Refreshes table to show new column
+  const addField = async () => {
+    const apiUrl = `${serverUrl}/api/add-column`;
+    const json = {
+      tableName: selectedTable,
+      columnName: "TIME",
+      dataType,
+    };
+    await Post(apiUrl, json); //requests api endpoint to alter table.
+    getFields(selectedTable);
+  };
 
   // Mapping from SQL data types to corresponding JavaScript input types for rendering our table cells.
   const sql_to_js_types = {
@@ -70,36 +90,11 @@ export default function Table({ selectedTable }) {
     Post(apiUrl, json);
   };
 
-  // const fields = fields; //when we use this, fields are not in order they are created
   return (
     <div>
       <h1 className="tableName">{selectedTable}</h1>
-      <button
-        onClick={async () => {
-          const apiUrl = `${serverUrl}/api/add-row`;
-          const json = { tableName: selectedTable };
-          const response = await Post(apiUrl, json); //requests api endpoint to create new row. must await so that useEffect() or getRows() has updated info ?
-          if (response) {
-            getRows(selectedTable);
-          }
-        }}
-      >
-        New Entry
-      </button>
-      <button
-        onClick={async () => {
-          const apiUrl = `${serverUrl}/api/add-column`;
-          const json = {
-            tableName: selectedTable,
-            columnName: "TIME",
-            dataType,
-          };
-          await Post(apiUrl, json); //requests api endpoint to alter table.
-          getFields(selectedTable);
-        }}
-      >
-        Add Column
-      </button>
+      <button onClick={addRow}>New Entry</button>
+      <button onClick={addField}>Add Column</button>
       <select
         id="data-type"
         onChange={(e) => {
@@ -165,18 +160,7 @@ export default function Table({ selectedTable }) {
           );
         })}
       </table>
-      <button
-        onClick={async () => {
-          const apiUrl = `${serverUrl}/api/add-row`;
-          const json = { tableName: selectedTable };
-          const response = await Post(apiUrl, json); //requests api endpoint to create new row. must await so that useEffect() or getRows() has updated info ?
-          if (response) {
-            getRows(selectedTable);
-          }
-        }}
-      >
-        +
-      </button>
+      <button onClick={addRow}>+</button>
     </div>
   );
 }
