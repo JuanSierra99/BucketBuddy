@@ -101,11 +101,12 @@ app.get(
         return response.status(400).json({ message: "Invalid table name" });
       }
       const tableId = await getTableId(username, table_name);
-      const fields_query = `SELECT column_name FROM information_schema.columns WHERE table_name='${tableId}' AND column_name!='unique_record_id'`;
+      const fields_query = `SELECT column_name, data_type FROM information_schema.columns WHERE table_name='${tableId}' AND column_name!='unique_record_id'`;
       const fields_result = await client.query(fields_query);
-      const fields = fields_result.rows.map((row) => {
-        return row.column_name;
-      });
+      // const fields = fields_result.rows.map((row) => {
+      //   return row.column_name;
+      // });
+      const fields = fields_result.rows;
       console.log("Sending fields for " + table_name + " table: ", fields);
       return response.status(200).json(fields);
     } catch (error) {
@@ -473,7 +474,7 @@ app.post("/login", async (request, response) => {
       username: username,
     };
     const secret_key = process.env.JWT_SIGN_KEY; // Key is used to encode the jwt (very sensitive, keep in .env)
-    const token = jwt.sign(user, secret_key, { expiresIn: 6000 });
+    const token = jwt.sign(user, secret_key, { expiresIn: 12000 });
     console.log("sending jwt");
     return response.status(200).json({ token }); // issue the jwt in response
   } catch (error) {
