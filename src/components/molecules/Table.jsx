@@ -6,7 +6,7 @@ import { serverUrl } from "../../config";
 export default function Table({ selectedTable }) {
   // Data for selected table
   const [rows, setRows] = useState([{}]);
-  const [fields, setFields] = useState([]);
+  const [fields, setFields] = useState([]); // Fields/Columns will have a name, and data type
   const [dataType, setDataType] = useState("VARCHAR"); // For creating new columns
 
   const getRows = async (table_name) => {
@@ -18,32 +18,49 @@ export default function Table({ selectedTable }) {
   const getFields = async (table_name) => {
     const apiUrl = `${serverUrl}/api/table-fields?table_name=${table_name}`;
     const new_fields = await getJson(apiUrl);
-    setFields(new_fields ? new_fields : fields);
+    if (new_fields) {
+      setFields(new_fields);
+    }
   };
 
+  // Mapping from SQL data types to corresponding JavaScript input types for rendering our table cells.
+  const sql_to_js_types = {
+    "character varying": "text",
+    integer: "number",
+    boolean: "checkbox",
+    date: "date",
+    "time without time zone": "Time",
+  };
+
+  // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
   useEffect(() => {
     const table_name = selectedTable;
-    // ensure we have a table name before sending request to api
     if (table_name) {
       getRows(table_name);
       getFields(table_name);
     }
   }, [selectedTable]);
 
+  // Update the state of the value in a table cell whenever it is changed.
+  // Takes the event object (e), index of the row, and the key (column name) as parameters.
   const handleInputChange = (e, index, key) => {
-    const newDataSet = [...rows];
-    newDataSet[index][key] = e.target.value;
-    setRows(newDataSet);
+    const newDataSet = [...rows]; // Create a copy of the current state to avoid direct mutation
+    newDataSet[index][key] = e.target.value; // Update the value in the specified cell with the new input value
+    setRows(newDataSet); // Update the state
   };
 
+  // Make a request to the API to update the value in the database after the user has finished changing a cell's value.
+  // Takes the table name, new cell value, record ID, and field name as parameters.
   const changeCellRequest = (tableName, newCellValue, RecordId, fieldName) => {
     const apiUrl = `${serverUrl}/api/change-cell`;
+    // Prepare the request payload
     const json = {
       name: tableName,
       rowId: RecordId,
       newCellValue,
       fieldName,
     };
+    // Make a POST request to the API with the payload
     Post(apiUrl, json);
   };
 
@@ -53,7 +70,7 @@ export default function Table({ selectedTable }) {
     Post(apiUrl, json);
   };
 
-  const keys = fields; //when we use this, fields are not in order they are created
+  // const fields = fields; //when we use this, fields are not in order they are created
   return (
     <div>
       <h1 className="tableName">{selectedTable}</h1>
@@ -74,7 +91,7 @@ export default function Table({ selectedTable }) {
           const apiUrl = `${serverUrl}/api/add-column`;
           const json = {
             tableName: selectedTable,
-            columnName: " ",
+            columnName: "TIME",
             dataType,
           };
           await Post(apiUrl, json); //requests api endpoint to alter table.
@@ -92,20 +109,23 @@ export default function Table({ selectedTable }) {
         <option value={"VARCHAR"}>Text</option>
         <option value={"INT"}>Number</option>
         <option value={"BOOL"}>Boolean</option>
+        <option value={"DATE"}>Date</option>
+        <option value={"JSON"}>JSON</option>
+        <option value={"TIME"}>TIME</option>
       </select>
       <table>
         {/*make every key in our table a header*/}
-        {keys.map((k, index) => {
+        {fields.map((field_data, index) => {
           return (
             <th>
               <input
                 type="text"
-                value={fields[index]}
-                onChange={(e) => {
-                  const newFields = [...fields];
-                  newFields[index] = e.target.value;
-                  setFields(newFields);
-                }}
+                value={field_data.column_name}
+                // onChange={(e) => {
+                //   const newFields = [...fields];
+                //   newFields[index] = e.target.value;
+                //   setFields(newFields);
+                // }}
                 // onBlur={(e) => {changeField(selectedTable, e.)}}
               ></input>
             </th>
@@ -116,22 +136,26 @@ export default function Table({ selectedTable }) {
           return (
             <tr>
               {/*display the value for every key in the object*/}
-              {keys.map((key, keyIndex) => {
+              {fields.map((field_data, keyIndex) => {
                 return (
                   <td>
                     <input
-                      type="text"
-                      value={record[key] ? record[key] : ""}
+                      type={sql_to_js_types[field_data.data_type]}
+                      value={record[field_data.column_name] || ""}
                       onBlur={(e) =>
                         changeCellRequest(
                           selectedTable,
                           e.target.value,
                           record.unique_record_id,
-                          key
+                          field_data.column_name
                         )
                       }
                       onChange={(e) => {
-                        handleInputChange(e, recordIndex, key);
+                        handleInputChange(
+                          e,
+                          recordIndex,
+                          field_data.column_name
+                        );
                       }}
                     />
                   </td>
