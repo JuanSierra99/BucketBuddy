@@ -71,7 +71,7 @@ export function HomePage() {
           onClick={async () => {
             const apiUrl = `${serverUrl}/api/deleteTable`;
             const json = {
-              table_name: selectedTable,
+              table_name: selectedTable.table_name,
             };
             await Post(apiUrl, json);
             getTables();
