@@ -26,10 +26,10 @@ export default function Table({ selectedTable }) {
   // Make a Post request to add a new row to the table. Refreshes table to show new row
   const addRow = async () => {
     const apiUrl = `${serverUrl}/api/add-row`;
-    const json = { tableName: selectedTable };
+    const json = { tableName: selectedTable.table_name };
     const response = await Post(apiUrl, json); //requests api endpoint to create new row. must await so that useEffect() or getRows() has updated info ?
     if (response) {
-      getRows(selectedTable);
+      getRows(selectedTable.table_name);
     }
   };
 
@@ -37,12 +37,12 @@ export default function Table({ selectedTable }) {
   const addField = async () => {
     const apiUrl = `${serverUrl}/api/add-column`;
     const json = {
-      tableName: selectedTable,
+      tableName: selectedTable.table_name,
       columnName: dataType,
       dataType,
     };
     await Post(apiUrl, json); //requests api endpoint to alter table.
-    getFields(selectedTable);
+    getFields(selectedTable.table_name);
   };
 
   // Mapping from SQL data types to corresponding JavaScript input types for rendering our table cells.
@@ -56,12 +56,12 @@ export default function Table({ selectedTable }) {
 
   // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
   useEffect(() => {
-    const table_name = selectedTable;
+    const table_name = selectedTable.table_name;
     if (table_name) {
       getRows(table_name);
       getFields(table_name);
     }
-  }, [selectedTable]);
+  }, [selectedTable.table_name]);
 
   // Update the state of the value in a table cell whenever it is changed.
   // Takes the event object (e), index of the row, and the key (column name) as parameters.
@@ -94,7 +94,9 @@ export default function Table({ selectedTable }) {
 
   return (
     <div className="table-container">
-      <h1 className="tableName">{selectedTable}</h1>
+      <h1 style={{ color: selectedTable.table_color }} className="tableName">
+        {selectedTable.table_name}
+      </h1>
       <button className="top-table-button" onClick={addRow}>
         New Entry
       </button>
@@ -146,7 +148,7 @@ export default function Table({ selectedTable }) {
                       value={record[field_data.column_name] || ""}
                       onBlur={(e) =>
                         changeCellValue(
-                          selectedTable,
+                          selectedTable.table_name,
                           e.target.value,
                           record.unique_record_id,
                           field_data.column_name

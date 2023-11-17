@@ -7,7 +7,9 @@ import "./HomePage.css";
 import { NavBar } from "../molecules/NavBar";
 
 export function HomePage() {
-  const [selectedTable, setSelectedTable] = useState("");
+  const [selectedTable, setSelectedTable] = useState([
+    { table_name: "", table_color: "" },
+  ]);
   const [tables, setTables] = useState([]);
   const [newTableName, setNewTableName] = useState("");
   const [tableColor, setTableColor] = useState("orange");
@@ -23,7 +25,7 @@ export function HomePage() {
   useEffect(() => {
     getTables().then((res) => {
       if (res.length > 0) {
-        setSelectedTable(res[0].table_name);
+        setSelectedTable(res[0]);
       }
     });
   }, []); //maybe we want to do something with this when we add new tables ?
@@ -68,7 +70,9 @@ export function HomePage() {
         <button
           onClick={async () => {
             const apiUrl = `${serverUrl}/api/deleteTable`;
-            const json = { table_name: selectedTable, table_color: tableColor };
+            const json = {
+              table_name: selectedTable,
+            };
             await Post(apiUrl, json);
             getTables();
           }}

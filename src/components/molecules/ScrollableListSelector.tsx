@@ -4,7 +4,6 @@ import "./ScrollableListSelector.css";
 // It sets the state of the selected table based on user interaction with the list.
 // Additionally, it includes search functionality to filter the displayed tables.
 export const ScrollableListSelector = (props) => {
-  const tables_array = props.data;
   const [lastSelected, setLastSelected] = useState(null);
   const [searchTableName, setSearchTableName] = useState("");
   return (
@@ -17,7 +16,7 @@ export const ScrollableListSelector = (props) => {
         value={searchTableName}
         onChange={(e) => setSearchTableName(e.target.value)}
       />
-      {tables_array.map((table) => {
+      {props.data.map((table) => {
         // Only return tables that contains value in search bar
         if (
           table.table_name
@@ -28,9 +27,8 @@ export const ScrollableListSelector = (props) => {
             <button
               style={{ color: table.table_color }}
               className="tableNameButton"
-              value={table.table_name}
               onClick={(e) => {
-                props.setState(e.target.value);
+                props.setState(table);
                 setLastSelected(table.table_name);
               }}
             >
