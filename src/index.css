@@ -70,5 +70,6 @@ button:focus-visible {
 
 body {
   margin: 0;
+  background-color: rgb(14, 14, 14);
   /* background-color: green; */
 }
