@@ -4,23 +4,26 @@ import { getJson, Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
 import "./Table.css";
 
+// selectedTable is in the form of {table_name: string, table_color: string}
 export default function Table({ selectedTable }) {
   // Data for selected table
-  const [rows, setRows] = useState([{}]);
-  const [fields, setFields] = useState([]); // Fields/Columns will have a name, and data type
-  const [dataType, setDataType] = useState("VARCHAR"); // For creating new columns
+  const [rows, setRows] = useState([{}]); // The row data for the selected table
+  const [fields, setFields] = useState([]); // An object representing table fields. Has a name, and data type
+  const [dataType, setDataType] = useState("VARCHAR"); // Used for creating new columns. changes when user wants to select a different data type.
 
+  // Make api request to get rows for the selected table.
   const getRows = async (table_name) => {
     const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
     const json = await getJson(apiUrl); // If request failed, getJson returns null
-    setRows(json ? json : [{ rows }]);
+    setRows(json ? json : [{ rows }]); // update the rows state
   };
 
+  // Make api request to get fields from the selected table.
   const getFields = async (table_name) => {
     const apiUrl = `${serverUrl}/api/table-fields?table_name=${table_name}`;
     const new_fields = await getJson(apiUrl);
     if (new_fields) {
-      setFields(new_fields);
+      setFields(new_fields); //update the fields state
     }
   };
   // Make a Post request to add a new row to the table. Refreshes table to show new row
@@ -117,7 +120,7 @@ export default function Table({ selectedTable }) {
         <option value={"JSON"}>JSON</option>
         <option value={"TIME"}>TIME</option>
       </select>
-      <table>
+      <table style={{ backgroundColor: selectedTable.table_color }}>
         {/*make every key in our table a header*/}
         {fields.map((field_data, index) => {
           return (
