@@ -1,0 +1,113 @@
+.table-container {
+  max-height: 90%;
+  overflow: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* background-color: red; */
+  width: 90%;
+}
+
+.top-table-button {
+  font-size: 13px;
+  font-weight: bold;
+  border: none;
+  color: #c77dff;
+  background-color: transparent;
+  border-left: 1px solid rgb(112, 22, 229);
+  border-right: 1px solid rgb(112, 22, 229);
+}
+
+.top-table-button:hover {
+  color: #ff7900;
+}
+
+/* Style the table itself */
+table {
+  width: 100%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 4px solid #3c096c; /* Light lavender border */
+  background-color: rgb(154, 78, 229);
+  border-radius: 6px;
+}
+
+/* Style the table headers (th elements) */
+th {
+  border: 2px solid #0d0d0d49;
+  padding: 9px;
+  text-align: left;
+}
+
+th input {
+  width: 100%;
+  height: 25px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: left;
+  background-color: transparent;
+  border: none;
+}
+
+/* Style the table rows (tr elements) */
+tr {
+  border: 3px solid #ffffff;
+}
+
+/* Add some hover effect for table rows */
+tr:hover {
+  background-color: #e4ccff; /* Light lavender on hover */
+}
+
+td:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+/* Style the input boxes within the table */
+td input {
+  color: white;
+  width: 100%;
+  text-indent: 8px;
+  height: 22px;
+  background-color: #ffffff00;
+  border: 1px solid #1716161b;
+  outline: none;
+  border-radius: 6px;
+}
+
+.bottom-row-plus-button {
+  background-color: transparent;
+  border: none;
+  font-weight: bold;
+  font-size: 13px;
+  color: rgb(230, 214, 243);
+}
+
+.bottom-row-plus-button:hover {
+  color: #ffffff;
+}
+
+@font-face {
+  font-family: "butter";
+  src: url("./src/assets/Butterfly-ywYKm.otf");
+}
+
+.tableName {
+  font-family: "Times New Roman", Times, serif;
+  text-align: center;
+  margin-bottom: 0;
+  display: block;
+  /* background-color: red; */
+  /* color: rgb(179, 0, 255); */
+  color: #ff7900;
+  padding: 3px;
+}
+
+.tableName:hover {
+  color: #e7e0d9;
+}
+
+.databaseStatus {
+  background-color: rgb(0, 255, 132);
+}
