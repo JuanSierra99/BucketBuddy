@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { getJson, Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
+import "./Table.css";
 
 export default function Table({ selectedTable }) {
   // Data for selected table
@@ -37,7 +38,7 @@ export default function Table({ selectedTable }) {
     const apiUrl = `${serverUrl}/api/add-column`;
     const json = {
       tableName: selectedTable,
-      columnName: "TIME",
+      columnName: dataType,
       dataType,
     };
     await Post(apiUrl, json); //requests api endpoint to alter table.
@@ -92,11 +93,16 @@ export default function Table({ selectedTable }) {
   };
 
   return (
-    <div>
+    <div className="table-container">
       <h1 className="tableName">{selectedTable}</h1>
-      <button onClick={addRow}>New Entry</button>
-      <button onClick={addField}>Add Column</button>
+      <button className="top-table-button" onClick={addRow}>
+        New Entry
+      </button>
+      <button className="top-table-button" onClick={addField}>
+        Add Column
+      </button>
       <select
+        className="top-table-button"
         id="data-type"
         onChange={(e) => {
           setDataType(e.target.value);
@@ -160,8 +166,10 @@ export default function Table({ selectedTable }) {
             </tr>
           );
         })}
+        <button className="bottom-row-plus-button" onClick={addRow}>
+          + Row
+        </button>
       </table>
-      <button onClick={addRow}>+</button>
     </div>
   );
 }
