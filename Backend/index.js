@@ -125,6 +125,7 @@ app.post(
       // Get the name of table from the request body
       const tableName = request.body.table_name;
       const username = request.user.username;
+      const tableColor = request.body.table_color;
       // Ensure that the given table name is defined
       if (!tableName) {
         console.log("Table name is required");
@@ -135,6 +136,10 @@ app.post(
         console.log("Invalid table name");
         return response.status(400).json({ error: "Invalid table name" });
       }
+      if (!tableColor) {
+        console.log("Invalid table color");
+        return response.status(400).json({ error: "Invalid table color" });
+      }
       const uniqueId = uuid.v4();
       // Using client class's transaction feature to make sure either both querys execute, or none execute
       // Keep in mind the query's still executes, so order still matters. If one fails, everything is reverted.
@@ -142,7 +147,7 @@ app.post(
       client.query("BEGIN");
       const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name VARCHAR)`;
       await client.query(createTableQuery); // Execute the SQL query to create the table
-      const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name) VALUES ('${uniqueId}', '${username}', '${tableName}')`;
+      const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${tableName}', '${tableColor}')`;
       await client.query(update_userTables_query);
       await client.query("COMMIT");
       console.log(`Table "${tableName}" created successfully`); // Log success message
@@ -216,6 +221,7 @@ app.post(
         console.log("Field name is required");
         return response.status(400).json({ error: "Field name is required" });
       }
+
       if (!newCellValue) {
         console.log("New cell value is required");
         return response
@@ -312,19 +318,17 @@ app.get(
     const username = request.user.username; // get username that was in jwt from request object
     try {
       // Execute the SQL query to retrieve the table names for a specific user
-      query = `select table_name from user_tables where username='${username}'`;
+      query = `select table_name, table_color from user_tables where username='${username}'`;
       const json = await client.query(
         query
         // "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
       );
       // Use json to make an array of table names
-      const table_names = json.rows.map((row) => {
-        return row.table_name;
-      });
+      const table_data = json.rows;
       // Log the data being sent for debugging
-      console.log("Sending table names: ", table_names);
+      console.log("Sending table names: ", table_data);
       // Send an HTTP response with an object containing the array of table names in the response body
-      return response.status(200).json({ table_names: table_names });
+      return response.status(200).json({ table_data: table_data });
     } catch (error) {
       console.log("Error @/api/all-tables: ", error.message);
       return response.status(500).json({ error: "Internal Server Error" });
