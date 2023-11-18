@@ -2,7 +2,7 @@ import "./FloatingInput.css";
 
 function FloatingInput(props) {
   return (
-    <>
+    <div className="floating-input-container">
       <input
         className="input-boxes"
         type={props.type ? props.type : "text"}
@@ -10,8 +10,10 @@ function FloatingInput(props) {
         id={props.id}
         name={props.name}
       />
-      <label for={props.id}>{props.value ? props.value : "input"}</label>
-    </>
+      <label className="floating-label" for={props.id}>
+        {props.value ? props.value : "input"}
+      </label>
+    </div>
   );
 }
 
