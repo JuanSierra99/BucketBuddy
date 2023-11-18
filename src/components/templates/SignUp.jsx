@@ -6,14 +6,7 @@ import { serverUrl } from "../../config";
 
 function SignUp() {
   return (
-    <body
-      style={{
-        backgroundImage:
-          'URL("https://static.vecteezy.com/system/resources/previews/010/527/184/original/liquid-flow-purple-purple-3d-neon-lava-lamp-geometric-background-for-banner-card-ui-design-or-wallpaper-gradient-mesh-bubble-in-the-shape-of-a-wave-drop-fluid-colorful-3d-tubes-free-vector.jpg")',
-        backgroundSize: "cover",
-        height: "100vh",
-      }}
-    >
+    <div className="sign-in-up-page">
       <NavBar
         navItem={
           <a href="/sign-in" className="navlink-signin">
@@ -44,7 +37,7 @@ function SignUp() {
           <input className="submit-form-button" type="submit" value="sign up" />
         </form>
       </div>
-    </body>
+    </div>
   );
 }
 
