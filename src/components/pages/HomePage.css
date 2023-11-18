@@ -1,14 +1,15 @@
 .homepage {
   top: 35px;
   position: relative;
-  background-color: rgb(19, 18, 18);
+  background-color: rgb(36, 36, 36);
   padding: 3px;
   height: 100vh;
+  width: fit-content - 15%;
 }
 
 .sidebar {
   position: absolute;
-  background-color: rgba(47, 43, 43, 0.152);
+  background-color: rgb(28, 27, 27);
   width: 15%;
   height: 100%;
 }
@@ -21,31 +22,8 @@
   /* background-color: red; */
 }
 
-.create-table-button {
-  background-color: blueviolet;
-  font-size: 12px;
-  font-weight: bold;
-  text-align: center;
-  width: 100%;
-  padding: 8px;
-  margin: 0;
-  box-sizing: border-box;
-  border-style: none;
-}
-
-.create-table-button:hover {
-  background-color: #ff7900;
-}
-
-.table-section {
-  /* background-color: red; */
-  height: 100%;
-  margin-left: 15%;
-  overflow: scroll;
-}
-
 .create-table-input {
-  color: #ff7900;
+  color: rgb(216, 158, 254);
   outline: none;
   text-align: center;
   height: 30px;
@@ -55,4 +33,37 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+.create-table-color {
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  border: none;
+  background-color: rgb(35, 35, 30);
+}
+
+.create-table-button {
+  color: #ffffff;
+  text-shadow: 0px 0px 2px rgb(0, 0, 0);
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  padding: 8px;
+  margin: 0;
+  box-sizing: border-box;
+  border-style: none;
+  border-radius: 2px;
+}
+
+/* .create-table-button:hover {
+  background-color: #ff7900;
+} */
+
+.table-section {
+  /* background-color: red; */
+  height: 100%;
+  margin-left: 15%;
+  overflow: scroll;
 }
