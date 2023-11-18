@@ -7,12 +7,16 @@ import "./HomePage.css";
 import { NavBar } from "../molecules/NavBar";
 
 export function HomePage() {
+  // For the table user currently has selected
   const [selectedTable, setSelectedTable] = useState([
     { table_name: "", table_color: "" },
   ]);
+  // All the tables for the user. updated to Array of objects.
   const [tables, setTables] = useState([]);
+  // The current value in create table input box, for when user wants to create table.
   const [newTableName, setNewTableName] = useState("");
-  const [tableColor, setTableColor] = useState("orange");
+  // For user to assign a table color when creating new table. default color is white
+  const [tableColor, setTableColor] = useState("rgb(100,100,210)");
 
   const getTables = async () => {
     const apiUrl = `${serverUrl}/api/all-tables`;
@@ -44,6 +48,7 @@ export function HomePage() {
             onChange={(e) => setNewTableName(e.target.value)}
           />
           <button
+            style={{ backgroundColor: tableColor }}
             className="create-table-button"
             onClick={async () => {
               const apiUrl = `${serverUrl}/api/new-table`;
