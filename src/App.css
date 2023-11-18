@@ -14,12 +14,13 @@
 }
 
 .form-container {
-  background-color: rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.3);
   border-radius: 5%;
   -webkit-backdrop-filter: blur(22px);
   backdrop-filter: blur(22px);
-  min-width: 20rem;
-  max-width: 25rem;
+  min-width: fit-content;
+  max-width: 50%;
   width: 35vw;
   height: fit-content;
   margin-left: auto;
