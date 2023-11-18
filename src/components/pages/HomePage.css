@@ -3,7 +3,7 @@
   top: 3rem;
   /* background-color: rgb(255, 255, 255); */
   height: 95vh;
-  width: 85wv;
+  width: 100vw;
   overflow: hidden;
 }
 
@@ -61,6 +61,6 @@
   left: 20%;
   background-color: rgb(39, 37, 37);
   /* background-color: red; */
-  width: 85%;
+  width: 80%;
   height: 100%;
 }

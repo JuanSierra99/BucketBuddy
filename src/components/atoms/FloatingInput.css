@@ -1,3 +1,9 @@
+.floating-input-container {
+  font-size: 1em;
+  position: relative;
+  /* background-color: red; */
+}
+
 .input-boxes {
   background-color: rgba(0, 0, 0, 0.5);
   color: rgb(255, 255, 255);
@@ -5,12 +11,11 @@
   border-style: solid;
   border-radius: 15px;
   border-color: #a99a9a2f;
-  border-width: 2.5px;
-  padding: 7px;
-  margin-bottom: 2em;
+  padding: 0.5em;
   width: 100%;
-  box-sizing: border-box; /*so that input box doestn extend past its container */
-  /* but why does 100% go past border box even with no padding ? */
+  height: 2.5em;
+  margin-bottom: 8%;
+  box-sizing: border-box; /*so that input box does not extend past its container */
 }
 
 .input-boxes::placeholder {
@@ -19,19 +24,17 @@
 
 input:focus + label,
 input:not(:placeholder-shown) + label {
-  transform: translateY(-4.5em);
+  transform: translateY(-110%);
   color: #ffffff;
   font-size: 1rem;
 }
-label {
-  display: block; /* do i need this ?*/
+.floating-label {
+  top: 8%;
   position: absolute;
+  left: 2%;
   color: white;
   font-family: sans-serif;
-  font-size: 0.9rem;
-  padding-left: 6px;
-  transform: translateY(-3.2em);
-  -webkit-transform: translateY(-3.2em);
+  font-size: 1rem;
   transform-origin: 0 0;
   user-select: none;
   cursor: text;
