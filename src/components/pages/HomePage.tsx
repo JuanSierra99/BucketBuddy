@@ -8,9 +8,10 @@ import { NavBar } from "../molecules/NavBar";
 
 export function HomePage() {
   // For the table user currently has selected
-  const [selectedTable, setSelectedTable] = useState([
-    { table_name: "", table_color: "" },
-  ]);
+  const [selectedTable, setSelectedTable] = useState({
+    table_name: "",
+    table_color: "",
+  });
   // All the tables for the user. updated to Array of objects.
   const [tables, setTables] = useState([]);
   // The current value in create table input box, for when user wants to create table.
@@ -42,22 +43,35 @@ export function HomePage() {
           <input
             className="create-table-input"
             type="text"
-            id="createTableName"
+            id="create-table-input"
             placeholder="new table name"
             value={newTableName}
             onChange={(e) => setNewTableName(e.target.value)}
           />
+          <input
+            className="create-table-color"
+            id="create-table-color"
+            type="color"
+            onChange={(e) => {
+              setTableColor(e.target.value);
+            }}
+          ></input>
           <button
             style={{ backgroundColor: tableColor }}
+            id="create-table-button"
             className="create-table-button"
             onClick={async () => {
-              const apiUrl = `${serverUrl}/api/new-table`;
-              const json = {
-                table_name: newTableName,
-                table_color: tableColor,
-              };
-              await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
-              await getTables(); //will request api endpoint to send current tables in db, then updates tables state
+              try {
+                const apiUrl = `${serverUrl}/api/new-table`;
+                const json = {
+                  table_name: newTableName,
+                  table_color: tableColor,
+                };
+                await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+                await getTables(); //will request api endpoint to send current tables in db, then updates tables state
+              } catch (error) {
+                console.error("Error creating table:", error);
+              }
             }}
           >
             Create new table
@@ -66,25 +80,25 @@ export function HomePage() {
         <ScrollableListSelector setState={setSelectedTable} data={tables} />
       </div>
       <div className="table-section">
-        <input
-          type="color"
-          onChange={(e) => {
-            setTableColor(e.target.value);
-          }}
-        ></input>
+        <Table selectedTable={selectedTable} />
         <button
+          style={{
+            backgroundColor: "red",
+            fontWeight: "bold",
+            fontSize: "16px",
+          }}
           onClick={async () => {
             const apiUrl = `${serverUrl}/api/deleteTable`;
             const json = {
               table_name: selectedTable.table_name,
             };
             await Post(apiUrl, json);
-            getTables();
+            await getTables();
+            tables[0] && setSelectedTable(tables[0]);
           }}
         >
-          Delete table
+          x
         </button>
-        <Table selectedTable={selectedTable} />
         <p className="databaseStatus">Database status</p>
       </div>
     </div>
