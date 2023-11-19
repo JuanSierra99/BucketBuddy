@@ -88,16 +88,29 @@ export const InputBox = ({
       );
     case "money":
       return (
-        <div style={{ position: "relative" }}>
-          <label htmlFor="money" style={{ display: "inline", color: "white" }}>
+        <div
+          style={{
+            display: "flex",
+            position: "relative",
+            // backgroundColor: "blue",
+          }}
+        >
+          <label
+            htmlFor="money"
+            style={{
+              color: "white",
+              position: "relative",
+              fontSize: "1em",
+              // backgroundColor: "green",
+              top: "1px",
+            }}
+          >
             $
           </label>
           <input
             style={{
-              display: "inline",
-              width: "98%",
-              position: "absolute",
-              right: "0",
+              fontSize: "1em",
+              // position: "absolute",
             }}
             name="money"
             type={"number"}
