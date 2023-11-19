@@ -7,6 +7,11 @@ import "./HomePage.css";
 import { NavBar } from "../molecules/NavBar";
 
 export function HomePage() {
+  // Function to toggle the sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const toggleSideBarVisibility = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
   // For the table user currently has selected
   const [selectedTable, setSelectedTable] = useState({
     table_name: "",
@@ -38,7 +43,10 @@ export function HomePage() {
   return (
     <div className="homepage">
       <NavBar></NavBar>
-      <div className="sidebar">
+      <div
+        className={`sidebar ${!isSidebarVisible && "sidebar-hidden"}`}
+        id="sidebar"
+      >
         <div className="create-table-container">
           <input
             className="create-table-input"
@@ -79,7 +87,12 @@ export function HomePage() {
         </div>
         <ScrollableListSelector setState={setSelectedTable} data={tables} />
       </div>
-      <div className="table-section">
+      <div
+        className={`table-section ${
+          !isSidebarVisible && "table-section-no-sidebar"
+        }`}
+      >
+        <button onClick={toggleSideBarVisibility}>Sidebar</button>
         <Table selectedTable={selectedTable} />
         <button
           style={{
