@@ -88,6 +88,7 @@ export default function Table({ selectedTable }) {
         <option value={"DATE"}>Date</option>
         <option value={"JSON"}>JSON</option>
         <option value={"TIME"}>TIME</option>
+        <option value={"MONEY"}>MONEY</option>
       </select>
       <table style={{ backgroundColor: selectedTable.table_color }}>
         {/*make every key in our table a header*/}
