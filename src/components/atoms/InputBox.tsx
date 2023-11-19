@@ -37,6 +37,7 @@ export const InputBox = ({
     boolean: "checkbox",
     date: "date",
     "time without time zone": "Time",
+    money: "money",
   };
   switch (sql_to_js_types[field_data.data_type]) {
     case "text":
@@ -79,6 +80,45 @@ export const InputBox = ({
                 selectedTable.table_name,
                 e.target.checked ? "true" : "false", // has to be sent as string
                 record.unique_record_id,
+                field_data.column_name
+              );
+            }}
+          />
+        </div>
+      );
+    case "money":
+      return (
+        <div style={{ position: "relative" }}>
+          <label htmlFor="money" style={{ display: "inline", color: "white" }}>
+            $
+          </label>
+          <input
+            style={{
+              display: "inline",
+              width: "98%",
+              position: "absolute",
+              right: "0",
+            }}
+            name="money"
+            type={"number"}
+            step=".25"
+            value={
+              (record[field_data.column_name] &&
+                parseFloat(record[field_data.column_name].replace("$", ""))) ||
+              ""
+            }
+            onBlur={(e) =>
+              changeCellValue(
+                selectedTable.table_name,
+                e.target.value,
+                record.unique_record_id,
+                field_data.column_name
+              )
+            }
+            onChange={(e) => {
+              handleInputChange(
+                e.target.value,
+                recordIndex,
                 field_data.column_name
               );
             }}
