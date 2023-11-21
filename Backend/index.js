@@ -142,6 +142,8 @@ app.post(
       await client.query(createTableQuery); // Execute the SQL query to create the table
       const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${tableName}', '${tableColor}')`;
       await client.query(update_userTables_query);
+      const addEmptyRecordQuery = `INSERT INTO "${uniqueId}" DEFAULT VALUES`;
+      await client.query(addEmptyRecordQuery);
       await client.query("COMMIT");
       console.log(`Table "${tableName}" created successfully`); // Log success message
       // Send an HTTP response with a success message in the response body
