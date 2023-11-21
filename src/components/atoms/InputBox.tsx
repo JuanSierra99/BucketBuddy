@@ -38,9 +38,10 @@ export const InputBox = ({
     date: "date",
     "time without time zone": "Time",
     money: "money",
+    text: "textblock",
   };
   switch (sql_to_js_types[field_data.data_type]) {
-    case "text":
+    case "textblock":
       return (
         <textarea
           rows={1}
