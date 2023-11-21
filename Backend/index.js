@@ -10,14 +10,7 @@ require("dotenv").config();
 // Api server framework
 const app = express();
 // Configure for cross origin requests
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://master--frolicking-salmiakki-5b8181.netlify.app",
-    ],
-  })
-);
+app.use(cors());
 app.use(express.json()); //Needed to parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Needed when we use post in html form
 
@@ -427,7 +420,7 @@ app.post(
   }
 );
 
-app.post("/register", async (request, response) => {
+app.post("/api/register", async (request, response) => {
   try {
     const { username, password } = request.body;
     if (!username) {
@@ -453,7 +446,7 @@ app.post("/register", async (request, response) => {
   }
 });
 
-app.post("/login", async (request, response) => {
+app.post("/api/login", async (request, response) => {
   try {
     const username = request.body.username; // Get username from request body
     if (!username) {
