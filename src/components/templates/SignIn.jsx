@@ -8,7 +8,7 @@ import { useState } from "react";
 function SignIn() {
   const handleSubmit = async (event) => {
     event.preventDefault(); // prevent default form submission behavior
-    const apiUrl = `${serverUrl}/login`;
+    const apiUrl = `${serverUrl}/api/login`;
     const user = document.getElementById("username").value; // get value from username input (Change to use React state instead)
     const sendJson = { username: user };
     const response = await Post(apiUrl, sendJson); // post request, wait for json response w/ token (Should we do something if not authenticated ?)

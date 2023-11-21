@@ -16,7 +16,7 @@ function SignUp() {
       ></NavBar>
       <img src="/buddy.png" className="buddy-image" />
       <div className="form-container">
-        <form method="Post" action={`${serverUrl}/register`}>
+        <form method="Post" action={`${serverUrl}/api/register`}>
           <FloatingInput
             value="username"
             type="text"
