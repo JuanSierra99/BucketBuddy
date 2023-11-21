@@ -43,10 +43,7 @@ export function HomePage() {
   return (
     <div className="homepage">
       <NavBar></NavBar>
-      <div
-        className={`sidebar ${!isSidebarVisible && "sidebar-hidden"}`}
-        id="sidebar"
-      >
+      <div className={"sidebar"} id="sidebar">
         <div className="create-table-container">
           <input
             className="create-table-input"
@@ -92,7 +89,12 @@ export function HomePage() {
           !isSidebarVisible && "table-section-no-sidebar"
         }`}
       >
-        <button onClick={toggleSideBarVisibility}>Sidebar</button>
+        <button
+          onClick={toggleSideBarVisibility}
+          className={`sidebar-toggle ${isSidebarVisible && "sidebar-hidden"}`}
+        >
+          =
+        </button>
         <Table selectedTable={selectedTable} />
         <button
           style={{

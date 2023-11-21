@@ -8,6 +8,7 @@
 }
 
 .sidebar {
+  z-index: 1;
   position: fixed;
   top: 3rem;
   left: 0;
@@ -15,11 +16,34 @@
   background-color: rgb(28, 27, 27);
   /* background-color: brown; */
   width: 20%;
-  transition: transform .2s ease-out;
+}
+
+.sidebar-toggle{
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 2em;
+  transition: transform .15s ease-in;
 }
 
 .sidebar-hidden{
-  transform: translateX(-100%);
+  transform: rotate(90deg);
+}
+
+.table-section {
+  z-index: 2;
+  position: relative;
+  left: 20%;
+  background-color: rgb(39, 37, 37);
+  /* background-color: red; */
+  width: 80%;
+  height: 100%;
+  transition: width .15s linear, left .15s linear;
+}
+
+.table-section-no-sidebar{
+  width: 100%;
+  left: 0;
 }
 
 
@@ -62,17 +86,3 @@
   border-radius: 3px;
 }
 
-.table-section {
-  position: relative;
-  left: 20%;
-  background-color: rgb(39, 37, 37);
-  /* background-color: red; */
-  width: 80%;
-  height: 100%;
-  transition: width .5s ease, left .5s ease;
-}
-
-.table-section-no-sidebar{
-  width: 100%;
-  left: 0;
-}
