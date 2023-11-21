@@ -82,13 +82,14 @@ export default function Table({ selectedTable }) {
           setDataType(e.target.value);
         }}
       >
-        <option value={"VARCHAR"}>Text</option>
+        <option value={"VARCHAR"}>VarChar</option>
         <option value={"INT"}>Number</option>
         <option value={"BOOL"}>Boolean</option>
         <option value={"DATE"}>Date</option>
         <option value={"JSON"}>JSON</option>
         <option value={"TIME"}>TIME</option>
         <option value={"MONEY"}>MONEY</option>
+        <option value={"TEXT"}>TEXTBLOCK</option>
       </select>
       <table style={{ backgroundColor: selectedTable.table_color }}>
         {/*make every key in our table a header*/}
