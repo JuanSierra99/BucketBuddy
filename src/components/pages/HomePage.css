@@ -20,14 +20,14 @@
 
 .sidebar-toggle{
   background-color: transparent;
-  color: white;
+  color: rgb(210, 190, 247);
   border: none;
   font-size: 2em;
   transition: transform .15s ease-in;
 }
 
 .sidebar-hidden{
-  transform: rotate(90deg);
+  transform: rotate(45deg);
 }
 
 .table-section {
