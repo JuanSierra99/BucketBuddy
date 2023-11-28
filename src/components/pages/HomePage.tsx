@@ -53,6 +53,14 @@ export function HomePage() {
             value={newTableName}
             onChange={(e) => setNewTableName(e.target.value)}
           />
+          <label
+            htmlFor="create-table-color"
+            style={{
+              color: "white",
+            }}
+          >
+            Color
+          </label>
           <input
             className="create-table-color"
             id="create-table-color"
@@ -72,7 +80,11 @@ export function HomePage() {
                   table_name: newTableName,
                   table_color: tableColor,
                 };
-                await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+                const PostResponse = await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+                if (PostResponse) {
+                  //Clear user input field if success
+                  setNewTableName("");
+                }
                 await getTables(); //will request api endpoint to send current tables in db, then updates tables state
               } catch (error) {
                 console.error("Error creating table:", error);
@@ -93,7 +105,7 @@ export function HomePage() {
           onClick={toggleSideBarVisibility}
           className={`sidebar-toggle ${isSidebarVisible && "sidebar-hidden"}`}
         >
-          =
+          +
         </button>
         <Table selectedTable={selectedTable} />
         <button
