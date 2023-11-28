@@ -11,7 +11,7 @@ export default function Table({ selectedTable }) {
   const [rows, setRows] = useState([{}]); // The row data for the selected table
   const [fields, setFields] = useState([]); // An object representing table fields. Has a name, and data type
   const [dataType, setDataType] = useState("VARCHAR"); // Used for creating new columns. changes when user wants to select a different data type.
-  const [filters, setFilters] = useState([]); // Filter functions applied from each field, that filter rows shown
+  const [filterFunctions, setFilters] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
   const [newFieldName, setNewFieldName] = useState("");
 
   // Make api request to get rows for the selected table.
@@ -61,14 +61,25 @@ export default function Table({ selectedTable }) {
       console.log("Failed to add new column ");
     }
   };
+  // [(row) => {field1: row[field1] === true}, field2: (row) => {row[field2] === true}]
 
-  //Apply a filter to the rows, so it's easier for users to see data they want
+  // For checkbox data types, alter the table depending on the checkbox values for the specific checkbox field/column
   const addCheckboxFilter = async (filter, field) => {
+    // if we unapply the filter, remove it from filters object, retrieve fresh unaltered rows, then apply the remaining filters
+    if (filter === "none") {
+      const removedFilter = { ...filterFunctions }; // copy the object
+      delete removedFilter[field]; // remove the key value pair for the specific field
+      await getRows(selectedTable.table_name); // wait for rows to be refreshed
+      setFilters(removedFilter); // Set new state without the filter
+    }
     if (filter === "true") {
-      setFilters([...filters, (row) => row[field] === true]);
+      setFilters({ ...filterFunctions, [field]: (row) => row[field] === true });
     }
     if (filter === "false") {
-      setFilters([...filters, (row) => row[field] === false]);
+      setFilters({
+        ...filterFunctions,
+        [field]: (row) => row[field] === false,
+      });
     }
   };
 
@@ -78,17 +89,21 @@ export default function Table({ selectedTable }) {
     if (table_name) {
       getRows(table_name); // get tables rows
       getFields(table_name); // get tables fields
-      setFilters([]); // unapply all filters
+      setFilters([]); // unapply all filters when switching tables
     }
   }, [selectedTable.table_name]);
 
   useEffect(() => {
-    // apply each filter to rows state
-    const filteredRows = filters.reduce((accumulatedRows, currentFilter) => {
-      return accumulatedRows.filter(currentFilter); // same as rows.filter((row) => some filter condition)
-    }, rows);
-    setRows(filteredRows);
-  }, [filters]);
+    // For every filter applied by our fields (by providing filter function), use filter on the rows state
+    // filterdFunctions is an object, where key is the field, and value is the function to be applied.
+    const filteredRows = Object.values(filterFunctions).reduce(
+      (accumulatedRows, currentFilter) => {
+        return accumulatedRows.filter(currentFilter); // same as rows.filter((row) => some filter condition)
+      },
+      [...rows]
+    );
+    setRows(filteredRows); // set state using rows with all filters applied
+  }, [filterFunctions]);
 
   const changeField = (tableName, currentFieldName, newFieldName) => {
     const apiUrl = `${serverUrl}/api/change-field`;
