@@ -62,7 +62,7 @@ app.get(
         return response.status(400).json({ Error: "Invalid table name " });
       }
       const table_id = await getTableId(username, table_name);
-      const table_query = `SELECT * FROM "${table_id}"`;
+      const table_query = `SELECT * FROM "${table_id}" ORDER BY unique_record_id DESC`;
       // Execute the SQL query to get the specified table's rows
       const table_result = await client.query(table_query);
       const rows = table_result.rows; // send every row for the requested table
@@ -142,7 +142,7 @@ app.post(
       await client.query(createTableQuery); // Execute the SQL query to create the table
       const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${tableName}', '${tableColor}')`;
       await client.query(update_userTables_query);
-      const addEmptyRecordQuery = `INSERT INTO "${uniqueId}" DEFAULT VALUES`;
+      const addEmptyRecordQuery = `INSERT INTO "${uniqueId}" DEFAULT VALUES`; // I want table to have one empty row by default
       await client.query(addEmptyRecordQuery);
       await client.query("COMMIT");
       console.log(`Table "${tableName}" created successfully`); // Log success message
