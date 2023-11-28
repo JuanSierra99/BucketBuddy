@@ -14,6 +14,28 @@ export default function Table({ selectedTable }) {
   const [filterFunctions, setFilters] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
   const [newFieldName, setNewFieldName] = useState("");
 
+  // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
+  useEffect(() => {
+    const table_name = selectedTable.table_name;
+    if (table_name) {
+      getRows(table_name); // get tables rows
+      getFields(table_name); // get tables fields
+      setFilters([]); // unapply all filters when switching tables
+    }
+  }, [selectedTable.table_name]);
+
+  useEffect(() => {
+    // For every filter applied by our fields (by providing filter function), use filter on the rows state
+    // filterdFunctions is an object, where key is the field, and value is the function to be applied.
+    const filteredRows = Object.values(filterFunctions).reduce(
+      (accumulatedRows, currentFilter) => {
+        return accumulatedRows.filter(currentFilter); // same as rows.filter((row) => some filter condition)
+      },
+      [...rows]
+    );
+    setRows(filteredRows); // set state using rows with all filters applied
+  }, [filterFunctions]);
+
   // Make api request to get rows for the selected table.
   const getRows = async (table_name) => {
     const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
@@ -82,28 +104,6 @@ export default function Table({ selectedTable }) {
       });
     }
   };
-
-  // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
-  useEffect(() => {
-    const table_name = selectedTable.table_name;
-    if (table_name) {
-      getRows(table_name); // get tables rows
-      getFields(table_name); // get tables fields
-      setFilters([]); // unapply all filters when switching tables
-    }
-  }, [selectedTable.table_name]);
-
-  useEffect(() => {
-    // For every filter applied by our fields (by providing filter function), use filter on the rows state
-    // filterdFunctions is an object, where key is the field, and value is the function to be applied.
-    const filteredRows = Object.values(filterFunctions).reduce(
-      (accumulatedRows, currentFilter) => {
-        return accumulatedRows.filter(currentFilter); // same as rows.filter((row) => some filter condition)
-      },
-      [...rows]
-    );
-    setRows(filteredRows); // set state using rows with all filters applied
-  }, [filterFunctions]);
 
   const changeField = (tableName, currentFieldName, newFieldName) => {
     const apiUrl = `${serverUrl}/api/change-field`;
