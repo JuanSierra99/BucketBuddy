@@ -1,7 +1,7 @@
 import "./BucketBuddyLink.css";
 function BucketBuddyLink({ link }) {
   return (
-    <a class="top-bar-bucketbuddy" href={link ? link : ""}>
+    <a className="top-bar-bucketbuddy" href={link ? link : ""}>
       Bucket Buddy
     </a>
   );
