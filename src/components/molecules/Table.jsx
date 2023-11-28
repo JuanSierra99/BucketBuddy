@@ -24,8 +24,9 @@ export default function Table({ selectedTable }) {
     }
   }, [selectedTable.table_name]);
 
+  // When a new filter is added, apply it to the rows. This alters the table
   useEffect(() => {
-    // For every filter applied by our fields (by providing filter function), use filter on the rows state
+    // For every filter applied by our fields (by providing filter function), apply the filter to the rows state
     // filterdFunctions is an object, where key is the field, and value is the function to be applied.
     const filteredRows = Object.values(filterFunctions).reduce(
       (accumulatedRows, currentFilter) => {
@@ -46,9 +47,9 @@ export default function Table({ selectedTable }) {
   // Make api request to get fields from the selected table.
   const getFields = async (table_name) => {
     const apiUrl = `${serverUrl}/api/table-fields?table_name=${table_name}`;
-    const new_fields = await getJson(apiUrl);
-    if (new_fields) {
-      setFields(new_fields); //update the fields state
+    const json = await getJson(apiUrl);
+    if (json) {
+      setFields(json); //update the fields state
     }
   };
 
@@ -74,8 +75,8 @@ export default function Table({ selectedTable }) {
       columnName: newFieldName,
       dataType,
     };
-    const request = await Post(apiUrl, json); //requests api endpoint to alter table.
-    if (request) {
+    const response = await Post(apiUrl, json); //requests api endpoint to alter table.
+    if (response) {
       //
       setNewFieldName("");
       getFields(selectedTable.table_name);
@@ -83,25 +84,36 @@ export default function Table({ selectedTable }) {
       console.log("Failed to add new column ");
     }
   };
-  // [(row) => {field1: row[field1] === true}, field2: (row) => {row[field2] === true}]
 
   // For checkbox data types, alter the table depending on the checkbox values for the specific checkbox field/column
   const addCheckboxFilter = async (filter, field) => {
-    // if we unapply the filter, remove it from filters object, retrieve fresh unaltered rows, then apply the remaining filters
-    if (filter === "none") {
-      const removedFilter = { ...filterFunctions }; // copy the object
-      delete removedFilter[field]; // remove the key value pair for the specific field
-      await getRows(selectedTable.table_name); // wait for rows to be refreshed
-      setFilters(removedFilter); // Set new state without the filter
-    }
-    if (filter === "true") {
-      setFilters({ ...filterFunctions, [field]: (row) => row[field] === true });
-    }
-    if (filter === "false") {
-      setFilters({
-        ...filterFunctions,
-        [field]: (row) => row[field] === false,
-      });
+    await getRows(selectedTable.table_name); // wait for rows to be refreshed
+    switch (filter) {
+      // if we unapply the filter, remove it from filters object, retrieve fresh unaltered rows, then apply the remaining filters
+      case "none": {
+        const removedFilter = { ...filterFunctions }; // copy the object
+        delete removedFilter[field]; // remove the key value pair for the specific field
+        // await getRows(selectedTable.table_name); // wait for rows to be refreshed
+        setFilters(removedFilter); // Set new state without the filter
+        break;
+      }
+      case "true": {
+        setFilters({
+          ...filterFunctions,
+          [field]: (row) => row[field] === true, // key value to add. replaces old filter for the field if exists
+        });
+        break;
+      }
+      case "false": {
+        setFilters({
+          ...filterFunctions,
+          [field]: (row) => row[field] === false, // key value to add. replaces old filter for the field if exists
+        });
+        break;
+      }
+      default: {
+        break; ///uhhh what do you want me to do, i did not account for this...
+      }
     }
   };
 
