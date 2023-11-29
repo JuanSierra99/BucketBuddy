@@ -63,6 +63,35 @@ export const InputBox = ({
           }}
         />
       );
+    case "text":
+      return (
+        <select
+          className="rating-input"
+          value={record[field_data.column_name]}
+          onBlur={(e) =>
+            changeCellValue(
+              selectedTable.table_name,
+              e.target.value,
+              record.unique_record_id,
+              field_data.column_name
+            )
+          }
+          onChange={(e) => {
+            handleInputChange(
+              e.target.value,
+              recordIndex,
+              field_data.column_name
+            );
+          }}
+        >
+          <option value={"☆"}>☆</option>
+          <option value={"⭐️"}>⭐️</option>
+          <option value={"⭐️⭐️"}>⭐️⭐️</option>
+          <option value={"⭐️⭐️⭐️"}>⭐️⭐️⭐️</option>
+          <option value={"⭐️⭐️⭐️⭐️"}>⭐️⭐️⭐️⭐️</option>
+          <option value={"⭐️⭐️⭐️⭐️⭐️"}>⭐️⭐️⭐️⭐️⭐️</option>
+        </select>
+      );
     case "checkbox":
       return (
         <div>
@@ -70,7 +99,6 @@ export const InputBox = ({
             type="checkbox"
             name="checker"
             checked={record[field_data.column_name]} // box is checked if true
-            // value={record[field_data.column_name]}
             onChange={(e) => {
               handleInputChange(
                 e.target.checked,
