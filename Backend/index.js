@@ -138,7 +138,7 @@ app.post(
       // Keep in mind the query's still executes, so order still matters. If one fails, everything is reverted.
       // https://node-postgres.com/features/transactions
       client.query("BEGIN");
-      const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name VARCHAR)`;
+      const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name text)`;
       await client.query(createTableQuery); // Execute the SQL query to create the table
       const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${tableName}', '${tableColor}')`;
       await client.query(update_userTables_query);
@@ -365,7 +365,7 @@ app.post(
       const tableId = await getTableId(username, tableName);
       // Execute the SQL query to add a column to the specified table
       await client.query(
-        `ALTER TABLE "${tableId}" ADD "${columnName}" ${dataType}`
+        `ALTER TABLE "${tableId}" ADD "${columnName.toLowerCase()}" ${dataType}`
       );
       // Log a success message
       console.log(`Added '${columnName}' ${dataType} Field, to '${tableName}'`);
