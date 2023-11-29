@@ -11,7 +11,7 @@ export default function Table({ selectedTable }) {
   const [rows, setRows] = useState([{}]); // The row data for the selected table
   const [fields, setFields] = useState([]); // An object representing table fields. Has a name, and data type
   const [dataType, setDataType] = useState("VARCHAR"); // Used for creating new columns. changes when user wants to select a different data type.
-  const [filterFunctions, setFilters] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
+  const [filterFunctions, setFilterFunctions] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
   const [newFieldName, setNewFieldName] = useState("");
 
   // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
@@ -20,7 +20,7 @@ export default function Table({ selectedTable }) {
     if (table_name) {
       getRows(table_name); // get tables rows
       getFields(table_name); // get tables fields
-      setFilters([]); // unapply all filters when switching tables
+      setFilterFunctions([]); // unapply all filters when switching tables
     }
   }, [selectedTable.table_name]);
 
@@ -65,14 +65,20 @@ export default function Table({ selectedTable }) {
 
   // Make a Post request to add a new field/column to the table. Refreshes table to show new column
   const addField = async () => {
-    if (fields.includes(newFieldName)) {
-      console.log("Column Name already exists !"); // Make sure the column name is unique
+    // Make sure column name does not already exist
+    if (
+      fields.some(
+        (field) =>
+          field.column_name.toLowerCase() === newFieldName.toLowerCase()
+      )
+    ) {
+      console.log("Column name already exists !");
       return;
     }
     const apiUrl = `${serverUrl}/api/add-column`;
     const json = {
       tableName: selectedTable.table_name,
-      columnName: newFieldName,
+      columnName: newFieldName.toLocaleLowerCase(),
       dataType,
     };
     const response = await Post(apiUrl, json); //requests api endpoint to alter table.
@@ -87,25 +93,25 @@ export default function Table({ selectedTable }) {
 
   // For checkbox data types, alter the table depending on the checkbox values for the specific checkbox field/column
   const addCheckboxFilter = async (filter, field) => {
-    await getRows(selectedTable.table_name); // wait for rows to be refreshed
+    await getRows(selectedTable.table_name); // wait for rows to be refreshed. Need this so filters can change/reapply properly
     switch (filter) {
       // if we unapply the filter, remove it from filters object, retrieve fresh unaltered rows, then apply the remaining filters
       case "none": {
         const removedFilter = { ...filterFunctions }; // copy the object
         delete removedFilter[field]; // remove the key value pair for the specific field
         // await getRows(selectedTable.table_name); // wait for rows to be refreshed
-        setFilters(removedFilter); // Set new state without the filter
+        setFilterFunctions(removedFilter); // Set new state without the filter
         break;
       }
       case "true": {
-        setFilters({
+        setFilterFunctions({
           ...filterFunctions,
           [field]: (row) => row[field] === true, // key value to add. replaces old filter for the field if exists
         });
         break;
       }
       case "false": {
-        setFilters({
+        setFilterFunctions({
           ...filterFunctions,
           [field]: (row) => row[field] === false, // key value to add. replaces old filter for the field if exists
         });
@@ -113,6 +119,63 @@ export default function Table({ selectedTable }) {
       }
       default: {
         break; ///uhhh what do you want me to do, i did not account for this...
+      }
+    }
+  };
+
+  const addRatingFilter = async (filter, field) => {
+    await getRows(selectedTable.table_name);
+    switch (filter) {
+      case "none": {
+        const removedFilter = { ...filterFunctions };
+        delete removedFilter[field];
+        setFilterFunctions(removedFilter);
+        break;
+      }
+      case "☆": {
+        setFilterFunctions({
+          ...filterFunctions,
+          [field]: (row) => row[field] === "☆",
+        });
+        break;
+      }
+      case "⭐️": {
+        setFilterFunctions({
+          ...filterFunctions,
+          [field]: (row) => row[field] === "⭐️",
+        });
+        break;
+      }
+      case "⭐️⭐️": {
+        setFilterFunctions({
+          ...filterFunctions,
+          [field]: (row) => row[field] === "⭐️⭐️",
+        });
+        break;
+      }
+      case "⭐️⭐️⭐️": {
+        setFilterFunctions({
+          ...filterFunctions,
+          [field]: (row) => row[field] === "⭐️⭐️⭐️",
+        });
+        break;
+      }
+      case "⭐️⭐️⭐️⭐️": {
+        setFilterFunctions({
+          ...filterFunctions,
+          [field]: (row) => row[field] === "⭐️⭐️⭐️⭐️",
+        });
+        break;
+      }
+      case "⭐️⭐️⭐️⭐️⭐️": {
+        setFilterFunctions({
+          ...filterFunctions,
+          [field]: (row) => row[field] === "⭐️⭐️⭐️⭐️⭐️",
+        });
+        break;
+      }
+      default: {
+        break;
       }
     }
   };
@@ -148,18 +211,21 @@ export default function Table({ selectedTable }) {
           setDataType(e.target.value);
         }}
       >
-        <option value={"VARCHAR"}>Text Line</option>
+        <option value={"VARCHAR"}>Rating</option>
         <option value={"TEXT"}>Text Block</option>
         <option value={"INT"}>Number</option>
         <option value={"MONEY"}>Money</option>
         <option value={"BOOL"}>CheckBox</option>
         <option value={"DATE"}>Date</option>
-        {/* <option value={"JSON"}>JSON</option> */}
         <option value={"TIME"}>Time</option>
+        {/* <option value={"JSON"}>JSON</option> */}
       </select>
       <button
         className="top-table-button"
-        onClick={() => getRows(selectedTable.table_name)}
+        onClick={() => {
+          getRows(selectedTable.table_name);
+          setFilterFunctions({});
+        }}
       >
         undo filters
       </button>
@@ -168,7 +234,7 @@ export default function Table({ selectedTable }) {
         {fields.map((field_data, index) => {
           return (
             <th>
-              {/* <input
+              <input
                 type="text"
                 value={field_data.column_name}
                 onChange={(e) => {
@@ -177,11 +243,11 @@ export default function Table({ selectedTable }) {
                   setFields(newFields);
                 }}
                 onBlur={(e) => {}}
-              ></input> */}
-              <p onBlur={(e) => {}}>{field_data.column_name}</p>
+              ></input>
+              {/* <p onBlur={(e) => {}}>{field_data.column_name}</p> */}
               {field_data.data_type === "boolean" && (
                 <select
-                  id="select-filter"
+                  id="checkbox-filter"
                   onChange={async (e) =>
                     await addCheckboxFilter(
                       e.target.value,
@@ -193,6 +259,27 @@ export default function Table({ selectedTable }) {
                   <option value="true">checked</option>
                   <option value="false">unchecked</option>
                 </select>
+              )}
+              {field_data.data_type === "character varying" && (
+                <div>
+                  <select
+                    id="rating-filter"
+                    onChange={async (e) =>
+                      await addRatingFilter(
+                        e.target.value,
+                        field_data.column_name
+                      )
+                    }
+                  >
+                    <option value="none">-</option>
+                    <option value="☆">☆</option>
+                    <option value="⭐️">⭐️</option>
+                    <option value="⭐️⭐️">⭐️⭐️</option>
+                    <option value="⭐️⭐️⭐️">⭐️⭐️⭐️</option>
+                    <option value="⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️</option>
+                    <option value="⭐️⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️⭐️</option>
+                  </select>
+                </div>
               )}
             </th>
           );
