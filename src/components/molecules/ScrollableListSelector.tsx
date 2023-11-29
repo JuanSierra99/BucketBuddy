@@ -17,7 +17,7 @@ export const ScrollableListSelector = (props) => {
         onChange={(e) => setSearchTableName(e.target.value)}
       />
       {props.data.map((table) => {
-        // Only return tables that contains value in search bar
+        // Only show table buttons that contains string input in search bar
         if (
           table.table_name
             .toLowerCase()
@@ -26,6 +26,7 @@ export const ScrollableListSelector = (props) => {
           return (
             <button
               style={{ color: table.table_color }}
+              key={table.table_name} // Each item in a list should have a unique key prop (React wants this for optimized renders)
               className="tableNameButton"
               onClick={(e) => {
                 props.setState(table);
