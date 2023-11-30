@@ -10,13 +10,14 @@ export const ScrollableListSelector = (props) => {
     <div className="scrollable-div">
       <input
         className="search-bar"
-        type="text"
+        type="search"
         id="searchForTable"
         placeholder="Search"
         value={searchTableName}
         onChange={(e) => setSearchTableName(e.target.value)}
       />
       {props.data.map((table) => {
+        // console.log("in ScrollableListSelector", table);
         // Only show table buttons that contains string input in search bar
         if (
           table.table_name
