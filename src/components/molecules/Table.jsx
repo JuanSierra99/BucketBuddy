@@ -25,19 +25,6 @@ export default function Table({ selectedTable }) {
     }
   }, [selectedTable.table_name]);
 
-  // When a new filter is added, apply it to the rows. This alters the table
-  useEffect(() => {
-    // For every filter applied by our fields (by providing filter function), apply the filter to the rows state
-    // filterdFunctions is an object, where key is the field, and value is the function to be applied.
-    const filteredRows = Object.values(filterFunctions).reduce(
-      (accumulatedRows, currentFilter) => {
-        return accumulatedRows.filter(currentFilter); // same as rows.filter((row) => some filter condition)
-      },
-      [...rows]
-    );
-    setRows(filteredRows); // set state using rows with all filters applied
-  }, [filterFunctions]);
-
   // Make api request to get rows for the selected table.
   const getRows = async (table_name) => {
     const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
@@ -94,7 +81,6 @@ export default function Table({ selectedTable }) {
 
   // For checkbox data types, alter the table depending on the checkbox values for the specific checkbox field/column
   const addCheckboxFilter = async (filter, field) => {
-    await getRows(selectedTable.table_name); // wait for rows to be refreshed. Need this so filters can change/reapply properly
     switch (filter) {
       // if we unapply the filter, remove it from filters object, retrieve fresh unaltered rows, then apply the remaining filters
       case "none": {
@@ -105,17 +91,11 @@ export default function Table({ selectedTable }) {
         break;
       }
       case "true": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === true, // key value to add. replaces old filter for the field if exists
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: true });
         break;
       }
       case "false": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === false, // key value to add. replaces old filter for the field if exists
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: false });
         break;
       }
       default: {
@@ -125,7 +105,6 @@ export default function Table({ selectedTable }) {
   };
 
   const addRatingFilter = async (filter, field) => {
-    await getRows(selectedTable.table_name);
     switch (filter) {
       case "none": {
         const removedFilter = { ...filterFunctions };
@@ -134,45 +113,27 @@ export default function Table({ selectedTable }) {
         break;
       }
       case "☆": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === "☆",
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: "☆" });
         break;
       }
       case "⭐️": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === "⭐️",
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: "⭐️" });
         break;
       }
       case "⭐️⭐️": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === "⭐️⭐️",
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️" });
         break;
       }
       case "⭐️⭐️⭐️": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === "⭐️⭐️⭐️",
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️⭐️" });
         break;
       }
       case "⭐️⭐️⭐️⭐️": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === "⭐️⭐️⭐️⭐️",
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️⭐️⭐️" });
         break;
       }
       case "⭐️⭐️⭐️⭐️⭐️": {
-        setFilterFunctions({
-          ...filterFunctions,
-          [field]: (row) => row[field] === "⭐️⭐️⭐️⭐️⭐️",
-        });
+        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️⭐️⭐️⭐️" });
         break;
       }
       default: {
@@ -234,7 +195,6 @@ export default function Table({ selectedTable }) {
       <button
         className="top-table-button"
         onClick={() => {
-          getRows(selectedTable.table_name);
           setFilterFunctions({});
         }}
       >
@@ -299,11 +259,14 @@ export default function Table({ selectedTable }) {
         {rows.map((record, recordIndex) => {
           // console.log(record)
           if (
-            searchTable == "" ||
-            Object.values(record)
-              .toString()
-              .toLowerCase()
-              .includes(searchTable.toLowerCase())
+            (searchTable === "" ||
+              Object.values(record)
+                .toString()
+                .toLowerCase()
+                .includes(searchTable.toLowerCase())) &&
+            Object.entries(filterFunctions).forEach(([field, condition]) => {
+              return record[field].toString() == condition.toString();
+            })
           )
             return (
               <tr>
