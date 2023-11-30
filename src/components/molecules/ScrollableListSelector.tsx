@@ -20,9 +20,7 @@ export const ScrollableListSelector = (props) => {
         // console.log("in ScrollableListSelector", table);
         // Only show table buttons that contains string input in search bar
         if (
-          table.table_name
-            .toLowerCase()
-            .includes(searchTableName.toLocaleLowerCase())
+          table.table_name.toLowerCase().includes(searchTableName.toLowerCase())
         ) {
           return (
             <button
