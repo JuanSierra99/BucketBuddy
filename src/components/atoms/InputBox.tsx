@@ -1,6 +1,11 @@
 import React from "react";
 import { serverUrl } from "../../config";
 import { Post } from "../../../Backend/Requests";
+{
+  /*Note: handleInputChange() and changeDatabaseCellValue are independent. handleInputChange() modifies the state of the table row data that user sees on frontend, 
+  and changeDatabaseCellValue() changes the actual cell in the database. So it does not matter what order they are called in. It's possible for the user to see the table rows change 
+  on frontend, but no actual value was changed in backend */
+}
 export const InputBox = ({
   recordIndex,
   field_data,
@@ -18,7 +23,12 @@ export const InputBox = ({
   };
   // Make a request to the API to update the value in the database after the user has finished changing a cell's value.
   // Takes the table name, new cell value, record ID, and field name as parameters.
-  const changeCellValue = (tableName, newCellValue, RecordId, fieldName) => {
+  const changeDatabaseCellValue = (
+    tableName,
+    newCellValue,
+    RecordId,
+    fieldName
+  ) => {
     const apiUrl = `${serverUrl}/api/change-cell`;
     // Prepare the request payload
     const json = {
@@ -47,7 +57,7 @@ export const InputBox = ({
           rows={1}
           value={record[field_data.column_name] || ""}
           onBlur={(e) =>
-            changeCellValue(
+            changeDatabaseCellValue(
               selectedTable.table_name,
               e.target.value,
               record.unique_record_id,
@@ -68,18 +78,24 @@ export const InputBox = ({
         <select
           className="rating-input"
           value={record[field_data.column_name]}
-          onBlur={(e) =>
-            changeCellValue(
-              selectedTable.table_name,
-              e.target.value,
-              record.unique_record_id,
-              field_data.column_name
-            )
-          }
+          // onBlur={(e) =>
+          //   changeDatabaseCellValue(
+          //     selectedTable.table_name,
+          //     e.target.value,
+          //     record.unique_record_id,
+          //     field_data.column_name
+          //   )
+          // }
           onChange={(e) => {
             handleInputChange(
               e.target.value,
               recordIndex,
+              field_data.column_name
+            );
+            changeDatabaseCellValue(
+              selectedTable.table_name,
+              e.target.value,
+              record.unique_record_id,
               field_data.column_name
             );
           }}
@@ -105,7 +121,7 @@ export const InputBox = ({
                 recordIndex,
                 field_data.column_name
               );
-              changeCellValue(
+              changeDatabaseCellValue(
                 selectedTable.table_name,
                 e.target.checked ? "true" : "false", // has to be sent as string
                 record.unique_record_id,
@@ -150,7 +166,7 @@ export const InputBox = ({
               ""
             }
             onBlur={(e) =>
-              changeCellValue(
+              changeDatabaseCellValue(
                 selectedTable.table_name,
                 e.target.value,
                 record.unique_record_id,
@@ -173,7 +189,7 @@ export const InputBox = ({
           type={sql_to_js_types[field_data.data_type]}
           value={record[field_data.column_name] || ""}
           onBlur={(e) =>
-            changeCellValue(
+            changeDatabaseCellValue(
               selectedTable.table_name,
               e.target.value,
               record.unique_record_id,
