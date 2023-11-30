@@ -86,7 +86,6 @@ export default function Table({ selectedTable }) {
       case "none": {
         const removedFilter = { ...filterFunctions }; // copy the object
         delete removedFilter[field]; // remove the key value pair for the specific field
-        // await getRows(selectedTable.table_name); // wait for rows to be refreshed
         setFilterFunctions(removedFilter); // Set new state without the filter
         break;
       }
@@ -264,8 +263,8 @@ export default function Table({ selectedTable }) {
                 .toString()
                 .toLowerCase()
                 .includes(searchTable.toLowerCase())) &&
-            Object.entries(filterFunctions).forEach(([field, condition]) => {
-              return record[field].toString() == condition.toString();
+            Object.entries(filterFunctions).every(([field, condition]) => {
+              return record[field].toString() === condition.toString();
             })
           )
             return (
