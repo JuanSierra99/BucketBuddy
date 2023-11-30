@@ -13,6 +13,7 @@ export default function Table({ selectedTable }) {
   const [dataType, setDataType] = useState("VARCHAR"); // Used for creating new columns. changes when user wants to select a different data type.
   const [filterFunctions, setFilterFunctions] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
   const [newFieldName, setNewFieldName] = useState("");
+  const [searchTable, setSearchTable] = useState("");
 
   // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
   useEffect(() => {
@@ -191,6 +192,16 @@ export default function Table({ selectedTable }) {
       <h1 style={{ color: selectedTable.table_color }} className="tableName">
         {selectedTable.table_name}
       </h1>
+      <input
+        type="search"
+        id={"table-row-search"}
+        style={{ display: "block" }}
+        value={searchTable}
+        placeholder="Search table"
+        onChange={(e) => {
+          setSearchTable(e.target.value);
+        }}
+      ></input>
       <button className="top-table-button" onClick={addRow}>
         New Entry
       </button>
@@ -286,25 +297,33 @@ export default function Table({ selectedTable }) {
         })}
         {/*for every object in our data set*/}
         {rows.map((record, recordIndex) => {
-          return (
-            <tr>
-              {/*display the value for every key in the object*/}
-              {fields.map((field_data, keyIndex) => {
-                return (
-                  <td>
-                    <InputBox
-                      recordIndex={recordIndex}
-                      field_data={field_data}
-                      selectedTable={selectedTable}
-                      record={record}
-                      rows={rows}
-                      setRows={setRows}
-                    />
-                  </td>
-                );
-              })}
-            </tr>
-          );
+          // console.log(record)
+          if (
+            searchTable == "" ||
+            Object.values(record)
+              .toString()
+              .toLowerCase()
+              .includes(searchTable.toLowerCase())
+          )
+            return (
+              <tr>
+                {/*display the value for every key in the object*/}
+                {fields.map((field_data, keyIndex) => {
+                  return (
+                    <td>
+                      <InputBox
+                        recordIndex={recordIndex}
+                        field_data={field_data}
+                        selectedTable={selectedTable}
+                        record={record}
+                        rows={rows}
+                        setRows={setRows}
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            );
         })}
         <button className="bottom-row-plus-button" onClick={addRow}>
           + Row
