@@ -384,7 +384,7 @@ app.post(
       // console.log(defaultTypes[dataType]);
       const addColumnQuery = `ALTER TABLE "${tableId}" ADD "${columnName.toLowerCase()}" ${dataType} DEFAULT ${
         defaultTypes[dataType]
-      }`;
+      } NOT NULL`;
       await client.query(addColumnQuery);
       // Log a success message
       console.log(`Added '${columnName}' ${dataType} Field, to '${tableName}'`);
