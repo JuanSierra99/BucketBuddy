@@ -138,7 +138,7 @@ app.post(
       // Keep in mind the query's still executes, so order still matters. If one fails, everything is reverted.
       // https://node-postgres.com/features/transactions
       client.query("BEGIN");
-      const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name text)`;
+      const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name text DEFAULT '')`;
       await client.query(createTableQuery); // Execute the SQL query to create the table
       const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${tableName}', '${tableColor}')`;
       await client.query(update_userTables_query);
@@ -364,9 +364,28 @@ app.post(
       }
       const tableId = await getTableId(username, tableName);
       // Execute the SQL query to add a column to the specified table
-      await client.query(
-        `ALTER TABLE "${tableId}" ADD "${columnName.toLowerCase()}" ${dataType}`
-      );
+      const defaultTypes = {
+        VARCHAR: "'☆'",
+        TEXT: "''",
+        INT: 0,
+        MONEY: 0,
+        BOOL: "false",
+        DATE: "'2023-01-01'",
+        TIME: "'00:00:00'",
+      };
+      if (!defaultTypes.hasOwnProperty(dataType)) {
+        console.error(`Invalid data type: ${dataType}`);
+
+        return response
+          .status(400)
+          .json({ error: "Invalid Data Type Recieved" });
+      }
+      // console.log(dataType);
+      // console.log(defaultTypes[dataType]);
+      const addColumnQuery = `ALTER TABLE "${tableId}" ADD "${columnName.toLowerCase()}" ${dataType} DEFAULT ${
+        defaultTypes[dataType]
+      }`;
+      await client.query(addColumnQuery);
       // Log a success message
       console.log(`Added '${columnName}' ${dataType} Field, to '${tableName}'`);
       // Send an HTTP response with a success message in the response body
