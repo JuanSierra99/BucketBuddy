@@ -1,10 +1,10 @@
 .homepage {
-  position: relative;
+  position: fixed;
   top: 3rem;
+  height: fit-content;
   /* background-color: rgb(255, 255, 255); */
-  height: 95vh;
+  /* height: 100%; */
   width: 100vw;
-  overflow: hidden;
 }
 
 .sidebar {
@@ -14,7 +14,7 @@
   left: 0;
   bottom: 0;
   background-color: rgb(28, 27, 27);
-  /* background-color: brown; */
+  /* background-color: transparent; */
   width: 20%;
 }
 
@@ -32,12 +32,13 @@
 
 .table-section {
   z-index: 2;
-  position: relative;
+  position: fixed;
   left: 20%;
   background-color: rgb(39, 37, 37);
-  /* background-color: red; */
   width: 80%;
-  height: 100%;
+  /* background-color: rgb(210, 189, 189); */
+  height: calc(100% - 3rem);
+  overflow: scroll;
   transition: width .15s linear, left .15s linear;
 }
 
@@ -45,7 +46,6 @@
   width: 100%;
   left: 0;
 }
-
 
 .create-table-container {
   box-sizing: border-box;

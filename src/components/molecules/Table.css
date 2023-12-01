@@ -1,16 +1,13 @@
 .table-container {
+  height: auto;
   position: relative;
   left: 0;
-  max-height: 90%;
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: hidden;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  /* background-color: rgba(140, 0, 255, 0); */
-  /* background-color: red; */
-  width: 90%;
-  /* max-width: 90%; */
-  /* How do i center this ? */
+  max-width: 95%;
 }
 
 .top-table-button {
@@ -79,7 +76,7 @@ td input,
 td textarea {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
-  width: 100%;
+  /* width: 100%; */
   text-shadow: 0px 0px 1px rgb(0, 0, 0);
   color: rgb(255, 255, 255);
   background-color: rgba(255, 0, 0, 0);
@@ -92,11 +89,12 @@ td textarea {
 
 td textarea {
   resize: vertical;
+  width: fit-content;
 }
 
-textarea:focus {
+/* textarea:focus {
   height: 4em;
-}
+} */
 
 td input[type="checkbox"] {
   appearance: none;
@@ -109,6 +107,10 @@ td input[type="checkbox"] {
 
 td input[type="checkbox"]:checked {
   background-color: rgb(34, 139, 34);
+}
+
+.rating-input {
+  all: unset;
 }
 
 .bottom-row-plus-button {
