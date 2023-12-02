@@ -4,8 +4,12 @@ import { SignUpLink } from "../atoms/SignUpLink";
 import { Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SignIn() {
+  const [authenticated, setAuthenticated] = useState(false); //If authenticated,
+  const navigation = useNavigate();
+
   const handleSubmit = async (event) => {
     event.preventDefault(); // prevent default form submission behavior
     const apiUrl = `${serverUrl}/api/login`;
@@ -13,6 +17,8 @@ function SignIn() {
     const sendJson = { username: user };
     const response = await Post(apiUrl, sendJson); // post request, wait for json response w/ token (Should we do something if not authenticated ?)
     if (response.token) {
+      // setAuthenticated(true);
+      navigation("/Home");
       localStorage.removeItem("jwtToken");
       localStorage.setItem("jwtToken", response.token); // save the jwt to local storage. Now it can be used to authenticate all our requests
     }
@@ -38,9 +44,9 @@ function SignIn() {
           />
           <input className="submit-form-button" type="submit" value="sign in" />
         </form>
-        <a href="http://www.bing.com" className="forgot-password-link">
+        {/* <a href="http://www.bing.com" className="forgot-password-link">
           Forgot Password?
-        </a>
+        </a> */}
       </div>
     </div>
   );
