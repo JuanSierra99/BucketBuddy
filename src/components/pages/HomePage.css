@@ -5,29 +5,6 @@
   width: 100vw;
 }
 
-.sidebar {
-  z-index: 1;
-  position: fixed;
-  top: 3rem; /*Account for navbar*/
-  left: 0;
-  bottom: 0;
-  background-color: rgb(28, 27, 27);
-  /* background-color: transparent; */
-  width: 15rem;
-}
-
-.sidebar-toggle{
-  background-color: transparent;
-  color: rgb(223, 208, 251);
-  border: none;
-  font-size: 2em;
-  transition: transform .15s ease-in;
-}
-
-.sidebar-hidden{
-  transform: rotate(45deg);
-}
-
 .table-section {
   z-index: 2;
   position: fixed;
@@ -36,50 +13,10 @@
   width: calc(100% - 15rem); /*Account for sidebar*/
   height: calc(100% - 3rem); /*Account for navbar*/
   overflow: scroll;
-  transition: width .15s linear, left .15s linear;
+  transition: width 0.15s linear, left 0.15s linear;
 }
 
-.table-section-no-sidebar{
+.table-section-no-sidebar {
   width: 100%;
   left: 0;
 }
-
-.create-table-container {
-  box-sizing: border-box;
-  width: 100%;
-  /* background-color: green; */
-}
-
-.create-table-input,
-.create-table-color,
-.create-table-button {
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-.create-table-input {
-  width: 100%;
-  padding: 0.5rem;
-  color: rgb(216, 158, 254);
-  outline: none;
-  text-align: center;
-  font-size: 0.8rem;
-  background-color: rgb(35, 30, 30);/
-}
-
-.create-table-color {
-  border: none;
-  background-color: rgb(221, 221, 221);
-}
-
-.create-table-button {
-  color: #ffffff;
-  text-shadow: 0px 0px 2px rgb(0, 0, 0);
-  font-size: 1rem;
-  text-align: center;
-  height: 40px;
-  border-style: none;
-  border-radius: 3px;
-}
-
