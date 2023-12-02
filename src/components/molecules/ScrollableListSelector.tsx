@@ -5,22 +5,15 @@ import "./ScrollableListSelector.css";
 // Additionally, it includes search functionality to filter the displayed tables.
 export const ScrollableListSelector = (props) => {
   const [lastSelected, setLastSelected] = useState(null);
-  const [searchTableName, setSearchTableName] = useState("");
   return (
     <div className="scrollable-div">
-      <input
-        className="search-bar"
-        type="search"
-        id="searchForTable"
-        placeholder="Search"
-        value={searchTableName}
-        onChange={(e) => setSearchTableName(e.target.value)}
-      />
       {props.data.map((table) => {
         // console.log("in ScrollableListSelector", table);
         // Only show table buttons that contains string input in search bar
         if (
-          table.table_name.toLowerCase().includes(searchTableName.toLowerCase())
+          table.table_name
+            .toLowerCase()
+            .includes(props.searchTableName.toLowerCase())
         ) {
           return (
             <button
