@@ -166,7 +166,10 @@ export default function Table({ selectedTable }) {
       <button className="top-table-button" onClick={addRow}>
         New Entry
       </button>
-      <button className="top-table-button" onClick={() => setShowModal(true)}>
+      <button
+        className="top-table-button"
+        onClick={() => setShowModal((prevState) => !prevState)}
+      >
         Add Column
       </button>
       {showModal && (
