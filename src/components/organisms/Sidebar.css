@@ -1,0 +1,108 @@
+.sidebar {
+  z-index: 1;
+  position: fixed;
+  top: 3rem; /*Account for navbar*/
+  left: 0;
+  bottom: 0;
+  background-color: rgb(28, 27, 27);
+  width: 15rem;
+}
+
+.sidebar-toggle {
+  background-color: transparent;
+  color: rgb(223, 208, 251);
+  border: none;
+  font-size: 2em;
+  transition: transform 0.15s ease-in;
+}
+
+.sidebar-hidden {
+  transform: rotate(45deg);
+}
+
+.create-table-container {
+  box-sizing: border-box;
+  width: 100%;
+  /* background-color: green; */
+}
+
+.create-table-input,
+.create-table-color,
+.create-table-button {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.create-table-input {
+  width: 100%;
+  border: none;
+  padding: 1rem;
+  color: rgb(221, 196, 237);
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  background-color: rgb(43, 40, 40);
+}
+
+.color-container {
+  height: fit-content; /*Height taken up by dots*/
+  position: relative;
+  height: fit-content;
+}
+
+.create-table-color {
+  position: absolute; /*We want dots to be over it */
+  height: 100%; /*take up entire height and width of container */
+  opacity: 0;
+}
+
+.color-dots {
+  display: flex;
+  justify-content: space-around;
+  align-self: flex-start;
+}
+
+.color-dots p {
+  margin: 0;
+  font-size: 3em; /*Color input takes up height of container, so it adjust if we change this font size*/
+}
+
+.create-table-button {
+  color: #ffffff;
+  text-shadow: 0px 0px 2px rgb(0, 0, 0);
+  font-size: 1rem;
+  text-align: center;
+  height: 40px;
+  border-style: none;
+  border-radius: 3px;
+}
+
+.settings-button {
+  position: absolute;
+  border: none;
+  background-color: transparent;
+  right: 0;
+  bottom: 0;
+}
+
+.search-bar {
+  /* background-color: rgb(55, 54, 53); */
+  display: flex;
+}
+
+.search-input {
+  appearance: none;
+  border: none;
+  box-sizing: border-box;
+  padding: 0.5em;
+  background-color: transparent;
+  font-size: 1em;
+  width: 100%;
+  color: rgb(223, 176, 255);
+  outline: none;
+}
+
+.search-bar:hover {
+  background-color: rgb(53, 50, 50);
+}
