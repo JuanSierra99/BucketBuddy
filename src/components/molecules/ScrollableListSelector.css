@@ -1,11 +1,13 @@
 .scrollable-div {
   box-sizing: border-box;
   width: 100%;
-  height: 60%; /*Make it so it only goes up to settings bar*/
+  flex-grow: 1; /*take up all avalilable space not being used by create table, search, and settings containers*/
+  /* background-color: green; */
   overflow: scroll;
 }
 
 .tableNameButton {
+  position: relative;
   font-size: 1em;
   font-weight: bold;
   text-align: left;
