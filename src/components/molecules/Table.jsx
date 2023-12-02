@@ -14,6 +14,7 @@ export default function Table({ selectedTable }) {
   const [filterFunctions, setFilterFunctions] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
   const [newFieldName, setNewFieldName] = useState("");
   const [searchTable, setSearchTable] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
   useEffect(() => {
@@ -149,9 +150,9 @@ export default function Table({ selectedTable }) {
 
   return (
     <div className="table-container">
-      <h1 style={{ color: selectedTable.table_color }} className="tableName">
+      <p style={{ color: selectedTable.table_color }} className="tableName">
         {selectedTable.table_name}
-      </h1>
+      </p>
       <input
         type="search"
         id={"table-row-search"}
@@ -165,32 +166,57 @@ export default function Table({ selectedTable }) {
       <button className="top-table-button" onClick={addRow}>
         New Entry
       </button>
-      <button className="top-table-button" onClick={addField}>
-        Add Column:
+      <button className="top-table-button" onClick={() => setShowModal(true)}>
+        Add Column
       </button>
-      <input // allow user to input new field name
-        id="new-field-name-input"
-        value={newFieldName}
-        placeholder="Enter Column Name"
-        onChange={(e) => {
-          setNewFieldName(e.target.value);
-        }}
-      ></input>
-      <select
-        id="data-type"
-        onChange={(e) => {
-          setDataType(e.target.value);
-        }}
-      >
-        <option value={"VARCHAR"}>Rating</option>
-        <option value={"TEXT"}>Text Block</option>
-        <option value={"INT"}>Number</option>
-        <option value={"MONEY"}>Money</option>
-        <option value={"BOOL"}>CheckBox</option>
-        <option value={"DATE"}>Date</option>
-        <option value={"TIME"}>Time</option>
-        {/* <option value={"JSON"}>JSON</option> */}
-      </select>
+      {showModal && (
+        <div
+          style={{
+            zIndex: 1000,
+            width: "fit-content",
+            height: "fit-content",
+            backgroundColor: "white",
+            position: "absolute",
+          }}
+        >
+          <input // allow user to input new field name
+            style={{ display: "block" }}
+            id="new-field-name-input"
+            value={newFieldName}
+            placeholder="Enter Column Name"
+            onChange={(e) => {
+              setNewFieldName(e.target.value);
+            }}
+          ></input>
+          <select
+            style={{ display: "block" }}
+            id="data-type"
+            onChange={(e) => {
+              setDataType(e.target.value);
+            }}
+          >
+            <option value={"VARCHAR"}>Rating</option>
+            <option value={"TEXT"}>Text Block</option>
+            <option value={"INT"}>Number</option>
+            <option value={"MONEY"}>Money</option>
+            <option value={"BOOL"}>CheckBox</option>
+            <option value={"DATE"}>Date</option>
+            <option value={"TIME"}>Time</option>
+            {/* <option value={"JSON"}>JSON</option> */}
+          </select>
+          <button
+            onClick={() => {
+              setShowModal(false);
+              if (newFieldName) {
+                addField();
+              }
+            }}
+          >
+            Done
+          </button>
+        </div>
+      )}
+
       <button
         className="top-table-button"
         onClick={() => {
@@ -204,7 +230,7 @@ export default function Table({ selectedTable }) {
         {fields.map((field_data, index) => {
           return (
             <th>
-              <input
+              {/* <input
                 type="text"
                 value={field_data.column_name}
                 onChange={(e) => {
@@ -213,8 +239,8 @@ export default function Table({ selectedTable }) {
                   setFields(newFields);
                 }}
                 onBlur={(e) => {}}
-              ></input>
-              {/* <p onBlur={(e) => {}}>{field_data.column_name}</p> */}
+              ></input> */}
+              <p onBlur={(e) => {}}>{field_data.column_name}</p>
               {field_data.data_type === "boolean" && (
                 <select
                   id="checkbox-filter"
@@ -257,6 +283,7 @@ export default function Table({ selectedTable }) {
         {/*for every object in our data set*/}
         {rows.map((record, recordIndex) => {
           // console.log(record)
+          // Search bar filtering, and column filtering
           if (
             (searchTable === "" ||
               Object.values(record)
