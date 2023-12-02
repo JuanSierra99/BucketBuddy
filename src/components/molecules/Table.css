@@ -153,10 +153,6 @@ td input[type="checkbox"]:checked {
   background-color: rgb(0, 255, 132);
 }
 
-input[type="search"] {
-  color: red;
-}
-
 @media (min-width: 320px) {
   /* smartphones, iPhone, portrait 480x320 phones */
   th p {
