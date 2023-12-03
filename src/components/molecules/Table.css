@@ -9,6 +9,7 @@
 }
 
 .top-table-button {
+  font-family: inherit;
   font-size: 0.8em;
   font-weight: bold;
   border: none;
@@ -50,6 +51,7 @@ th p {
 
 th select {
   appearance: none;
+  font-family: inherit;
   background-color: rgba(0, 0, 0, 0.1);
   color: white;
   outline: none;
@@ -81,15 +83,13 @@ td:hover {
 /* Style the input boxes within the table */
 td input,
 td textarea {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inherit;
   font-size: 1em;
   /* width: 100%; */
   text-shadow: 0px 0px 1px rgb(0, 0, 0);
   color: rgb(255, 255, 255);
   background-color: rgba(255, 0, 0, 0);
   text-indent: 4px;
-  /* background-color: transparent; */
-  /* border: 1px solid #1716161b; */
   border: none;
   outline: none;
 }
@@ -125,12 +125,13 @@ td input[type="checkbox"]:checked {
 }
 
 .bottom-row-plus-button {
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(0, 0, 0, 0.25);
   border: none;
-  border-radius: 23px;
+  border-radius: 4px;
   font-weight: bold;
   font-size: 1rem;
   color: rgb(255, 255, 255);
+  font-family: inherit;
 }
 
 .bottom-row-plus-button:hover {
@@ -139,7 +140,7 @@ td input[type="checkbox"]:checked {
 }
 
 .tableName {
-  font-family: "Times New Roman", Times, serif;
+  /* font-family: "Times New Roman", Times, serif; */
   display: block;
   margin-bottom: 0.1em;
   margin-right: auto;
