@@ -161,3 +161,8 @@
   font-family: "butter";
   src: url("/Users/juansierra/BucketBuddy/bucketbuddy/src/assets/Butterfly-ywYKm.otf");
 }
+
+@font-face {
+  font-family: "cool";
+  src: url("/assets/ChakraPetch-Medium.ttf");
+}
