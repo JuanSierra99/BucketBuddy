@@ -1,0 +1,21 @@
+.search-bar {
+  /* background-color: rgb(55, 54, 53); */
+  display: flex;
+}
+
+.search-input {
+  appearance: none;
+  border: none;
+  box-sizing: border-box;
+  padding: 0.5em;
+  background-color: transparent;
+  font-size: 1em;
+  width: 100%;
+  color: rgb(233, 213, 245);
+  outline: none;
+  font-family: inherit;
+}
+
+.search-bar:hover {
+  background-color: rgb(53, 50, 50);
+}
