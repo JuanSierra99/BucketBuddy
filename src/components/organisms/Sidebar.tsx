@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollableListSelector } from "../molecules/ScrollableListSelector";
 import { serverUrl } from "../../config";
+import { Post } from "../../../Backend/Requests";
+import { SearchBar } from "../molecules/SearchBar";
 import "./Sidebar.css";
 
 //Component for our homepages sidebar. Has functionality for searching tables, creating tables, and displayoing/selecting tables
@@ -14,8 +16,12 @@ export const Sidebar = (props) => {
     getTables,
     setSelectedTable,
     tables,
+    buddyImage,
+    setBuddyImage,
   } = props;
   const [searchTableName, setSearchTableName] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="sidebar" id="sidebar">
       <div className="create-table-container">
@@ -71,23 +77,64 @@ export const Sidebar = (props) => {
           Create new table
         </button>
       </div>
-      <div className="search-bar">
-        <img src="./search.svg"></img>
-        <input
-          className="search-input"
-          type="search"
-          id="searchForTable"
-          placeholder="Search"
-          value={searchTableName}
-          onChange={(e) => setSearchTableName(e.target.value)}
-        />
-      </div>
+      <SearchBar
+        value={searchTableName}
+        setValue={setSearchTableName}
+      ></SearchBar>
       <ScrollableListSelector
         setState={setSelectedTable}
         data={tables}
         searchTableName={searchTableName}
+        buddyImage={buddyImage}
       />
-      <button className="settings-button">
+      {showModal && (
+        <div className="settings-modal">
+          <button
+            onClick={async () => {
+              const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
+              const json = {
+                image_url: "./hanging_spot.png",
+              };
+              await Post(apiUrl, json);
+              setBuddyImage("./hanging_spot.png");
+            }}
+          >
+            <img src="./spot.png/"></img>
+          </button>
+
+          <button
+            onClick={async () => {
+              const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
+              const json = {
+                image_url: "./hanging_bern.png",
+              };
+              await Post(apiUrl, json);
+              setBuddyImage("./hanging_bern.png");
+            }}
+          >
+            <img src="./Bernese.png/"></img>
+          </button>
+          <button
+            onClick={async () => {
+              const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
+              const json = {
+                image_url: "./hanging_bern.png",
+              };
+              await Post(apiUrl, json);
+              setBuddyImage("./button-buddy.png");
+            }}
+          >
+            <img src="./buddy.png/"></img>
+          </button>
+        </div>
+      )}
+
+      <button
+        className="settings-button"
+        onClick={() => {
+          setShowModal((prevstate) => !prevstate);
+        }}
+      >
         <img src="/public/gear-solid.svg"></img>
       </button>
     </div>
