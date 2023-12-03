@@ -23,6 +23,7 @@ export function HomePage() {
   const [newTableName, setNewTableName] = useState("");
   // For user to assign a table color when creating new table. default color is white
   const [tableColor, setTableColor] = useState("rgb(100,100,210)");
+  const [buddyImage, setBuddyImage] = useState("/button-buddy.PNG");
 
   const getTables = async () => {
     const apiUrl = `${serverUrl}/api/all-tables`;
@@ -30,9 +31,18 @@ export function HomePage() {
     setTables(json.table_data); // set state with the obtained table names
     return json.table_data;
   };
+
+  const getSettings = async () => {
+    const apiUrl = `${serverUrl}/api/get-settings`;
+    const json = await getJson(apiUrl);
+    setBuddyImage(json.settings.image);
+    return json.settings;
+  };
+
   //retrieve a list of all the tables in our database
   //maybe we can use this to prevent users from trying to create a duplicate table with api create table endpoint
   useEffect(() => {
+    getSettings();
     getTables().then((res) => {
       if (res.length > 0) {
         setSelectedTable(res[0]);
@@ -52,6 +62,8 @@ export function HomePage() {
         getTables={getTables}
         setSelectedTable={setSelectedTable}
         tables={tables}
+        buddyImage={buddyImage}
+        setBuddyImage={setBuddyImage}
       ></Sidebar>
       <div
         className={`table-section ${
