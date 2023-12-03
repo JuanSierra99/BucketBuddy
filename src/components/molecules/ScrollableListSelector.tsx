@@ -5,6 +5,7 @@ import "./ScrollableListSelector.css";
 // Additionally, it includes search functionality to filter the displayed tables.
 export const ScrollableListSelector = (props) => {
   const [lastSelected, setLastSelected] = useState(null);
+
   return (
     <div className="scrollable-div">
       {props.data.map((table) => {
@@ -27,7 +28,7 @@ export const ScrollableListSelector = (props) => {
             >
               {table.table_name}
               {lastSelected === table.table_name && ( // if last selected table is name of currently selected table. SHOW THE DOG !!!
-                <img src="/button-buddy.PNG" className="button-buddy-image" />
+                <img src={props.buddyImage} className="button-buddy-image" />
               )}
             </button>
           );
