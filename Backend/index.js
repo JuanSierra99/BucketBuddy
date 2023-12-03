@@ -441,6 +441,53 @@ app.post(
   }
 );
 
+app.get(
+  "/api/get-settings",
+  passport.authenticate("jwt", { session: false }),
+  async (request, response) => {
+    try {
+      const username = request.user.username;
+      getSettingsQuery = `select settings from users where username = '${username}'`;
+      const query_result = await client.query(getSettingsQuery);
+      if (query_result.rows.length > 0) {
+        const settings = query_result.rows[0];
+        console.log(`sending settings for user: ${settings}`);
+        return response.status(200).json(settings);
+      } else {
+        console.log("couldnt retrieve settings");
+        res
+          .status(404)
+          .json({ error: "User not found or no settings available" });
+      }
+    } catch (error) {
+      console.log("Error @/api/get-settings: ", error.message);
+      return response
+        .status(500)
+        .json({ error: "Internal Server Error", message: error.message });
+    }
+  }
+);
+
+app.post(
+  "/api/change-buddy-image-setting",
+  passport.authenticate("jwt", { session: false }),
+  async (request, response) => {
+    try {
+      const username = request.user.username;
+      const image_url = request.body.image_url;
+      getSettingsQuery = `UPDATE users SET settings = '{"image": "${image_url}"}' where username = '${username}'`;
+      await client.query(getSettingsQuery);
+      console.log(`settings updated`);
+      return response.status(200).json({ message: "settings updated" });
+    } catch (error) {
+      console.log("Error @/api/get-settings: ", error.message);
+      return response
+        .status(500)
+        .json({ error: "Internal Server Error", message: error.message });
+    }
+  }
+);
+
 app.post("/api/register", async (request, response) => {
   try {
     const { username, password } = request.body;
