@@ -3,6 +3,7 @@ import React from "react";
 import { getJson, Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
 import { InputBox } from "../atoms/InputBox";
+import { SearchBar } from "./SearchBar";
 import "./Table.css";
 
 // selectedTable is in the form of {table_name: string, table_color: string }
@@ -153,16 +154,7 @@ export default function Table({ selectedTable }) {
       <p style={{ color: selectedTable.table_color }} className="tableName">
         {selectedTable.table_name}
       </p>
-      <input
-        type="search"
-        id={"table-row-search"}
-        style={{ display: "block" }}
-        value={searchTable}
-        placeholder="Search table"
-        onChange={(e) => {
-          setSearchTable(e.target.value);
-        }}
-      ></input>
+      <SearchBar value={searchTable} setValue={setSearchTable}></SearchBar>
       <button className="top-table-button" onClick={addRow}>
         New Entry
       </button>
