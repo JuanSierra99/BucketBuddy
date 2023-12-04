@@ -93,7 +93,7 @@ export const Sidebar = (props) => {
         setValue={setSearchTableName}
       ></SearchBar>
       <ScrollableListSelector
-        setState={setSelectedTable}
+        setSelectedTable={setSelectedTable}
         data={tables}
         searchTableName={searchTableName}
         buddyImage={buddyImage}
