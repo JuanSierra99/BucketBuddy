@@ -1,0 +1,75 @@
+.modal-container {
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  font-family: "cool", sans-serif;
+}
+
+.modal-container > * {
+  font-family: inherit;
+  display: block;
+  margin: 1em;
+  padding: 0.3em;
+  font-size: 0.8em;
+  border-radius: 4px;
+}
+
+.column-name-input {
+  color: rgb(233, 213, 245);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  outline: none;
+}
+
+.data-type-select {
+  all: unset;
+  color: rgb(233, 213, 245);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 0.3em;
+  flex: 1;
+}
+
+.data-type-select::after {
+  color: wheat;
+  content: "Hi";
+}
+
+.done-button {
+  border: none;
+  color: rgb(233, 213, 245);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  text-align: center;
+  font-weight: bold;
+}
+
+.done-button:hover {
+  color: white;
+  background-color: rgba(0, 0, 0, 1);
+}
+
+.type-text {
+  width: fit-content;
+  text-align: center;
+  margin: 0;
+  margin-right: 5px;
+  padding: 0;
+  height: fit-content;
+  color: white;
+}
+
+.select-container {
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
