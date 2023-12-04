@@ -129,7 +129,7 @@ export const Sidebar = (props) => {
             onClick={async () => {
               const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
               const json = {
-                image_url: "./hanging_bern.png",
+                image_url: "./button-buddy.png",
               };
               await Post(apiUrl, json);
               setBuddyImage("./button-buddy.png");
