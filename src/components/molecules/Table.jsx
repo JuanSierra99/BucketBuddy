@@ -190,11 +190,11 @@ export default function Table({ selectedTable }) {
               setDataType(e.target.value);
             }}
           >
-            <option value={"VARCHAR"}>Rating</option>
-            <option value={"TEXT"}>Text Block</option>
+            <option value={"TEXT"}>Text</option>
             <option value={"INT"}>Number</option>
-            <option value={"MONEY"}>Money</option>
             <option value={"BOOL"}>CheckBox</option>
+            <option value={"VARCHAR"}>Rating</option>
+            <option value={"MONEY"}>Money</option>
             <option value={"DATE"}>Date</option>
             <option value={"TIME"}>Time</option>
             {/* <option value={"JSON"}>JSON</option> */}
