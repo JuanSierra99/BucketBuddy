@@ -134,7 +134,10 @@ export default function Table({ selectedTable }) {
                 .toLowerCase()
                 .includes(searchTable.toLowerCase())) &&
             Object.entries(filterFunctions).every(([field, condition]) => {
-              return record[field].toString() === condition.toString();
+              return (
+                record[field] &&
+                record[field].toString() === condition.toString()
+              );
             })
           )
             return (
