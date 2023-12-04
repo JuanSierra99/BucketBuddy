@@ -58,17 +58,28 @@ export const Sidebar = (props) => {
           className="create-table-button"
           onClick={async () => {
             try {
-              const apiUrl = `${serverUrl}/api/new-table`;
-              const json = {
-                table_name: newTableName,
-                table_color: tableColor,
-              };
-              const PostResponse = await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
-              if (PostResponse) {
-                //Clear user input field if success
-                setNewTableName("");
+              //Make sure we do not allow duplicate table names.
+              const noDuplicateName = tables.every((table_object) => {
+                return (
+                  table_object.table_name.toLowerCase() !=
+                  newTableName.toLowerCase()
+                );
+              });
+              if (noDuplicateName) {
+                const apiUrl = `${serverUrl}/api/new-table`;
+                const json = {
+                  table_name: newTableName,
+                  table_color: tableColor,
+                };
+                const PostResponse = await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
+                if (PostResponse) {
+                  //Clear user input field if success
+                  setNewTableName("");
+                }
+                await getTables(); //will request api endpoint to send current tables in db, then updates tables state
+              } else {
+                return console.log("No duplicate table names allowed");
               }
-              await getTables(); //will request api endpoint to send current tables in db, then updates tables state
             } catch (error) {
               console.error("Error creating table:", error);
             }
