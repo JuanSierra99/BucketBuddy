@@ -46,7 +46,7 @@ const AddColumnModal = (props) => {
         }}
       ></input>
       <div className="select-container">
-        <p className="type-text">Type: </p>
+        <p className="type-text">Type:</p>
         <select
           className="data-type-select"
           id="data-type"
