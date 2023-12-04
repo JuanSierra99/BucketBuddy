@@ -4,6 +4,8 @@ import { getJson, Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
 import { InputBox } from "../atoms/InputBox";
 import { SearchBar } from "./SearchBar";
+import AddColumnModal from "../atoms/AddColumnModal";
+import { FilterSelection } from "../atoms/FilterSelection";
 import "./Table.css";
 
 // selectedTable is in the form of {table_name: string, table_color: string }
@@ -11,15 +13,14 @@ export default function Table({ selectedTable }) {
   // Data for selected table
   const [rows, setRows] = useState([{}]); // The row data for the selected table
   const [fields, setFields] = useState([]); // An object representing table fields. Has a name, and data type
-  const [dataType, setDataType] = useState("VARCHAR"); // Used for creating new columns. changes when user wants to select a different data type.
   const [filterFunctions, setFilterFunctions] = useState({}); // Holds key value pairs, where key is field/column name, and filter function to be applied to rows is the value
-  const [newFieldName, setNewFieldName] = useState("");
   const [searchTable, setSearchTable] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   // Get the data (rows and fields) for the table, and continue to do so whenever a new table is selected
   useEffect(() => {
     const table_name = selectedTable.table_name;
+    setShowModal((prevstate) => prevstate && !prevstate); // dont want it to stay showing when switching tables
     if (table_name) {
       getRows(table_name); // get tables rows
       getFields(table_name); // get tables fields
@@ -53,96 +54,6 @@ export default function Table({ selectedTable }) {
     }
   };
 
-  // Make a Post request to add a new field/column to the table. Refreshes table to show new column
-  const addField = async () => {
-    // Make sure column name does not already exist
-    if (
-      fields.some(
-        (field) =>
-          field.column_name.toLowerCase() === newFieldName.toLowerCase()
-      )
-    ) {
-      console.log("Column name already exists !");
-      return;
-    }
-    const apiUrl = `${serverUrl}/api/add-column`;
-    const json = {
-      tableName: selectedTable.table_name,
-      columnName: newFieldName.toLocaleLowerCase(),
-      dataType,
-    };
-    const response = await Post(apiUrl, json); //requests api endpoint to alter table.
-    if (response) {
-      //
-      setNewFieldName("");
-      getFields(selectedTable.table_name);
-    } else {
-      console.log("Failed to add new column ");
-    }
-  };
-
-  // For checkbox data types, alter the table depending on the checkbox values for the specific checkbox field/column
-  const addCheckboxFilter = async (filter, field) => {
-    switch (filter) {
-      // if we unapply the filter, remove it from filters object, retrieve fresh unaltered rows, then apply the remaining filters
-      case "none": {
-        const removedFilter = { ...filterFunctions }; // copy the object
-        delete removedFilter[field]; // remove the key value pair for the specific field
-        setFilterFunctions(removedFilter); // Set new state without the filter
-        break;
-      }
-      case "true": {
-        setFilterFunctions({ ...filterFunctions, [field]: true });
-        break;
-      }
-      case "false": {
-        setFilterFunctions({ ...filterFunctions, [field]: false });
-        break;
-      }
-      default: {
-        break; ///uhhh what do you want me to do, i did not account for this...
-      }
-    }
-  };
-
-  const addRatingFilter = async (filter, field) => {
-    switch (filter) {
-      case "none": {
-        const removedFilter = { ...filterFunctions };
-        delete removedFilter[field];
-        setFilterFunctions(removedFilter);
-        break;
-      }
-      case "☆": {
-        setFilterFunctions({ ...filterFunctions, [field]: "☆" });
-        break;
-      }
-      case "⭐️": {
-        setFilterFunctions({ ...filterFunctions, [field]: "⭐️" });
-        break;
-      }
-      case "⭐️⭐️": {
-        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️" });
-        break;
-      }
-      case "⭐️⭐️⭐️": {
-        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️⭐️" });
-        break;
-      }
-      case "⭐️⭐️⭐️⭐️": {
-        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️⭐️⭐️" });
-        break;
-      }
-      case "⭐️⭐️⭐️⭐️⭐️": {
-        setFilterFunctions({ ...filterFunctions, [field]: "⭐️⭐️⭐️⭐️⭐️" });
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  };
-
   const changeField = (tableName, currentFieldName, newFieldName) => {
     const apiUrl = `${serverUrl}/api/change-field`;
     const json = { tableName, currentFieldName, newFieldName };
@@ -150,10 +61,7 @@ export default function Table({ selectedTable }) {
   };
 
   return (
-    <div className="table-container">
-      <p style={{ color: selectedTable.table_color }} className="tableName">
-        {selectedTable.table_name}
-      </p>
+    <div>
       <SearchBar value={searchTable} setValue={setSearchTable}></SearchBar>
       <button className="top-table-button" onClick={addRow}>
         New Entry
@@ -165,51 +73,12 @@ export default function Table({ selectedTable }) {
         Add Column
       </button>
       {showModal && (
-        <div
-          style={{
-            zIndex: 1000,
-            width: "fit-content",
-            height: "fit-content",
-            backgroundColor: "white",
-            position: "absolute",
-          }}
-        >
-          <input // allow user to input new field name
-            style={{ display: "block" }}
-            id="new-field-name-input"
-            value={newFieldName}
-            placeholder="Enter Column Name"
-            onChange={(e) => {
-              setNewFieldName(e.target.value);
-            }}
-          ></input>
-          <select
-            style={{ display: "block" }}
-            id="data-type"
-            onChange={(e) => {
-              setDataType(e.target.value);
-            }}
-          >
-            <option value={"TEXT"}>Text</option>
-            <option value={"INT"}>Number</option>
-            <option value={"BOOL"}>CheckBox</option>
-            <option value={"VARCHAR"}>Rating</option>
-            <option value={"MONEY"}>Money</option>
-            <option value={"DATE"}>Date</option>
-            <option value={"TIME"}>Time</option>
-            {/* <option value={"JSON"}>JSON</option> */}
-          </select>
-          <button
-            onClick={() => {
-              setShowModal(false);
-              if (newFieldName) {
-                addField();
-              }
-            }}
-          >
-            Done
-          </button>
-        </div>
+        <AddColumnModal
+          fields={fields}
+          selectedTable={selectedTable}
+          getFields={getFields}
+          setShowModal={setShowModal}
+        />
       )}
 
       <button
@@ -235,42 +104,21 @@ export default function Table({ selectedTable }) {
                 }}
                 onBlur={(e) => {}}
               ></input> */}
+
               <p onBlur={(e) => {}}>{field_data.column_name}</p>
               {field_data.data_type === "boolean" && (
-                <select
-                  id="checkbox-filter"
-                  onChange={async (e) =>
-                    await addCheckboxFilter(
-                      e.target.value,
-                      field_data.column_name
-                    )
-                  }
-                >
-                  <option value="none">-</option>
-                  <option value="true">checked</option>
-                  <option value="false">unchecked</option>
-                </select>
+                <FilterSelection
+                  filterFunctions={filterFunctions}
+                  setFilterFunctions={setFilterFunctions}
+                  field_data={field_data}
+                />
               )}
               {field_data.data_type === "character varying" && (
-                <div>
-                  <select
-                    id="rating-filter"
-                    onChange={async (e) =>
-                      await addRatingFilter(
-                        e.target.value,
-                        field_data.column_name
-                      )
-                    }
-                  >
-                    <option value="none">-</option>
-                    <option value="☆">☆</option>
-                    <option value="⭐️">⭐️</option>
-                    <option value="⭐️⭐️">⭐️⭐️</option>
-                    <option value="⭐️⭐️⭐️">⭐️⭐️⭐️</option>
-                    <option value="⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️</option>
-                    <option value="⭐️⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️⭐️</option>
-                  </select>
-                </div>
+                <FilterSelection
+                  filterFunctions={filterFunctions}
+                  setFilterFunctions={setFilterFunctions}
+                  field_data={field_data}
+                />
               )}
             </th>
           );
@@ -309,10 +157,10 @@ export default function Table({ selectedTable }) {
               </tr>
             );
         })}
-        <button className="bottom-row-plus-button" onClick={addRow}>
-          + Row
-        </button>
       </table>
+      <button className="bottom-row-plus-button" onClick={addRow}>
+        + Row
+      </button>
     </div>
   );
 }

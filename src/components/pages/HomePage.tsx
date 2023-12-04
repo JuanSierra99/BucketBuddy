@@ -76,20 +76,31 @@ export function HomePage() {
         >
           +
         </button>
-        <Table selectedTable={selectedTable} />
-        <button
-          onClick={async () => {
-            const apiUrl = `${serverUrl}/api/deleteTable`;
-            const json = {
-              table_name: selectedTable.table_name,
-            };
-            await Post(apiUrl, json);
-            await getTables();
-            tables[0] && setSelectedTable(tables[0]);
-          }}
-        >
-          x
-        </button>
+        {tables.length > 0 && (
+          <div className="table-container">
+            <p
+              style={{ color: selectedTable.table_color }}
+              className="tableName"
+            >
+              {selectedTable.table_name}
+              <button
+                className="delete-table-button"
+                onClick={async () => {
+                  const apiUrl = `${serverUrl}/api/deleteTable`;
+                  const json = {
+                    table_name: selectedTable.table_name,
+                  };
+                  await Post(apiUrl, json);
+                  await getTables();
+                  tables[0] && setSelectedTable(tables[0]);
+                }}
+              >
+                <img src="circle-xmark-regular.svg"></img>
+              </button>
+            </p>
+            <Table selectedTable={selectedTable} />
+          </div>
+        )}
         <p className="databaseStatus">Database status</p>
       </div>
     </div>

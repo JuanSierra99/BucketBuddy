@@ -17,6 +17,32 @@
   transition: width 0.15s linear, left 0.15s linear;
 }
 
+.table-container {
+  height: auto;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  min-width: 70%;
+  max-width: 95%;
+}
+
+.tableName {
+  /* font-family: "Times New Roman", Times, serif; */
+  display: block;
+  margin-bottom: 0.1em;
+  margin-right: auto;
+  width: fit-content;
+  border: none;
+  border-bottom: 1.5px solid rgb(210, 190, 247);
+}
+
+.delete-table-button {
+  all: unset;
+  margin-left: 3px;
+}
+
 .table-section-no-sidebar {
   width: 100%;
   left: 0;
