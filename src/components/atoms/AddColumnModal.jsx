@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
 import "./AddColumnModal.css";
 const AddColumnModal = (props) => {
   const { fields, selectedTable, getFields, setShowModal } = props;
   const [newFieldName, setNewFieldName] = useState("");
-  const [dataType, setDataType] = useState("VARCHAR"); // Used for creating new columns. changes when user wants to select a different data type.
+  const [dataType, setDataType] = useState("Text"); // Used for creating new columns. changes when user wants to select a different data type.
   // Make a Post request to add a new field/column to the table. Refreshes table to show new column
+
+  useEffect(() => {
+    setNewFieldName("");
+    setDataType("TEXT");
+  }, []); // Run only once on component mount
+
   const addField = async () => {
     // Make sure column name does not already exist
     if (
@@ -50,6 +56,7 @@ const AddColumnModal = (props) => {
         <select
           className="data-type-select"
           id="data-type"
+          value={dataType}
           onChange={(e) => {
             setDataType(e.target.value);
           }}
