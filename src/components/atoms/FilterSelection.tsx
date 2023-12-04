@@ -68,7 +68,7 @@ export const FilterSelection = (props) => {
     <div>
       {field_data.data_type === "boolean" && (
         <div className="filter-container">
-          <img src="/public/filter-solid.svg"></img>
+          <img src="./filter-solid.svg"></img>
           <select
             id="checkbox-filter"
             onChange={async (e) =>
@@ -83,7 +83,7 @@ export const FilterSelection = (props) => {
       )}
       {field_data.data_type === "character varying" && (
         <div className="filter-container">
-          <img src="/public/filter-solid.svg"></img>
+          <img src="./filter-solid.svg"></img>
           <select
             id="rating-filter"
             onChange={async (e) =>
