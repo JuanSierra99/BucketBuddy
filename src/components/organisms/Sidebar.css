@@ -69,6 +69,7 @@
 
 .color-dots p {
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 3em; /*Color input takes up height of container, so it adjust if we change this font size*/
 }
 
