@@ -13,9 +13,10 @@
   font-weight: bold;
   text-align: left;
   width: 100%;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid rgb(233, 213, 247);
+  background-color: rgb(24, 23, 23);
+  color: white;
+  border: 0.5px solid rgb(9, 8, 9);
+  /* border-bottom: 1px solid rgb(21, 20, 21); */
   padding: 1rem 0 1rem 0;
   text-indent: 3px;
 }
@@ -26,9 +27,10 @@
 }
 
 .button-buddy-image {
+  z-index: 1000; /*Make sure it's always above buton for hanging effect*/
   position: absolute;
   height: 2em;
   right: 0;
   pointer-events: none;
-  transform: translateY(0.6em);
+  transform: translateY(0.8em);
 }
