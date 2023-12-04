@@ -110,7 +110,7 @@ export const Sidebar = (props) => {
               setBuddyImage("./hanging_spot.png");
             }}
           >
-            <img src="./spot.png/"></img>
+            <img src="./spot.png"></img>
           </button>
 
           <button
@@ -123,7 +123,7 @@ export const Sidebar = (props) => {
               setBuddyImage("./hanging_bern.png");
             }}
           >
-            <img src="./Bernese.png/"></img>
+            <img src="./Bernese.png"></img>
           </button>
           <button
             onClick={async () => {
@@ -135,7 +135,7 @@ export const Sidebar = (props) => {
               setBuddyImage("./button-buddy.png");
             }}
           >
-            <img src="./buddy.png/"></img>
+            <img src="./buddy.png"></img>
           </button>
         </div>
       )}
@@ -146,7 +146,7 @@ export const Sidebar = (props) => {
           setShowModal((prevstate) => !prevstate);
         }}
       >
-        <img src="/public/gear-solid.svg"></img>
+        <img src="./gear-solid.svg"></img>
       </button>
     </div>
   );
