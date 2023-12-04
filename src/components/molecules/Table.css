@@ -4,7 +4,8 @@
   overflow-y: hidden;
   margin-left: auto;
   margin-right: auto;
-  /* width: fit-content; */
+  width: fit-content;
+  min-width: 70%;
   max-width: 95%;
 }
 
@@ -18,16 +19,16 @@
 }
 
 .top-table-button:hover {
-  color: #c7a9ff;
+  color: #cfb9f6;
 }
 
 /* Style the table itself */
 table {
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  border: 3.5px solid #f1d0f8; /* Light lavender border */
-  border-radius: 6px;
+  /* margin-left: auto;
+  margin-right: auto; */
+  border: 3.5px solid #ebd9ee; /* Light lavender border */
+  border-radius: 3px;
 }
 
 th {
@@ -45,12 +46,14 @@ th p {
   text-align: center;
   border: none;
   border-bottom: 1.5px solid rgba(32, 31, 31, 0.4);
+  text-shadow: 0px 0px 1px rgb(0, 0, 0);
   margin-bottom: 0;
   min-width: 8em;
 }
 
 th select {
-  appearance: none;
+  all: unset;
+  text-align: center;
   font-family: inherit;
   background-color: rgba(0, 0, 0, 0.1);
   color: white;
@@ -85,7 +88,7 @@ td input,
 td textarea {
   font-family: inherit;
   font-size: 1em;
-  /* width: 100%; */
+  width: 100%;
   text-shadow: 0px 0px 1px rgb(0, 0, 0);
   color: rgb(255, 255, 255);
   background-color: rgba(255, 0, 0, 0);
@@ -94,9 +97,13 @@ td textarea {
   outline: none;
 }
 
+/* td input[type="number"] {
+  width: 100%;
+} */
+
 td textarea {
   resize: vertical;
-  width: fit-content;
+  /* width: 100%; */
 }
 
 /* textarea:focus {
@@ -108,8 +115,8 @@ td input[type="checkbox"] {
   margin-left: auto;
   margin-right: auto;
   appearance: none;
-  width: 2rem;
-  height: 2rem;
+  width: 2em;
+  height: 2em;
   background-color: rgb(255, 55, 0);
   border: 3px solid rgb(229, 224, 214);
   border-radius: 5px;
@@ -152,6 +159,7 @@ td input[type="checkbox"]:checked {
 .databaseStatus {
   /* display: none; */
   background-color: rgb(0, 255, 132);
+  display: none;
 }
 
 @media (min-width: 320px) {
