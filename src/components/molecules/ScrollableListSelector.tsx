@@ -4,16 +4,17 @@ import "./ScrollableListSelector.css";
 // It sets the state of the selected table based on user interaction with the list.
 // Additionally, it includes search functionality to filter the displayed tables.
 export const ScrollableListSelector = (props) => {
-  const { searchTableName, setSelectedTable, buddyImage, data } = props;
   const [lastSelected, setLastSelected] = useState(null);
 
   return (
     <div className="scrollable-div">
-      {data.map((table) => {
+      {props.data.map((table) => {
         // console.log("in ScrollableListSelector", table);
         // Only show table buttons that contains string input in search bar
         if (
-          table.table_name.toLowerCase().includes(searchTableName.toLowerCase())
+          table.table_name
+            .toLowerCase()
+            .includes(props.searchTableName.toLowerCase())
         ) {
           return (
             <button
@@ -21,13 +22,13 @@ export const ScrollableListSelector = (props) => {
               key={table.table_name} // Each item in a list should have a unique key prop (React wants this for optimized renders)
               className="tableNameButton"
               onClick={(e) => {
-                setSelectedTable(table);
+                props.setState(table);
                 setLastSelected(table.table_name);
               }}
             >
               {table.table_name}
               {lastSelected === table.table_name && ( // if last selected table is name of currently selected table. SHOW THE DOG !!!
-                <img src={buddyImage} className="button-buddy-image" />
+                <img src={props.buddyImage} className="button-buddy-image" />
               )}
             </button>
           );
