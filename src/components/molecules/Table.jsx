@@ -28,6 +28,10 @@ export default function Table({ selectedTable }) {
     }
   }, [selectedTable.table_name]);
 
+  useEffect(() => {
+    getRows(selectedTable.table_name);
+  }, fields);
+
   // Make api request to get rows for the selected table.
   const getRows = async (table_name) => {
     const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
@@ -72,6 +76,7 @@ export default function Table({ selectedTable }) {
       >
         Add Column
       </button>
+      {/* <p>{JSON.stringify(rows)}</p> */}
       {showModal && (
         <AddColumnModal
           fields={fields}
@@ -104,7 +109,6 @@ export default function Table({ selectedTable }) {
                 }}
                 onBlur={(e) => {}}
               ></input> */}
-
               <p onBlur={(e) => {}}>{field_data.column_name}</p>
               {field_data.data_type === "boolean" && (
                 <FilterSelection
