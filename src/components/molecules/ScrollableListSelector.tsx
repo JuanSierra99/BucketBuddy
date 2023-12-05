@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ScrollableListSelector.css";
 // This component displays a scrollable list of table names.
 // It sets the state of the selected table based on user interaction with the list.
 // Additionally, it includes search functionality to filter the displayed tables.
 export const ScrollableListSelector = (props) => {
-  const { data, searchTableName, setSelectedTable, buddyImage } = props;
+  const { data, searchTableName, selectedTable, setSelectedTable, buddyImage } =
+    props;
   const [lastSelected, setLastSelected] = useState(null);
+
+  useEffect(() => {
+    setLastSelected(selectedTable.table_name);
+  }, [selectedTable]);
 
   return (
     <div className="scrollable-div">
