@@ -14,6 +14,7 @@ export const Sidebar = (props) => {
     tableColor,
     Post,
     getTables,
+    selectedTable,
     setSelectedTable,
     tables,
     buddyImage,
@@ -61,14 +62,14 @@ export const Sidebar = (props) => {
               //Make sure we do not allow duplicate table names.
               const noDuplicateName = tables.every((table_object) => {
                 return (
-                  table_object.table_name.toLowerCase() !=
-                  newTableName.toLowerCase()
+                  table_object.table_name.trim().toLowerCase() !=
+                  newTableName.trim().toLowerCase()
                 );
               });
               if (noDuplicateName) {
                 const apiUrl = `${serverUrl}/api/new-table`;
                 const json = {
-                  table_name: newTableName,
+                  table_name: newTableName.trim(), //No leading/trailing whitespaces
                   table_color: tableColor,
                 };
                 const PostResponse = await Post(apiUrl, json); //requests api endpoint to create new table. must await for getTables() to have updated info
@@ -93,6 +94,7 @@ export const Sidebar = (props) => {
         setValue={setSearchTableName}
       ></SearchBar>
       <ScrollableListSelector
+        selectedTable={selectedTable}
         setSelectedTable={setSelectedTable}
         data={tables}
         searchTableName={searchTableName}
