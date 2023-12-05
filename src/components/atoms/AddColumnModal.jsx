@@ -18,7 +18,8 @@ const AddColumnModal = (props) => {
     if (
       fields.some(
         (field) =>
-          field.column_name.toLowerCase() === newFieldName.toLowerCase()
+          field.column_name.trim().toLowerCase() ===
+          newFieldName.trim().toLowerCase()
       )
     ) {
       console.log("Column name already exists !");
@@ -27,7 +28,7 @@ const AddColumnModal = (props) => {
     const apiUrl = `${serverUrl}/api/add-column`;
     const json = {
       tableName: selectedTable.table_name,
-      columnName: newFieldName.toLocaleLowerCase(),
+      columnName: newFieldName.trim().toLocaleLowerCase(),
       dataType,
     };
     const response = await Post(apiUrl, json); //requests api endpoint to alter table.

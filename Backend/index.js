@@ -61,13 +61,14 @@ app.get(
       if (!isValidName(table_name)) {
         return response.status(400).json({ Error: "Invalid table name " });
       }
-      const table_id = await getTableId(username, table_name);
+      const trimmed_table_name = table_name.trim(); //No leading/trailing whitespace
+      const table_id = await getTableId(username, trimmed_table_name);
       const table_query = `SELECT * FROM "${table_id}" ORDER BY unique_record_id DESC`;
       // Execute the SQL query to get the specified table's rows
       const table_result = await client.query(table_query);
       const rows = table_result.rows; // send every row for the requested table
       // Log the data for debugging
-      console.log(`Sending rows for ${table_name}: `, rows);
+      console.log(`Sending rows for ${trimmed_table_name}: `, rows);
       // Send an HTTP response with data in the response body
       return response.status(200).json(rows);
     } catch (error) {
@@ -137,19 +138,20 @@ app.post(
       // Using client class's transaction feature to make sure either both querys execute, or none execute
       // Keep in mind the query's still executes, so order still matters. If one fails, everything is reverted.
       // https://node-postgres.com/features/transactions
+      const trimmed_table_name = tableName.trim();
       client.query("BEGIN");
       const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name text DEFAULT '')`;
       await client.query(createTableQuery); // Execute the SQL query to create the table
-      const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${tableName}', '${tableColor}')`;
+      const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${trimmed_table_name}', '${tableColor}')`;
       await client.query(update_userTables_query);
       const addEmptyRecordQuery = `INSERT INTO "${uniqueId}" DEFAULT VALUES`; // I want table to have one empty row by default
       await client.query(addEmptyRecordQuery);
       await client.query("COMMIT");
-      console.log(`Table "${tableName}" created successfully`); // Log success message
+      console.log(`Table "${trimmed_table_name}" created successfully`); // Log success message
       // Send an HTTP response with a success message in the response body
-      return response
-        .status(200)
-        .json({ message: `Table "${tableName}" created successfully` });
+      return response.status(200).json({
+        message: `Table "${trimmed_table_name}" created successfully`,
+      });
     } catch (error) {
       await client.query("ROLLBACK");
       console.log("@/api/table_fields", error.message);
@@ -382,24 +384,27 @@ app.post(
       }
       // console.log(dataType);
       // console.log(defaultTypes[dataType]);
-      const addColumnQuery = `ALTER TABLE "${tableId}" ADD "${columnName.toLowerCase()}" ${dataType} DEFAULT ${
+      const formatted_column_name = columnName.trim().toLowerCase();
+      const addColumnQuery = `ALTER TABLE "${tableId}" ADD "${formatted_column_name.toLowerCase()}" ${dataType} DEFAULT ${
         defaultTypes[dataType]
       } NOT NULL`;
       await client.query(addColumnQuery);
       // Log a success message
-      console.log(`Added '${columnName}' ${dataType} Field, to '${tableName}'`);
+      console.log(
+        `Added '${formatted_column_name}' ${dataType} Field, to '${tableName}'`
+      );
       // Send an HTTP response with a success message in the response body
       return response.status(200).json({
-        message: `Added '${columnName}' ${dataType} Field, to table '${tableName}'`,
+        message: `Added '${formatted_column_name}' ${dataType} Field, to table '${tableName}'`,
       });
     } catch (error) {
       // Check for specific error codes to handle known scenarios.
       if (error.code === "42701") {
         console.log(
-          `Column "${columnName}" already exists in table "${tableName}"`
+          `Column "${formatted_column_name}" already exists in table "${tableName}"`
         );
         return response.status(400).json({
-          error: `Column "${columnName}" already exists in table "${tableName}"`,
+          error: `Column "${formatted_column_name}" already exists in table "${tableName}"`,
         });
       } else {
         console.log("Error @/api/add-column: ", error.message);
