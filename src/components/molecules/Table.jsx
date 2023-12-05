@@ -34,14 +34,18 @@ export default function Table({ selectedTable }) {
 
   // Make api request to get rows for the selected table.
   const getRows = async (table_name) => {
-    const apiUrl = `${serverUrl}/api/get-table?table_name=${table_name}`;
+    const apiUrl = `${serverUrl}/api/get-table?table_name=${encodeURIComponent(
+      table_name.trim()
+    )}`;
     const json = await getJson(apiUrl); // If request failed, getJson returns null
     setRows(json ? json : [{ rows }]); // update the rows state
   };
 
   // Make api request to get fields from the selected table.
   const getFields = async (table_name) => {
-    const apiUrl = `${serverUrl}/api/table-fields?table_name=${table_name}`;
+    const apiUrl = `${serverUrl}/api/table-fields?table_name=${encodeURIComponent(
+      table_name.trim()
+    )}`;
     const json = await getJson(apiUrl);
     if (json) {
       setFields(json); //update the fields state
@@ -76,7 +80,6 @@ export default function Table({ selectedTable }) {
       >
         Add Column
       </button>
-      {/* <p>{JSON.stringify(rows)}</p> */}
       {showModal && (
         <AddColumnModal
           fields={fields}
@@ -129,7 +132,6 @@ export default function Table({ selectedTable }) {
         })}
         {/*for every object in our data set*/}
         {rows.map((record, recordIndex) => {
-          // console.log(record)
           // Search bar filtering, and column filtering
           if (
             (searchTable === "" ||
@@ -138,10 +140,7 @@ export default function Table({ selectedTable }) {
                 .toLowerCase()
                 .includes(searchTable.toLowerCase())) &&
             Object.entries(filterFunctions).every(([field, condition]) => {
-              return (
-                record[field] &&
-                record[field].toString() === condition.toString()
-              );
+              return record[field].toString() === condition.toString();
             })
           )
             return (
