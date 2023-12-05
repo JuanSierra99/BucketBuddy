@@ -50,6 +50,17 @@ export function HomePage() {
     });
   }, []); //maybe we want to do something with this when we add new tables ?
 
+  useEffect(() => {
+    if (tables.length === 0) {
+      setSelectedTable({
+        table_name: "",
+        table_color: "",
+      });
+    } else if (tables.length > 0) {
+      setSelectedTable(tables[tables.length - 1]);
+    }
+  }, [tables]);
+
   return (
     <div className="homepage">
       <NavBar></NavBar>
@@ -60,6 +71,7 @@ export function HomePage() {
         tableColor={tableColor}
         Post={Post}
         getTables={getTables}
+        selectedTable={selectedTable}
         setSelectedTable={setSelectedTable}
         tables={tables}
         buddyImage={buddyImage}
