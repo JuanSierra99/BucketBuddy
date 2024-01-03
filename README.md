@@ -6,11 +6,7 @@
 *** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
 *** See the bottom of this document for the declaration of the reference variables
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![LinkedIn][linkedin-shield]][https://www.linkedin.com/in/juan-sierra-971837120/]
 
 
 <!-- PROJECT LOGO -->
@@ -66,7 +62,6 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -74,6 +69,9 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 ### Built With
 
 * [![React][React.js]][React-url]
+* [![Nginx][Nginx]][Nginx-url]
+* ![Static Badge](https://img.shields.io/badge/AWS%20EC2%20-%20black?style=flat-square&logo=amazon&labelColor=black&color=orange&link=https%3A%2F%2Faws.amazon.com%2Fpm%2Fec2%2F%3Ftrk%3D9cd376cd-1c18-46f2-9f75-0e1cdbca94c5%26sc_channel%3Dps%26ef_id%3DCjwKCAiAqNSsBhAvEiwAn_tmxSfrfEnW87ds6mwuLZGhoUCfhKpMQsMzjE-0MlqBOCbE3gq46tRMuRoCUo0QAvD_BwE%3AG%3As%26s_kwcid%3DAL!4422!3!651751059333!e!!g!!aws%2520ec2%2520server!19852662176!145019190377%26gclid%3DCjwKCAiAqNSsBhAvEiwAn_tmxSfrfEnW87ds6mwuLZGhoUCfhKpMQsMzjE-0MlqBOCbE3gq46tRMuRoCUo0QAvD_BwE)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -101,10 +99,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.com/juansierra99/repo_name/issues) for a full list of proposed features (and known issues).
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -134,16 +129,8 @@ Project Link: [https://github.com/JuanSierra99/BucketBuddy](https://github.com/J
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/juan-sierra-971837120/
-[product-screenshot]: images/screenshot.png
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[Nginx]: https://img.shields.io/badge/nginx%20-%20green?logo=nginx&link=https%3A%2F%2Fwww.nginx.com%2F
