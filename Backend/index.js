@@ -536,8 +536,10 @@ app.post("/api/login", async (request, response) => {
     );
     if (result.rows.length === 0) {
       // If we dont get any rows in result, no user was found
-      console.log("User not found");
-      return response.status(404).json({ error: "User not found" });
+      console.log("username or password is incorrect");
+      return response
+        .status(404)
+        .json({ error: "username or password is incorrect" });
     }
     // Payload for jwt. needed to distinguish user (dont use sensitive info like password)
     const user = {
