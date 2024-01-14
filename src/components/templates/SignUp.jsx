@@ -14,7 +14,7 @@ function SignUp() {
           </a>
         }
       ></NavBar>
-      <img src="/buddy.png" className="buddy-image" />
+      <img src="/buddy_images/buddy.webp" className="buddy-image" />
       <div className="form-container">
         <form method="Post" action={`${serverUrl}/api/register`}>
           <FloatingInput
@@ -22,12 +22,14 @@ function SignUp() {
             type="text"
             id="username"
             name="username"
+            placeholder="username"
           />
           <FloatingInput
             value="password"
             type="text"
             id="password"
             name="password"
+            placeholder="password"
           />
           {/* <FloatingInput
             value="confirm-password"
