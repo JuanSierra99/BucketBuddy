@@ -83,14 +83,17 @@ A CRUD WEBSITE
 
 ## Getting Started
 
-To get started, visit the Following Link and create or sign into your account:
+To get started, visit the Following Link and create your account: http://bucketbuddyko.com/sign-up
 
 <!-- USAGE EXAMPLES -->
 
 ## Usage
 
-[![Movies Table][movies-table-screenshot]](https://example.com)
-[![Games Table][games-table-screenshot]]()
+Theres always something to watch, but you never have time to watch it all. Quicly make a bucket buddy table and write down all the movies currently on your list before you forget. And when the time comes to find a movie to watch, filter through your list and find the right movie for the occasion.
+[![Movies Table][movies-table-screenshot]](http://www.bucketbuddyko.com./sign-up)
+
+Filter through your games and see what you rated them. Maybe you want to revisit some or play with friends. You can easily search or filter through your list to find the right game to play.
+[![Games Table][games-table-screenshot]](http://www.bucketbuddyko.com./sign-up)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
