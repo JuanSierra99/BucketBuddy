@@ -6,13 +6,13 @@ function FloatingInput(props) {
       <input
         className="input-boxes"
         type={props.type ? props.type : "text"}
-        placeholder="input"
+        placeholder={props.placeholder}
         id={props.id}
         name={props.name}
       />
-      <label className="floating-label" for={props.id}>
+      {/* <label className="floating-label" for={props.id}>
         {props.value ? props.value : "input"}
-      </label>
+      </label> */}
     </div>
   );
 }
