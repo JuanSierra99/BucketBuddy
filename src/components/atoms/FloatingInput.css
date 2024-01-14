@@ -1,37 +1,34 @@
 .floating-input-container {
-  height: 5em;
+  height: fit-content;
   font-size: 1em;
   position: relative;
-  /* background-color: green; */
-  /* background-color: red; */
 }
 
 .input-boxes {
   background-color: rgba(0, 0, 0, 0.5);
-  /* background-color: red; */
   color: rgb(255, 255, 255);
   outline: none;
   border-style: solid;
-  border-radius: 15px;
-  border-color: #a99a9a2f;
+  border-radius: 1em;
+  border-color: #eee4e42f;
   padding: 1em;
   width: 100%;
-  height: 1em;
-  margin-bottom: 8%;
+  height: auto;
+  margin-bottom: 10px;
   box-sizing: border-box; /*so that input box does not extend past its container */
 }
 
 .input-boxes::placeholder {
-  opacity: 0;
 }
 
-input:focus + label,
+/* input:focus + label,
 input:not(:placeholder-shown) + label {
   transform: translateY(-110%);
   color: #ffffff;
   font-size: 1rem;
-}
-.floating-label {
+} */
+
+/* .floating-label {
   top: 5%;
   position: absolute;
   left: 2%;
@@ -42,4 +39,4 @@ input:not(:placeholder-shown) + label {
   user-select: none;
   cursor: text;
   transition: 0.25s;
-}
+} */
