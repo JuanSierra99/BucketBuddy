@@ -20,6 +20,7 @@ export const Sidebar = (props) => {
     buddyImage,
     setBuddyImage,
   } = props;
+
   const [searchTableName, setSearchTableName] = useState("");
   const [showModal, setShowModal] = useState(false);
 
@@ -106,38 +107,37 @@ export const Sidebar = (props) => {
             onClick={async () => {
               const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
               const json = {
-                image_url: "./hanging_spot.png",
+                image_url: "./buddy_images/hanging_spot.webp",
               };
               await Post(apiUrl, json);
-              setBuddyImage("./hanging_spot.png");
+              setBuddyImage("./buddy_images/hanging_spot.webp");
             }}
           >
-            <img src="./spot.png"></img>
-          </button>
-
-          <button
-            onClick={async () => {
-              const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
-              const json = {
-                image_url: "./hanging_bern.png",
-              };
-              await Post(apiUrl, json);
-              setBuddyImage("./hanging_bern.png");
-            }}
-          >
-            <img src="./Bernese.png"></img>
+            <img src="./buddy_images/spot.webp"></img>
           </button>
           <button
             onClick={async () => {
               const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
               const json = {
-                image_url: "./button-buddy.png",
+                image_url: "./buddy_images/hanging_bern.webp",
               };
               await Post(apiUrl, json);
-              setBuddyImage("./button-buddy.png");
+              setBuddyImage("./buddy_images/hanging_bern.webp");
             }}
           >
-            <img src="./buddy.png"></img>
+            <img src="./buddy_images/Bernese.webp"></img>
+          </button>
+          <button
+            onClick={async () => {
+              const apiUrl = `${serverUrl}/api/change-buddy-image-setting`;
+              const json = {
+                image_url: "./buddy_images/button-buddy.webp",
+              };
+              await Post(apiUrl, json);
+              setBuddyImage("./buddy_images/button-buddy.webp");
+            }}
+          >
+            <img src="./buddy_images/buddy.webp"></img>
           </button>
         </div>
       )}
