@@ -23,7 +23,9 @@ export function HomePage() {
   const [newTableName, setNewTableName] = useState("");
   // For user to assign a table color when creating new table. default color is white
   const [tableColor, setTableColor] = useState("rgb(100,100,210)");
-  const [buddyImage, setBuddyImage] = useState("/button-buddy.PNG");
+  const [buddyImage, setBuddyImage] = useState(
+    "./buddy_images/button-buddy.webp"
+  );
 
   const getTables = async () => {
     const apiUrl = `${serverUrl}/api/all-tables`;
