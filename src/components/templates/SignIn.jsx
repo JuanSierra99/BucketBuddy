@@ -5,6 +5,7 @@ import { Post } from "../../../Backend/Requests";
 import { serverUrl } from "../../config";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./SignIn.css";
 
 function SignIn() {
   const [authenticated, setAuthenticated] = useState(false); //If authenticated,
@@ -27,7 +28,7 @@ function SignIn() {
   return (
     <div className="sign-in-up-page">
       <NavBar navItem={<SignUpLink />}></NavBar>
-      <img src="/buddy-smile.png" className="buddy-image" />
+      <img src="/buddy_images/buddy-smile.webp" className="buddy-image" />
       <div className="form-container">
         <form onSubmit={handleSubmit}>
           <FloatingInput
@@ -35,12 +36,14 @@ function SignIn() {
             type="text"
             id="username"
             name="username"
+            placeholder="username"
           />
           <FloatingInput
             value="password"
             type="password"
             id="password"
             name="password"
+            placeholder="password"
           />
           <input className="submit-form-button" type="submit" value="sign in" />
         </form>
