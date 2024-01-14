@@ -16,24 +16,26 @@ export function WelcomePage() {
       ></NavBar>
       <div className="information-grid">
         <h1 className="grid-header">
-          Say Hello To
-          <img src="/buddy.png" className="welcome-page-buddy-image" />
+          Say hello to
+          <img
+            src="/buddy_images/buddy.webp"
+            className="welcome-page-buddy-image"
+          />
           <p className="test">Bucket Buddy</p>
         </h1>
         <img className="grid-image1" src="/CAT2.jpeg"></img>
         <p className="grid-text1">
-          Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-          consectetur, adipisci velit...
+          Create lists to maintain and track things you want to eventually
+          complete.
         </p>
         <p className="grid-text2">
-          Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-          consectetur, adipisci velit...
+          Manage and complete your goals. No more falling into the habit of
+          "saving it for later", then forgetting about it.
         </p>
         <img className="grid-image2" src="/CAT3.jpeg"></img>
         <img className="grid-image3" src="/CAT1.png"></img>
         <h1 className="grid-footer">
-          Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-          consectetur, adipisci velit
+          Your privacy is important. Your data will never be sold.
         </h1>
       </div>
     </body>
