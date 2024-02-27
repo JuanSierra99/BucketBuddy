@@ -1,10 +1,8 @@
 const client = require("./database");
 const express = require("express");
-const cors = require("cors");
-const passport = require("./passport-config");
-const jwt = require("jsonwebtoken");
+// const cors = require("cors");
 const uuid = require("uuid"); // For random and unique id's for out table names
-const { request } = require("http");
+// const { request } = require("http");
 require("dotenv").config();
 
 // Api server framework
@@ -493,79 +491,89 @@ app.post(
   }
 );
 
-app.post("/api/register", async (request, response) => {
-  try {
-    const { username, password } = request.body;
-    if (!username) {
-      console.log("message: username required");
-      return response.status(400).json({ Error: "username required" });
-    }
-    if (!isValidUsername(username)) {
-      console.log("invalid username");
-      return response.status(400).json({ Error: "invalid username" });
-    }
-    if (!password) {
-      console.log("password required");
-      return response.json({ Error: "password required" });
-    }
-    await client.query(
-      `INSERT INTO users (username, password) VALUES ('${username}', '${password}') `
-    );
-    console.log("Success: new user registered");
-    return response.status(200).json({ Success: "New user registered" });
-  } catch (error) {
-    console.log("Error @/register: ", error.message);
-    return response.json({ Error: error.message });
-  }
-});
+// app.post("/api/register", async (request, response) => {
+//   try {
+//     const { username, password } = request.body;
+//     if (!username) {
+//       console.log("message: username required");
+//       return response.status(400).json({ Error: "username required" });
+//     }
+//     if (!isValidUsername(username)) {
+//       console.log("invalid username");
+//       return response
+//         .json({
+//           Error:
+//             "username must be 3-20 characters long and only contain: a-z, 0-9",
+//         })
+//         .status(400);
+//     }
+//     if (!password) {
+//       console.log("password required");
+//       return response.json({ Error: "password required" }).status(400);
+//     }
+//     await client.query(
+//       `INSERT INTO users (username, password) VALUES ('${username}', '${password}') `
+//     );
+//     console.log("Success: new user registered");
+//     return response.status(200).json({ registered: "New user registered" });
+//   } catch (error) {
+//     console.error("Error @/register: ", error.message);
+//     return response.json({ Error: error.message });
+//   }
+// });
 
-app.post("/api/login", async (request, response) => {
-  try {
-    const username = request.body.username; // Get username from request body
-    if (!username) {
-      console.log("message: username required");
-      return response.status(400).json({ Error: "username required" });
-    }
-    if (!isValidUsername(username)) {
-      console.log("invalid username");
-      return response.status(400).json({ Error: "invalid username" });
-    }
-    // Find user in db
-    const result = await client.query(
-      `SELECT username FROM users where username='${username}'`
-    );
-    if (result.rows.length === 0) {
-      // If we dont get any rows in result, no user was found
-      console.log("username or password is incorrect");
-      return response
-        .status(404)
-        .json({ error: "username or password is incorrect" });
-    }
-    // Payload for jwt. needed to distinguish user (dont use sensitive info like password)
-    const user = {
-      username: username,
-    };
-    const secret_key = process.env.JWT_SIGN_KEY; // Key is used to encode the jwt (very sensitive, keep in .env)
-    const token = jwt.sign(user, secret_key, { expiresIn: 12000 });
-    console.log("sending jwt");
-    return response.status(200).json({ token }); // issue the jwt in response
-  } catch (error) {
-    console.log("Error @/api/login: ", error.message);
-    return response.status(500).json({ Error: error.message });
-  }
-});
+// app.post("/api/login", async (request, response) => {
+//   try {
+//     const username = request.body.username; // Get username from request body
+//     if (!username) {
+//       console.log("message: username required");
+//       return response.status(400).json({ Error: "username required" });
+//     }
+//     if (!isValidUsername(username)) {
+//       console.log("invalid username");
+//       return response.status(400).json({ Error: "invalid username" });
+//     }
+//     // Find user in db
+//     const result = await client.query(
+//       `SELECT username FROM users where username='${username}'`
+//     );
+//     if (result.rows.length === 0) {
+//       // If we dont get any rows in result, no user was found
+//       console.log("username or password is incorrect");
+//       return response
+//         .status(404)
+//         .json({ error: "username or password is incorrect" });
+//     }
+//     // Payload for jwt. needed to distinguish user (dont use sensitive info like password)
+//     const user = {
+//       username: username,
+//     };
+//     const secret_key = process.env.JWT_SIGN_KEY; // Key is used to encode the jwt (very sensitive, keep in .env)
+//     const token = jwt.sign(user, secret_key, { expiresIn: 12000 });
+//     console.log("sending jwt");
+//     return response.status(200).json({ token }); // issue the jwt in response
+//   } catch (error) {
+//     console.error("Error @/api/login: ", error.message);
+//     return response.status(500).json({ Error: error.message });
+//   }
+// });
 
 // Validate strings to ensure query safety.
 function isValidName(tableName) {
-  // One way to define regular expressions is with literals like this
-  const validNameRegex = /^[a-zA-Z0-9 ]+$/;
+  // One way to define regular expressions is with literals like this. Or we can use RegExp() constructor.
+  const validNameRegex = /^[a-zA-Z0-9]+$/;
   // Test the string
   return validNameRegex.test(tableName);
 }
 
 function isValidUsername(username) {
   // One way to define regular expression is with the RegExp constructor like this
+  // const validUserRegex = /^[\w-.]{3,20}$/;
   const validUserRegex = new RegExp("^[a-zA-Z0-9]{3,20}$");
   // Test the string
-  return validUserRegex.test(username);
+  validUserRegex.test(username);
 }
+
+//TO DO
+// use parameters sql to prevent injections. does not workn on identifiers tho
+// touch up register and login. lets make it more secure
