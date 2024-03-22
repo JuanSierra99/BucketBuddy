@@ -8,12 +8,9 @@ export const getJson = async (url) => {
     },
   });
   if (response.ok) {
-    // we return the json
-    // console.log(response.status + " " + response.statusText);
     const json = await response.json();
     return json;
   } else {
-    // we do not return json
     console.log("Error: " + response.status + " " + response.statusText);
     return null;
   }
@@ -34,7 +31,7 @@ export const Post = async (url, request_body) => {
     const json = await response.json();
     return json;
   } else {
-    return null;
     console.log("Error: " + response.status + " " + response.statusText);
+    return null;
   }
 };
