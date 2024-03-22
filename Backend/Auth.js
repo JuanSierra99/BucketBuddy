@@ -1,52 +1,97 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import express from 'express';
+import express from "express";
 import { usernameValidation, passwordValidation } from "./validation.js";
-import { client } from './database.js';
+import bcrypt from "bcrypt";
+//@ts-ignore
+import { client } from "./database.js";
+import jwt from "jsonwebtoken";
+import * as dotenv from "dotenv";
+dotenv.config(); // Load the .env file
 const app = express();
 //This middleware parses incoming request bodies in JSON format, and makes req.body avaliable to route handlers
 app.use(express.json());
 app.listen(3001, () => {
     console.log("server listening on port 3001");
 });
-app.post("/auth/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// Middleware to ensure user is authorized to access api endpoint. They require a token.
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers["authorization"]; // Get authorization header content
+    const token = authHeader && authHeader.split(" ")[1]; // Get JWT from authentication header
+    if (token == null)
+        return res.status(401); // No token found
+    const secretSignKey = process.env.JWT_SIGN_KEY;
+    // Verify that token was not tampered with
+    if (!secretSignKey) {
+        console.log("JWT_SIGN_KEY is not defined");
+        return res.status(500).send("JWT_SIGN_KEY is not defined");
+    }
+    jwt.verify(token, secretSignKey, (err, user) => {
+        if (err)
+            return res.status(403);
+        req.user = user; // Add JWT payload to html request
+        next(); //
+    });
+};
+app.post("/auth/register", async (req, res) => {
     try {
-        // Obtain the username and password from http body
+        // Obtain data from http body
         const username = req.body.username;
         const email = req.body.email;
         const password = req.body.password;
-        if (!username || !password) {
-            console.log("Username and password are both required");
+        //
+        if (!email || !username || !password) {
+            console.log("Email, username, and password are required");
             return res
                 .status(400)
-                .json({ error: "Username and password are both required" });
+                .json({ error: "Email, username, and password are required" });
         }
         if (!usernameValidation(username)) {
             return res.status(400).json({ error: "Invalid username" });
         }
         if (!passwordValidation(password)) {
-            return res.status(400).json({ error: "Invalid Password" });
+            return res.status(400).json({ error: "Invalid password" });
         }
-        const query = "INSERT INTO users(id, email, username, password) VALUES ($1, $2, $3, $4)";
-        const values = [1, email, username, password];
-        yield client.query(query, values);
-        return res.status(200).json({ message: "username and password requirements met" });
+        // Hash the password before storing in database
+        const hashedPassword = await bcrypt.hash(password, 11);
+        const query = "INSERT INTO users(email, username, password) VALUES ($1, $2, $3)";
+        const values = [email, username, hashedPassword];
+        await client.query(query, values);
+        return res.status(200).json({ message: "Account registered" });
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Internal server error" });
     }
-}));
-//Regex Security
-// At least one upsercase letter
-// At least one Number
-// At least one symbol
-// At least 8 characters long
-// Max 20 characters long
+});
+app.post("/auth/login", async (req, res) => {
+    try {
+        const email = req.body.email; //Obtain email from request
+        const password = req.body.password; //Obtain password from request
+        if (!email || !password) {
+            return res
+                .status(400)
+                .json({ error: "Email and password are both required" });
+        }
+        if (!passwordValidation(password)) {
+            return res.status(400).json({ error: "Invalid password" });
+        }
+        const query = "SELECT * FROM users WHERE email=$1";
+        const values = [email];
+        const result = await client.query(query, values);
+        // See if user exists in the database
+        if (result.rows.length === 0 ||
+            !(await bcrypt.compare(password, result.rows[0].password))) {
+            return res.status(401).json({ error: "Invalid username or password" });
+        }
+        //JWT Payload
+        const user = {
+            email: email,
+        };
+        const secretSignKey = process.env.JWT_SIGN_KEY; //JWT secret key
+        const token = jwt.sign(user, secretSignKey, { expiresIn: 12000 });
+        return res.status(200).json({ token }); //Succesful login, send token in response.
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
