@@ -1,579 +1,230 @@
-const client = require("./database");
-const express = require("express");
-// const cors = require("cors");
-const uuid = require("uuid"); // For random and unique id's for out table names
-// const { request } = require("http");
-require("dotenv").config();
-
-// Api server framework
+//@ts-ignore
+import { client } from "./database.js";
+import express from "express";
+import * as dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
 const app = express();
-// Configure for cross origin requests
-app.use(cors());
+dotenv.config();
 app.use(express.json()); //Needed to parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Needed when we use post in html form
-
 const port = 3000; // Run this api server on port 3000
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });
-
-const getTableId = async (username, table_name) => {
-  try {
-    // Construct a SQL query to select the tableid from user_tables based on the provided username and table_name
-    const tableid_query = `SELECT tableid FROM user_tables WHERE username='${username}' AND table_name='${table_name}'`;
-    const tableid_result = await client.query(tableid_query); // WHAT HAPPENS IF WE HAVE SAME USER AND TABLE NAMES DUPLICATES ????
-    // Check if the query result has no rows or is an empty array
-    if (!tableid_result.rows || tableid_result.rows.length === 0) {
-      console.log(`Table '${table_name}' not found`);
-      // Send an HTTP response indicating that the table was not found
-      return;
+// Middleware for authenticating users with JWT. Used to secure api endpoints.
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers["authorization"]; // Get authorization header content
+    const token = authHeader && authHeader.split(" ")[1]; // Get JWT from authentication header
+    const secretSignKey = process.env.JWT_SIGN_KEY;
+    if (!token)
+        return res.status(401).json({ error: "No token was provided" }); // Return error if token undefined/null
+    if (!secretSignKey) {
+        console.log("JWT_SIGN_KEY is not defined");
+        return res.status(500).send("JWT_SIGN_KEY is not defined"); // Return error if secret key is undefined/null
     }
-    // Extract the table_id from the first row of the query result
-    const table_id = tableid_result.rows[0].tableid;
-    // console.log(table_id);
-    return table_id;
-  } catch (error) {
-    return console.log(error.message);
-  }
+    // Verify that token was not tampered with
+    jwt.verify(token, secretSignKey, (err, user) => {
+        if (err)
+            return res.status(403).json({ error: "Unauthorized user" }); // Return error, user could not be authenticated
+        req.user = user; // Add JWT payload to html request
+        next();
+    });
 };
-
-{
-  /*Note: psql does not support parameters for identifiers. Ensure proper security practices to prevent sql injection when creating tables,
- or adding new columns*/
-}
-{
-  /*Note: Passport's authentication middleware, when successfully authenticating a user, adds a user object to the request object.  */
-}
-// Send row data of the specific table
-app.get(
-  "/api/get-table", // Route
-  passport.authenticate("jwt", { session: false }), // protected endpoint. Only authorized users
-  async (request, response) => {
-    try {
-      const table_name = request.query.table_name;
-      const username = request.user.username;
-      if (!table_name) {
-        console.log("Table name is required");
-        return response.status(400).json({ Error: "Table name is required" });
-      }
-      if (!isValidName(table_name)) {
-        return response.status(400).json({ Error: "Invalid table name " });
-      }
-      const trimmed_table_name = table_name.trim(); //No leading/trailing whitespace
-      const table_id = await getTableId(username, trimmed_table_name);
-      const table_query = `SELECT * FROM "${table_id}" ORDER BY unique_record_id DESC`;
-      // Execute the SQL query to get the specified table's rows
-      const table_result = await client.query(table_query);
-      const rows = table_result.rows; // send every row for the requested table
-      // Log the data for debugging
-      console.log(`Sending rows for ${trimmed_table_name}: `, rows);
-      // Send an HTTP response with data in the response body
-      return response.status(200).json(rows);
-    } catch (error) {
-      console.log("Error @/api/get-table: ", error.message);
-      return response.status(500).json({ error: "Internal Server Error" });
+// userId is critical for queries, this middlepoint will help with debugging.
+const ensureUserIdExists = (req, res, next) => {
+    const userId = req.user?.id;
+    //For debugging. userId should be guaranteed to have a value because it comes from JWT after authentication.
+    if (!userId) {
+        console.error("User id has no value");
+        return res.status(400).json({ error: "User id has no value" }); //Return error if variable is undefined/null
     }
-  }
-);
-
-// FINISH THIS ONE I MADE IT SUPER QUICK
-app.get(
-  "/api/table-fields",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
+    next();
+};
+app.use(authenticateToken); //Use authentication middleware for all endpoints.
+app.use(ensureUserIdExists); //Debugging middleware
+// Create a new user table.
+app.post("/create-table", async (req, res) => {
     try {
-      const table_name = request.query.table_name;
-      const username = request.user.username;
-      if (!table_name) {
-        console.log("table name required");
-        return response.status(400).json({ message: "table name required" });
-      }
-      if (!isValidName(table_name)) {
-        console.log("Invalid table name");
-        return response.status(400).json({ message: "Invalid table name" });
-      }
-      const tableId = await getTableId(username, table_name);
-      const fields_query = `SELECT column_name, data_type FROM information_schema.columns WHERE table_name='${tableId}' AND column_name!='unique_record_id'`;
-      const fields_result = await client.query(fields_query);
-      // const fields = fields_result.rows.map((row) => {
-      //   return row.column_name;
-      // });
-      const fields = fields_result.rows;
-      console.log("Sending fields for " + table_name + " table: ", fields);
-      return response.status(200).json(fields);
-    } catch (error) {
-      console.log("@/api/table-fields", error.message);
-      return response.status(500).json({ error: error.message });
-    }
-  }
-);
-
-// In the SQL database, create a new table using the speicified name
-app.post(
-  "/api/new-table",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
-    try {
-      // Get the name of table from the request body
-      const tableName = request.body.table_name;
-      const username = request.user.username;
-      const tableColor = request.body.table_color;
-      // Ensure that the given table name is defined
-      if (!tableName) {
-        console.log("Table name is required");
-        return response.status(400).json({ error: "Table name is required" });
-      }
-      // Ensure that the given table name is valid
-      if (!isValidName(tableName)) {
-        console.log("Invalid table name");
-        return response.status(400).json({ error: "Invalid table name" });
-      }
-      if (!tableColor) {
-        console.log("Invalid table color");
-        return response.status(400).json({ error: "Invalid table color" });
-      }
-      const uniqueId = uuid.v4();
-      // Using client class's transaction feature to make sure either both querys execute, or none execute
-      // Keep in mind the query's still executes, so order still matters. If one fails, everything is reverted.
-      // https://node-postgres.com/features/transactions
-      const trimmed_table_name = tableName.trim();
-      client.query("BEGIN");
-      const createTableQuery = `CREATE TABLE "${uniqueId}" (unique_record_id SERIAL PRIMARY KEY , Name text DEFAULT '')`;
-      await client.query(createTableQuery); // Execute the SQL query to create the table
-      const update_userTables_query = `INSERT INTO user_tables (tableid, username, table_name, table_color) VALUES ('${uniqueId}', '${username}', '${trimmed_table_name}', '${tableColor}')`;
-      await client.query(update_userTables_query);
-      const addEmptyRecordQuery = `INSERT INTO "${uniqueId}" DEFAULT VALUES`; // I want table to have one empty row by default
-      await client.query(addEmptyRecordQuery);
-      await client.query("COMMIT");
-      console.log(`Table "${trimmed_table_name}" created successfully`); // Log success message
-      // Send an HTTP response with a success message in the response body
-      return response.status(200).json({
-        message: `Table "${trimmed_table_name}" created successfully`,
-      });
-    } catch (error) {
-      await client.query("ROLLBACK");
-      console.log("@/api/table_fields", error.message);
-      return response.status(500).json({ error: "Table creation failed" });
-    }
-  }
-);
-
-// Can a client manipulate table name and user name to drop someone elses table ?!?!?!
-app.post(
-  "/api/deleteTable",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
-    try {
-      const tableName = request.body.table_name; // Get the table name to delete from the request body
-      const username = request.user.username;
-      await client.query("BEGIN");
-      // ITS VERY IMPORTANT THAT THIS QUERY GOES FIRST. IF NOT, WHEN WE TRY getTableId(), the row in user_tables it needs is already deleted and itll show it does not exitst ! ...
-      // ...Because of the other query deleting it
-      const tableId = await getTableId(username, tableName); // Get the name of the table in the database
-      await client.query(`DROP TABLE "${tableId}"`);
-      const deleteUserTableEntryQuery = `DELETE FROM user_tables WHERE table_name='${tableName}' AND username='${username}'`;
-      await client.query(deleteUserTableEntryQuery);
-      await client.query("COMMIT");
-      console.log(`Table "${tableName}" deleted successfully`); // Log success message
-      // Send an HTTP response with a success message in the response body
-      return response
-        .status(200)
-        .json({ message: `Table "${tableName}" deleted successfully` });
-    } catch (error) {
-      await client.query("ROLLBACK");
-      console.log("@/api/deleteTable", error.message);
-      return response.status(500).json({ error: "table deletion failed" });
-    }
-  }
-);
-
-// Double check validation for this one. Wrote this one kinda fast so make sure it looks good !!!!!!!!!
-// In the SQL database, create a new table using the speicified name
-app.post(
-  "/api/change-cell",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
-    try {
-      const username = request.user.username;
-      // Get the table name from the request body
-      const tableName = request.body.name;
-      // Get the row id from the request body
-      const rowId = request.body.rowId;
-      // Get the field name from the request body
-      const fieldName = request.body.fieldName;
-      // Get the new value to assing to cell from the request body
-      const newCellValue = request.body.newCellValue;
-      // Ensure that the given table name is defined
-      if (!tableName) {
-        console.log("Table name is required");
-        return response.status(400).json({ error: "Table name is required" });
-      }
-      if (!rowId) {
-        console.log("Row Id is required");
-        return response.status(400).json({ error: "Row Id is required" });
-      }
-      if (!fieldName) {
-        console.log("Field name is required");
-        return response.status(400).json({ error: "Field name is required" });
-      }
-
-      if (!newCellValue) {
-        console.log("New cell value is required");
-        return response
-          .status(400)
-          .json({ error: "New cell value is required" });
-      }
-      // Validate all recieved parameters
-      if (
-        !isValidName(tableName) ||
-        !isValidName(rowId) ||
-        !isValidName(fieldName)
-        // !isValidName(newCellValue) // WE CANT RESTRICT CELL VALUE TOO MUCH !!
-      ) {
-        console.log("Invalid Parameter");
-        return response.status(400).json({ error: "Invalid Parameter" });
-      }
-      const tableId = await getTableId(username, tableName); // Get actual name of table (each table has a unique id for its name)
-      const changeCellQuery = `UPDATE "${tableId}" SET "${fieldName}" = '${newCellValue}' WHERE unique_record_id=${rowId}`;
-      // Execute the SQL query to create the table
-      await client.query(changeCellQuery);
-      // Log a success message indicating that the table has been created.
-      console.log(
-        `Changed cell in table "${tableName}", with row id ${rowId}, and field name "${fieldName}", to ${newCellValue}`
-      );
-      // Send an HTTP response with a success message in the response body
-      return response.status(200).json({
-        message: `Changed cell in table "${tableName}", with row id ${rowId}, and field name "${fieldName}", to ${newCellValue}`,
-      });
-    } catch (error) {
-      console.log("@/api/change-cell " + error.message);
-      return response.status(500).json({ error: error.message });
-    }
-  }
-);
-
-app.post(
-  "/api/change-field",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
-    try {
-      // Get the table name from the request body
-      const tableName = request.body.tableName;
-      // Get the field name from the request body
-      const fieldName = request.body.currentFieldName;
-      // Get the new value to assing to cell from the request body
-      const newFieldName = request.body.newFieldName;
-      // Ensure that the given table name is defined
-      if (!tableName) {
-        console.log("Table name is required");
-        return response.status(400).json({ error: "Table name is required" });
-      }
-      if (!fieldName) {
-        console.log("Current field name is required");
-        return response
-          .status(400)
-          .json({ error: "Current field name is required" });
-      }
-      if (!newFieldName) {
-        console.log("New field name is required");
-        return response
-          .status(400)
-          .json({ error: "New field name is required" });
-      }
-      // Validate all recieved parameters
-      if (
-        !isValidName(tableName) ||
-        !isValidName(fieldName) ||
-        !isValidName(newFieldName)
-      ) {
-        console.log("Invalid Parameter");
-        return response.status(400).json({ error: "Invalid Parameter" });
-      }
-      const changeFieldNameQuery = `ALTER TABLE "${tableName}" RENAME COLUMN "${fieldName}" TO "${newFieldName}"`;
-      // Execute the SQL query to create the table
-      await client.query(changeFieldNameQuery);
-      // Log a success message indicating that the table has been created.
-      console.log(`Success in changing field name`);
-      // Send an HTTP response with a success message in the response body
-      response.status(200).json({
-        message: `Success in changing field name`,
-      });
-    } catch (error) {
-      console.log("Error @/api/change-field: " + error.message);
-      return response.status(500).json({ error: error.message });
-    }
-  }
-);
-
-// Send an array of all the public tables in the SQL database
-app.get(
-  "/api/all-tables",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
-    const username = request.user.username; // get username that was in jwt from request object
-    try {
-      // Execute the SQL query to retrieve the table names for a specific user
-      query = `select table_name, table_color from user_tables where username='${username}'`;
-      const json = await client.query(
-        query
-        // "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
-      );
-      // Use json to make an array of table names
-      const table_data = json.rows;
-      // Log the data being sent for debugging
-      console.log("Sending table names: ", table_data);
-      // Send an HTTP response with an object containing the array of table names in the response body
-      return response.status(200).json({ table_data: table_data });
-    } catch (error) {
-      console.log("Error @/api/all-tables: ", error.message);
-      return response.status(500).json({ error: "Internal Server Error" });
-    }
-  }
-);
-
-// Given an existing tables name, a valid field name, and a valid data type, add a new field to the table in the database
-app.post(
-  "/api/add-column",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
-    const { tableName, columnName, dataType } = request.body;
-    const username = request.user.username;
-    try {
-      // Get the required values from the body of the request
-      // Ensure all values are defined.
-      if (!tableName) {
-        console.log("Table name required");
-        return response.status(400).json({ Error: "Table name required" });
-      }
-      if (!columnName) {
-        console.log("Column name required");
-        return response.status(400).json({ Error: `Column name required` });
-      }
-      if (!dataType) {
-        console.log("data type required");
-        return response.status(400).json({ Error: "data type required" });
-      }
-      // Validate each value before adding it to the query
-      if (
-        !isValidName(tableName) ||
-        !isValidName(columnName) ||
-        !isValidName(dataType)
-      ) {
-        console.log("Invalid query");
-        return response.status(400).json({ Error: "invalid query" });
-      }
-      const tableId = await getTableId(username, tableName);
-      // Execute the SQL query to add a column to the specified table
-      const defaultTypes = {
-        VARCHAR: "'☆'",
-        TEXT: "''",
-        INT: 0,
-        MONEY: 0,
-        BOOL: "false",
-        DATE: "'2023-01-01'",
-        TIME: "'00:00:00'",
-      };
-      if (!defaultTypes.hasOwnProperty(dataType)) {
-        console.error(`Invalid data type: ${dataType}`);
-
-        return response
-          .status(400)
-          .json({ error: "Invalid Data Type Recieved" });
-      }
-      // console.log(dataType);
-      // console.log(defaultTypes[dataType]);
-      const formatted_column_name = columnName.trim().toLowerCase();
-      const addColumnQuery = `ALTER TABLE "${tableId}" ADD "${formatted_column_name.toLowerCase()}" ${dataType} DEFAULT ${
-        defaultTypes[dataType]
-      } NOT NULL`;
-      await client.query(addColumnQuery);
-      // Log a success message
-      console.log(
-        `Added '${formatted_column_name}' ${dataType} Field, to '${tableName}'`
-      );
-      // Send an HTTP response with a success message in the response body
-      return response.status(200).json({
-        message: `Added '${formatted_column_name}' ${dataType} Field, to table '${tableName}'`,
-      });
-    } catch (error) {
-      // Check for specific error codes to handle known scenarios.
-      if (error.code === "42701") {
-        console.log(
-          `Column "${formatted_column_name}" already exists in table "${tableName}"`
-        );
-        return response.status(400).json({
-          error: `Column "${formatted_column_name}" already exists in table "${tableName}"`,
+        //obtain following data from request
+        const tableName = req.body.tableName;
+        const userId = req.user.id;
+        let tableColor = req.body.tableColor;
+        if (!tableName) {
+            console.error("Table name has no value");
+            return res.status(400).json({ error: "Table name has no value" }); //Return error if variable is undefined/null
+        }
+        if (!tableColor) {
+            tableColor = "white"; //Assign default color if variable is undefined/null
+        }
+        const trimmedTableName = tableName.trim(); //Remove leading/trailing whitespace from variable tableName
+        const uniqueTableId = uuidv4(); //Generate a unique id for the table
+        const createTableQuery = "INSERT INTO USERS_TABLES VALUES($1, $2, $3, $4)";
+        const values = [uniqueTableId, userId, trimmedTableName, tableColor];
+        // Using parameterized query
+        await client.query(createTableQuery, values);
+        console.log(`Successfuly created table: ${tableName}`);
+        // Send an HTTP response with a success message in the body
+        return res.status(200).json({
+            message: `Successfully created table: ${tableName}`,
         });
-      } else {
-        console.log("Error @/api/add-column: ", error.message);
-        // Send a HTTP response containing a generic error message for other errors.
-        return response.status(500).json({ error: "Internal Server Error" });
-      }
     }
-  }
-);
-
-app.post(
-  "/api/add-row",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
+    catch (error) {
+        console.error("Internal server error. Failed to create table.");
+        return res
+            .status(500)
+            .json({ error: "Internal server error. Failed to create table." });
+    }
+});
+app.get("/user-tables", async (req, res) => {
     try {
-      const tableName = request.body.tableName;
-      const username = request.user.username;
-      if (!tableName) {
-        console.log("Table name is required");
-        return response.status(400).json({ Error: "Table name is required" });
-      }
-      if (!isValidName(tableName)) {
-        console.log("Invalid table name");
-        return response.status(400).json({ Error: "invalid table name" });
-      }
-      const tableId = await getTableId(username, tableName);
-      newRowQuery = `INSERT INTO "${tableId}" DEFAULT VALUES`;
-      await client.query(newRowQuery);
-      console.log(`Added new row to table: ${tableName}`);
-      return response
-        .status(200)
-        .json({ message: `Added new row to table: ${tableName}` });
-    } catch (error) {
-      console.log("Error @/api/add-row: ", error.message);
-      return response
-        .status(500)
-        .json({ error: "Internal Server Error", message: error.message });
+        const userId = req.user.id;
+        const getTablesQuery = "SELECT table_id, table_name, table_color FROM USERS_TABLES WHERE user_id = $1";
+        const values = [userId];
+        const result = await client.query(getTablesQuery, values);
+        return res.status(200).json({ tables: result.rows });
     }
-  }
-);
-
-app.get(
-  "/api/get-settings",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
+    catch (error) {
+        console.error("Internal server error. Failed to retrieve user tables.");
+        return res.status(500).json({
+            error: "Internal server error. Failed to retrieve user tables.",
+        });
+    }
+});
+app.post("/delete-table", async (req, res) => {
     try {
-      const username = request.user.username;
-      getSettingsQuery = `select settings from users where username = '${username}'`;
-      const query_result = await client.query(getSettingsQuery);
-      if (query_result.rows.length > 0) {
-        const settings = query_result.rows[0];
-        console.log(`sending settings for user: ${settings}`);
-        return response.status(200).json(settings);
-      } else {
-        console.log("couldnt retrieve settings");
-        res
-          .status(404)
-          .json({ error: "User not found or no settings available" });
-      }
-    } catch (error) {
-      console.log("Error @/api/get-settings: ", error.message);
-      return response
-        .status(500)
-        .json({ error: "Internal Server Error", message: error.message });
+        const userId = req.user.id;
+        const tableId = req.body.tableId;
+        // Check if tableId is provided
+        if (!tableId) {
+            return res.status(400).json({ error: "Table ID was not provided." });
+        }
+        // Begin postgres transaction.
+        await client.query("BEGIN");
+        const values = [userId, tableId];
+        const deleteRowsQuery = "DELETE FROM ROW_METADATA WHERE user_id = $1 AND table_id = $2";
+        await client.query(deleteRowsQuery, values);
+        const deleteColumnsQuery = "DELETE FROM COLUMN_METADATA WHERE user_id = $1 AND table_id = $2";
+        await client.query(deleteColumnsQuery, values);
+        const deleteUserTableQuery = "DELETE FROM USERS_TABLES WHERE user_id=$1 AND table_id=$2";
+        const result = await client.query(deleteUserTableQuery, values);
+        // Check if any rows were deleted
+        if (result.rowCount === 0) {
+            return res
+                .status(404)
+                .json({ error: "Table not found or already deleted." });
+        }
+        await client.query("COMMIT");
+        return res.status(200).json({ message: "Table deleted successfully." });
     }
-  }
-);
-
-app.post(
-  "/api/change-buddy-image-setting",
-  passport.authenticate("jwt", { session: false }),
-  async (request, response) => {
+    catch (error) {
+        await client.query("ROLLBACK");
+        console.log("Internal server error. Failed to delete user table");
+        return res
+            .status(500)
+            .json({ error: "Internal server error. Failed to delete user table." });
+    }
+    finally {
+        client.release();
+    }
+});
+// Add a new column for a user table.
+app.post("/new-column", async (req, res) => {
     try {
-      const username = request.user.username;
-      const image_url = request.body.image_url;
-      getSettingsQuery = `UPDATE users SET settings = '{"image": "${image_url}"}' where username = '${username}'`;
-      await client.query(getSettingsQuery);
-      console.log(`settings updated`);
-      return response.status(200).json({ message: "settings updated" });
-    } catch (error) {
-      console.log("Error @/api/get-settings: ", error.message);
-      return response
-        .status(500)
-        .json({ error: "Internal Server Error", message: error.message });
+        const columnName = req.body.columnName;
+        const dataType = req.body.dataType;
+        const tableId = req.body.tableId;
+        const userId = req.user.id;
+        const validDataTypes = ["text", "rating", "number", "bool"];
+        if (!tableId) {
+            return res.status(400).json({ error: "Table ID was not provided." });
+        }
+        if (!columnName) {
+            return res.status(400).json({ error: "Column name was not provided." });
+        }
+        if (!dataType) {
+            return res
+                .status(400)
+                .json({ error: "Column data type was not provided." });
+        }
+        if (!validDataTypes.includes(dataType.toLowerCase())) {
+            return res
+                .status(400)
+                .json({ error: "Invalid column data type provided." });
+        }
+        const addColumnQuery = `
+    INSERT INTO COLUMN_METADATA (column_name, data_type, table_id, column_id, user_id) 
+      VALUES($1, $2, $3, $4, $5)`;
+        const columnId = uuidv4();
+        const values = [
+            columnName,
+            dataType.toLowerCase(),
+            tableId,
+            columnId,
+            userId,
+        ];
+        await client.query(addColumnQuery, values);
+        return res.status(200).json({ message: "Column added successfully" });
     }
-  }
-);
-
-// app.post("/api/register", async (request, response) => {
-//   try {
-//     const { username, password } = request.body;
-//     if (!username) {
-//       console.log("message: username required");
-//       return response.status(400).json({ Error: "username required" });
-//     }
-//     if (!isValidUsername(username)) {
-//       console.log("invalid username");
-//       return response
-//         .json({
-//           Error:
-//             "username must be 3-20 characters long and only contain: a-z, 0-9",
-//         })
-//         .status(400);
-//     }
-//     if (!password) {
-//       console.log("password required");
-//       return response.json({ Error: "password required" }).status(400);
-//     }
-//     await client.query(
-//       `INSERT INTO users (username, password) VALUES ('${username}', '${password}') `
-//     );
-//     console.log("Success: new user registered");
-//     return response.status(200).json({ registered: "New user registered" });
-//   } catch (error) {
-//     console.error("Error @/register: ", error.message);
-//     return response.json({ Error: error.message });
-//   }
-// });
-
-// app.post("/api/login", async (request, response) => {
-//   try {
-//     const username = request.body.username; // Get username from request body
-//     if (!username) {
-//       console.log("message: username required");
-//       return response.status(400).json({ Error: "username required" });
-//     }
-//     if (!isValidUsername(username)) {
-//       console.log("invalid username");
-//       return response.status(400).json({ Error: "invalid username" });
-//     }
-//     // Find user in db
-//     const result = await client.query(
-//       `SELECT username FROM users where username='${username}'`
-//     );
-//     if (result.rows.length === 0) {
-//       // If we dont get any rows in result, no user was found
-//       console.log("username or password is incorrect");
-//       return response
-//         .status(404)
-//         .json({ error: "username or password is incorrect" });
-//     }
-//     // Payload for jwt. needed to distinguish user (dont use sensitive info like password)
-//     const user = {
-//       username: username,
-//     };
-//     const secret_key = process.env.JWT_SIGN_KEY; // Key is used to encode the jwt (very sensitive, keep in .env)
-//     const token = jwt.sign(user, secret_key, { expiresIn: 12000 });
-//     console.log("sending jwt");
-//     return response.status(200).json({ token }); // issue the jwt in response
-//   } catch (error) {
-//     console.error("Error @/api/login: ", error.message);
-//     return response.status(500).json({ Error: error.message });
-//   }
-// });
-
-// Validate strings to ensure query safety.
-function isValidName(tableName) {
-  // One way to define regular expressions is with literals like this. Or we can use RegExp() constructor.
-  const validNameRegex = /^[a-zA-Z0-9]+$/;
-  // Test the string
-  return validNameRegex.test(tableName);
-}
-
-function isValidUsername(username) {
-  // One way to define regular expression is with the RegExp constructor like this
-  // const validUserRegex = /^[\w-.]{3,20}$/;
-  const validUserRegex = new RegExp("^[a-zA-Z0-9]{3,20}$");
-  // Test the string
-  validUserRegex.test(username);
-}
-
-//TO DO
-// use parameters sql to prevent injections. does not workn on identifiers tho
-// touch up register and login. lets make it more secure
+    catch (error) {
+        if (error.code === "23505")
+            return res.status(409).json({ error: "Column already exists" });
+        console.log("Internal server error. Failed to add column");
+        return res
+            .status(500)
+            .json({ error: "Internal server error. Failed to add column" });
+    }
+});
+// Add a new column for a user table.
+app.post("/new-row", async (req, res) => {
+    try {
+        const tableId = req.body.tableId;
+        const columnId = req.body.columnId;
+        const rowData = req.body.rowData;
+        const userId = req.user.id;
+        if (!tableId) {
+            return res.status(400).json({ error: "Table ID was not provided." });
+        }
+        if (!columnId) {
+            return res.status(400).json({ error: "Column ID was not provided." });
+        }
+        if (!rowData) {
+            return res.status(400).json({ error: "Row data was not provided." });
+        }
+        const rowId = uuidv4();
+        const addRowQuery = `
+    INSERT INTO ROW_METADATA (table_id, column_id, row_data, row_id, user_id) 
+    VALUES($1, $2, $3, $4, $5)`;
+        const values = [tableId, columnId, rowData, rowId, userId];
+        await client.query(addRowQuery, values);
+        return res.status(200).json({ message: "Row added successfully" });
+    }
+    catch (error) {
+        console.log("Internal server error. Failed to add row");
+        return res
+            .status(500)
+            .json({ error: "Internal server error. Failed to add row" });
+    }
+});
+app.post("/get-table", async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const tableId = req.body.tableId;
+        if (!tableId) {
+            return res.status(400).json({ error: "Table ID was not provided" });
+        }
+        const getTableQuery = `
+    SELECT r.row_data, r.row_id, c.column_id, c.column_name, c.data_type
+    FROM row_metadata as r LEFT JOIN column_metadata AS c ON c.column_id = r.column_id 
+    WHERE r.table_id = $1 AND r.user_id = $2`;
+        const values = [tableId, userId];
+        const result = await client.query(getTableQuery, values);
+        return res.status(200).json({ tableData: result.rows });
+    }
+    catch (error) {
+        console.log("Internal server error. Failed to send table data.");
+        return res
+            .status(500)
+            .json({ error: "Internal server error. Failed to send table data." });
+    }
+});
