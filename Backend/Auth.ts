@@ -15,24 +15,6 @@ app.listen(3001, () => {
   console.log("server listening on port 3001");
 });
 
-// Middleware to ensure user is authorized to access api endpoint. They require a token.
-const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"]; // Get authorization header content
-  const token = authHeader && authHeader.split(" ")[1]; // Get JWT from authentication header
-  if (token == null) return res.status(401); // No token found
-  const secretSignKey = process.env.JWT_SIGN_KEY as string;
-  // Verify that token was not tampered with
-  if (!secretSignKey) {
-    console.log("JWT_SIGN_KEY is not defined");
-    return res.status(500).send("JWT_SIGN_KEY is not defined");
-  }
-  jwt.verify(token, secretSignKey, (err, user) => {
-    if (err) return res.status(403);
-    req.user = user; // Add JWT payload to html request
-    next(); //
-  });
-};
-
 app.post("/auth/register", async (req: Request, res: Response) => {
   try {
     // Obtain data from http body
@@ -90,6 +72,7 @@ app.post("/auth/login", async (req: Request, res: Response) => {
     //JWT Payload
     const user = {
       email: email,
+      id: result.rows[0].id,
     };
     const secretSignKey = process.env.JWT_SIGN_KEY as string; //JWT secret key
     const token = jwt.sign(user, secretSignKey, { expiresIn: 12000 });
