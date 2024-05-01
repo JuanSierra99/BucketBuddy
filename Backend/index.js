@@ -219,12 +219,12 @@ app.post("/new-cell", async (req, res) => {
         if (!data) {
             return res.status(400).json({ error: "Cell data was not provided" });
         }
-        const cellQuery = `
+        const insertCellQuery = `
     INSERT INTO cell_Data (table_id, column_id, row_id, data) 
     VALUES ($1, $2, $3, $4)
     `;
         const values = [tableId, columnId, rowId, data];
-        await client.query(cellQuery, values);
+        await client.query(insertCellQuery, values);
         return res.status(200).json({ message: "Added data to cell" });
     }
     catch (error) {
@@ -240,6 +240,7 @@ app.post("/get-table-data", async (req, res) => {
         if (!tableId) {
             return res.status(400).json({ error: "Table ID was not provided" });
         }
+        // Retrieve column data for the columns that belong to the specified table.
         const getColumnsQuery = `
     SELECT column_name, column_id, data_type
     FROM column_metadata
@@ -247,24 +248,17 @@ app.post("/get-table-data", async (req, res) => {
     `;
         const columnQueryValues = [tableId];
         const columnsResponse = await client.query(getColumnsQuery, columnQueryValues);
-        const columnData = columnsResponse.rows;
+        const columnData = columnsResponse.rows; // Get column data sent back from sql query.
+        // Return 204 If there are no columns.
         if (columnData.length === 0) {
-            return res.status(404).json({
-                message: "No data to send. Could not find table",
+            return res.status(204).json({
+                message: "No data to send.",
             });
         }
-        const columnIds = columnData.map((c) => {
-            return { id: c.column_id, name: c.column_name };
-        });
-        if (columnIds.length === 0) {
-            return res.status(404).json({
-                message: "No data to send. Could not find columns",
-            });
-        }
-        // Constructing the SELECT clause dynamically. Use join to make it one string for the query.
-        const selectClause = columnIds
+        // By utilizing a group by query alongside conditionals, we have the capability to dynamically formulate our query, enabling the organization of each row's cell data with its respective column.
+        const selectClause = columnData
             .map((c) => {
-            return `MAX(CASE WHEN column_id = '${c.id}' THEN data END) AS ${c.name}`;
+            return `MAX(CASE WHEN column_id = '${c.column_id}' THEN data END) AS ${c.column_name}`;
         })
             .join(", ");
         const getDataQuery = `
@@ -273,9 +267,9 @@ app.post("/get-table-data", async (req, res) => {
     FROM cell_data
     GROUP BY row_id
     `;
-        const cellResponse = await client.query(getDataQuery);
-        const cellData = cellResponse.rows;
-        return res.status(200).json({ columns: columnData, data: cellData });
+        const dataQueryResponse = await client.query(getDataQuery);
+        const data = dataQueryResponse.rows;
+        return res.status(200).json({ columns: columnData, data });
     }
     catch (error) {
         console.log("Internal server error. Failed to send table data.");
