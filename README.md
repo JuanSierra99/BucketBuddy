@@ -12,9 +12,9 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/JuanSierra99/BucketBuddy">
+<!--   <a href="https://github.com/JuanSierra99/BucketBuddy">
     <img src="public/buddy.png" alt="Logo" width="80" height="80">
-  </a>
+  </a> -->
 
 <h3 align="center">Bucket Buddy</h3>
 
